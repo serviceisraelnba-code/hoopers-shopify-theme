@@ -4,11 +4,290 @@
   {%- assign drawer_position = 'left' -%}
 {% endif %}
 
-<div id="NavDrawer" class="drawer drawer--{{ drawer_position }}">
+<style>
+  #NavDrawer.hoopers-menu {
+    --hoopers-menu-bg: #fff;
+    --hoopers-menu-text: #050505;
+    --hoopers-menu-muted: #767676;
+    --hoopers-menu-border: rgba(0, 0, 0, 0.09);
+    --hoopers-menu-soft: #f6f6f4;
+    background: var(--hoopers-menu-bg);
+    color: var(--hoopers-menu-text);
+  }
+
+  #NavDrawer.hoopers-menu .drawer__contents {
+    background: var(--hoopers-menu-bg);
+  }
+
+  #NavDrawer.hoopers-menu .drawer__fixed-header {
+    border-bottom: 1px solid var(--hoopers-menu-border);
+  }
+
+  #NavDrawer.hoopers-menu .drawer__header {
+    min-height: 68px;
+    padding: 18px 22px 16px;
+  }
+
+  #NavDrawer.hoopers-menu .drawer__title {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin: 0;
+    line-height: 1;
+  }
+
+  #NavDrawer.hoopers-menu .hoopers-menu__eyebrow {
+    color: var(--hoopers-menu-muted);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  #NavDrawer.hoopers-menu .hoopers-menu__title {
+    color: var(--hoopers-menu-text);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  #NavDrawer.hoopers-menu .drawer__close-button {
+    align-items: center;
+    background: #050505;
+    border-radius: 50%;
+    color: #fff;
+    display: inline-flex;
+    height: 38px;
+    justify-content: center;
+    padding: 0;
+    width: 38px;
+  }
+
+  #NavDrawer.hoopers-menu .drawer__close-button .icon {
+    color: #fff;
+    height: 18px;
+    stroke-width: 2px;
+    width: 18px;
+  }
+
+  #NavDrawer.hoopers-menu .hoopers-menu__promo {
+    background: #050505;
+    color: #fff;
+    margin: 18px 20px 12px;
+    padding: 18px;
+  }
+
+  #NavDrawer.hoopers-menu .top_promotion_text,
+  #NavDrawer.hoopers-menu .top_promotion_text * {
+    color: inherit;
+  }
+
+  #NavDrawer.hoopers-menu .text_promo_main {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  #NavDrawer.hoopers-menu .text_promo_body {
+    color: rgba(255, 255, 255, 0.74);
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  #NavDrawer.hoopers-menu .timer {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 0;
+    box-shadow: none;
+    margin: 14px 0 0;
+    padding: 10px;
+  }
+
+  #NavDrawer.hoopers-menu .timer-display {
+    color: #fff;
+    font-size: 13px;
+    gap: 7px;
+    justify-content: center;
+  }
+
+  #NavDrawer.hoopers-menu .timer-block {
+    background: #fff;
+    border-radius: 0;
+    box-shadow: none;
+    color: #050505;
+    font-size: 13px;
+    min-width: 34px;
+    padding: 5px 7px;
+  }
+
+  #NavDrawer.hoopers-menu .drawer__scrollable {
+    padding: 0 20px 28px;
+  }
+
+  #NavDrawer.hoopers-menu .mobile-nav {
+    margin: 0;
+  }
+
+  #NavDrawer.hoopers-menu .mobile-nav__item,
+  #NavDrawer.hoopers-menu .line_style_top_bottom {
+    border-color: var(--hoopers-menu-border);
+  }
+
+  #NavDrawer.hoopers-menu .mobile-nav > .mobile-nav__item {
+    background: transparent;
+  }
+
+  #NavDrawer.hoopers-menu .mobile-nav__link--top-level,
+  #NavDrawer.hoopers-menu .mobile-nav__faux-link {
+    color: var(--hoopers-menu-text);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.1;
+    padding: 19px 0;
+    text-transform: uppercase;
+  }
+
+  #NavDrawer.hoopers-menu .mobile-nav__has-sublist {
+    align-items: stretch;
+  }
+
+  #NavDrawer.hoopers-menu .mobile-nav__toggle button,
+  #NavDrawer.hoopers-menu .mobile-nav__toggle .faux-button {
+    align-items: center;
+    border-left: 0;
+    color: var(--hoopers-menu-text);
+    display: flex;
+    height: 100%;
+    justify-content: flex-end;
+    min-width: 48px;
+    padding: 0;
+  }
+
+  #NavDrawer.hoopers-menu .mobile-nav__sublist {
+    margin: 0;
+    padding: 0;
+  }
+
+  #NavDrawer.hoopers-menu .mobile-nav__sublist .collapsible-content__inner {
+    padding: 6px 0 16px;
+  }
+
+  #NavDrawer.hoopers-menu .mobile-nav__child-item {
+    align-items: center;
+    min-height: 58px;
+  }
+
+  #NavDrawer.hoopers-menu .mobile-nav__sublist .mobile-nav__link,
+  #NavDrawer.hoopers-menu .mobile-nav__sublist .mobile-nav__faux-link {
+    color: var(--hoopers-menu-text);
+    font-size: 13px;
+    font-weight: 650;
+    letter-spacing: 0.1em;
+    line-height: 1.35;
+    padding: 13px 0;
+    text-transform: uppercase;
+  }
+
+  #NavDrawer.hoopers-menu .mobile-nav__grandchildlist {
+    margin: 4px 0 12px 14px;
+    padding-left: 14px;
+  }
+
+  #NavDrawer.hoopers-menu .collection_menu_main_img.mobile-nav__link {
+    align-items: center !important;
+    background: var(--hoopers-menu-soft);
+    border: 1px solid transparent;
+    display: flex !important;
+    gap: 14px !important;
+    margin: 8px 0;
+    min-height: 76px;
+    padding: 12px !important;
+    transition: background 0.22s ease, border-color 0.22s ease, transform 0.22s ease;
+  }
+
+  #NavDrawer.hoopers-menu .collection_menu_main_img.mobile-nav__link:focus,
+  #NavDrawer.hoopers-menu .collection_menu_main_img.mobile-nav__link:hover {
+    background: #fff;
+    border-color: #050505;
+    color: #050505 !important;
+    transform: translateX(2px);
+  }
+
+  #NavDrawer.hoopers-menu .collection_menu_main_img .extra--styled---div {
+    background: #fff;
+    border: 1px solid var(--hoopers-menu-border);
+    border-radius: 0;
+    flex: 0 0 56px;
+    height: 56px;
+    overflow: hidden;
+    width: 56px;
+  }
+
+  #NavDrawer.hoopers-menu .collection_menu_main_img .nav-collection_image,
+  #NavDrawer.hoopers-menu .collection_menu_main_img .nav-child-link-image {
+    border-radius: 0 !important;
+    height: 56px !important;
+    object-fit: cover;
+    width: 56px !important;
+  }
+
+  #NavDrawer.hoopers-menu .mobile-nav__item--secondary {
+    border-top: 1px solid var(--hoopers-menu-border);
+    margin-top: 18px;
+    padding-top: 14px;
+  }
+
+  #NavDrawer.hoopers-menu .mobile-nav__item--secondary .mobile-nav__link {
+    color: var(--hoopers-menu-muted);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    padding: 10px 0;
+    text-transform: uppercase;
+  }
+
+  #NavDrawer.hoopers-menu .mobile-nav__social {
+    border-top: 1px solid var(--hoopers-menu-border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 22px 0 0;
+    padding: 18px 0 0;
+  }
+
+  #NavDrawer.hoopers-menu .mobile-nav__social-item {
+    border: 1px solid var(--hoopers-menu-border);
+    flex: 0 0 42px;
+    height: 42px;
+  }
+
+  #NavDrawer.hoopers-menu .mobile-nav__social a {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    padding: 0;
+  }
+
+  #NavDrawer.hoopers-menu .mobile-nav__social .icon {
+    height: 17px;
+    width: 17px;
+  }
+
+  @media only screen and (min-width: 769px) {
+    #NavDrawer.hoopers-menu .drawer__scrollable {
+      padding-left: 30px;
+      padding-right: 30px;
+    }
+  }
+</style>
+<div id="NavDrawer" class="drawer drawer--{{ drawer_position }} hoopers-menu">
   <div class="drawer__contents">
     <div class="drawer__fixed-header">
       <div class="drawer__header appear-animation appear-delay-{{ animation_row }}">
-        <div class="h2 drawer__title"></div>
+        <div class="h2 drawer__title"><span class="hoopers-menu__eyebrow">HOOPERS</span><span class="hoopers-menu__title">{{ 'general.drawers.navigation' | t }}</span></div>
         <div class="drawer__close">
           <button type="button" class="drawer__close-button js-drawer-close">
             <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-close" viewBox="0 0 64 64"><title>icon-X</title><path d="m19 17.61 27.12 27.13m0-27.12L19 44.74"/></svg>
@@ -17,7 +296,7 @@
         </div>
       </div>
     </div>
-<div class="timer_promo_main">
+<div class="timer_promo_main hoopers-menu__promo">
     {% if section.settings.text_promo_main  or section.settings.text_promo_body %}
     <div class="top_promotion_text">
       <div class="text_promo_main">{{ section.settings.text_promo_main }}</div>
