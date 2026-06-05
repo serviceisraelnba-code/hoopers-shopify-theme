@@ -956,51 +956,98 @@
         function normalizeUrl(url) {
           if (!url) return '';
           try {
-            return new URL(url, window.location.origin).pathname + new URL(url, window.location.origin).search;
+            var parsed = new URL(url, window.location.origin);
+            return parsed.pathname + parsed.search;
           } catch (error) {
             return url;
           }
         }
 
-        function getImageFromElement(card) {
-          var image = card.querySelector('img');
+        function normalizeProductKey(url) {
+          if (!url) return '';
+          try {
+            return new URL(url, window.location.origin).pathname;
+          } catch (error) {
+            return url.split('?')[0];
+          }
+        }
+
+        function getCleanImageSource(image) {
           if (!image) return '';
 
-          var src = image.getAttribute('src') || image.getAttribute('data-src') || image.getAttribute('data-original') || '';
-          var srcset = image.getAttribute('srcset') || image.getAttribute('data-srcset') || '';
+          var srcset = image.getAttribute('data-srcset') || image.getAttribute('srcset') || '';
+          var src = image.getAttribute('data-src') || image.getAttribute('data-original') || image.getAttribute('data-image') || image.getAttribute('src') || '';
 
-          if (!src && srcset) {
-            src = srcset.split(',')[0].trim().split(' ')[0];
+          if (srcset) {
+            src = srcset.split(',').pop().trim().split(' ')[0] || src;
           }
 
-          if (src.indexOf('//') === 0) src = window.location.protocol + src;
-          return src;
+          if (src && src.indexOf('{width}') > -1) {
+            src = src.replace('{width}', '540');
+          }
+
+          if (src && src.indexOf('//') === 0) src = window.location.protocol + src;
+          return src || '';
+        }
+
+        function getImageFromElement(card) {
+          var images = Array.prototype.slice.call(card.querySelectorAll('img'));
+          if (!images.length) return '';
+
+          for (var i = 0; i < images.length; i += 1) {
+            var source = getCleanImageSource(images[i]);
+            if (source && source.indexOf('placeholder') === -1 && source.indexOf('no-image') === -1) {
+              return source;
+            }
+          }
+
+          return getCleanImageSource(images[0]);
+        }
+
+        function getProductTitleFromCard(card, link) {
+          var titleNode = card.querySelector('.grid-product__title, .grid-product__meta .grid-product__title, .spf-product-card__title a, .spf-product-card__title, .spf-product__title, [class*="product__title"], [class*="product-title"]');
+          var title = titleNode ? titleNode.textContent.trim() : '';
+          var image = card.querySelector('img');
+
+          if (!title && link) title = link.getAttribute('title') || link.getAttribute('aria-label') || '';
+          if (!title && image) title = image.getAttribute('alt') || '';
+          if (!title && card.getAttribute('data-product-handle')) title = card.getAttribute('data-product-handle').replace(/-/g, ' ');
+
+          return title.replace(/\s+/g, ' ').trim();
+        }
+
+        function getProductPriceFromCard(card) {
+          var priceNode = card.querySelector('.grid-product__price, .grid-product__price--current, .spf-product__price, .spf-product-card__price, [class*="product__price"], [class*="product-price"], [class*="price"]');
+          return priceNode ? priceNode.textContent.replace(/\s+/g, ' ').trim() : '';
         }
 
         function extractProductsFromSearchHtml(html) {
           var doc = new DOMParser().parseFromString(html, 'text/html');
-          var cards = Array.prototype.slice.call(doc.querySelectorAll('.grid-product, .spf-product-card, [data-product-card]'));
+          var links = Array.prototype.slice.call(doc.querySelectorAll('a[href*="/products/"]'));
           var seen = {};
+          var products = [];
 
-          return cards.map(function (card) {
-            var link = card.querySelector('a[href*="/products/"]');
-            var titleNode = card.querySelector('.grid-product__title, .spf-product-card__title a, .spf-product__title, [class*="product__title"]');
-            var priceNode = card.querySelector('.grid-product__price, .spf-product__price, .spf-product-card__price, [class*="product__price"]');
-            var url = link ? normalizeUrl(link.getAttribute('href')) : '';
-            var title = titleNode ? titleNode.textContent.trim() : (link ? link.getAttribute('title') || link.textContent.trim() : '');
-            var price = priceNode ? priceNode.textContent.replace(/\s+/g, ' ').trim() : '';
-            var image = getImageFromElement(card);
+          links.forEach(function (link) {
+            var card = link.closest('.grid-product, .spf-product-card, [data-product-card], .grid__item, li, article') || link;
+            var rawUrl = link.getAttribute('href') || '';
+            var url = normalizeUrl(rawUrl);
+            var key = normalizeProductKey(rawUrl);
 
-            if (!url || !title || seen[url]) return null;
-            seen[url] = true;
+            if (!url || !key || seen[key]) return;
 
-            return {
+            var title = getProductTitleFromCard(card, link);
+            if (!title) return;
+
+            seen[key] = true;
+            products.push({
               title: title,
               url: url,
-              price: price,
-              image: image
-            };
-          }).filter(Boolean).slice(0, 8);
+              price: getProductPriceFromCard(card),
+              image: getImageFromElement(card)
+            });
+          });
+
+          return products.slice(0, 8);
         }
 
         function renderFallbackProducts(root, searchTerm, products) {
@@ -1026,15 +1073,18 @@
           activateVisibleSearchRoot();
         }
 
-        function runSearchPageFallback(root, searchTerm) {
+        var activeSearchRequestId = 0;
+
+        function runSearchPageFallback(root, searchTerm, requestId, signal) {
           var url = '{{ routes.search_url }}?type=product&q=' + encodeURIComponent(searchTerm);
 
-          return fetch(url)
+          return fetch(url, { signal: signal })
             .then(function (response) {
               if (!response.ok) throw new Error(response.status);
               return response.text();
             })
             .then(function (html) {
+              if (requestId !== activeSearchRequestId) return;
               renderFallbackProducts(root, searchTerm, extractProductsFromSearchHtml(html));
             });
         }
@@ -1098,6 +1148,8 @@
           }
 
           searchAbortController = new AbortController();
+          activeSearchRequestId += 1;
+          var requestId = activeSearchRequestId;
           results.innerHTML = '<div class="hh-native-search-results__loading">מחפש...</div>';
           results.style.display = 'block';
           results.style.background = 'transparent';
@@ -1118,20 +1170,25 @@
               return response.json();
             })
             .then(function (data) {
+              if (requestId !== activeSearchRequestId) return;
               var resources = data && data.resources && data.resources.results ? data.resources.results : {};
               var products = resources.products || [];
 
               if (products.length) {
                 renderSearchResults(root, searchTerm, data);
               } else {
-                runSearchPageFallback(root, searchTerm).catch(function () {
+                runSearchPageFallback(root, searchTerm, requestId, searchAbortController.signal).catch(function (fallbackError) {
+                  if (fallbackError.name === 'AbortError') return;
+                  if (requestId !== activeSearchRequestId) return;
                   renderSearchResults(root, searchTerm, data);
                 });
               }
             })
             .catch(function (error) {
               if (error.name === 'AbortError') return;
-              runSearchPageFallback(root, searchTerm).catch(function () {
+              runSearchPageFallback(root, searchTerm, requestId, searchAbortController.signal).catch(function (fallbackError) {
+                if (fallbackError.name === 'AbortError') return;
+                if (requestId !== activeSearchRequestId) return;
                 results.innerHTML = '<div class="hh-native-search-results__empty">החיפוש לא נטען כרגע. נסו שוב בעוד רגע.</div>';
                 results.style.display = 'block';
                 results.style.background = 'transparent';
