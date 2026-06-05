@@ -1050,11 +1050,34 @@
           return products.slice(0, 8);
         }
 
+        function getFallbackCollections(searchTerm) {
+          var value = String(searchTerm || '').toLowerCase();
+          var collections = [];
+
+          [
+            { title: 'Jordan', url: '/collections/jordan', terms: ['jordan', 'ג׳ורדן', 'גורדן'] },
+            { title: 'Fear Of God', url: '/collections/fog', terms: ['fear', 'fog', 'fear of god'] },
+            { title: 'World Cup', url: '/collections/מונדיאל', terms: ['world', 'world cup', 'מונדיאל'] },
+            { title: 'Kids', url: '/collections/ילדים', terms: ['kids', 'ילדים'] },
+            { title: 'Lakers', url: '/collections/לוס-אנג׳לס-לייקרס', terms: ['lakers', 'לייקרס'] },
+            { title: 'Warriors', url: '/collections/גולדן-סטייט-ווריוס', terms: ['warriors', 'גולדן'] }
+          ].forEach(function (collection) {
+            var hasMatch = collection.terms.some(function (term) {
+              return value.indexOf(term.toLowerCase()) > -1 || term.toLowerCase().indexOf(value) > -1;
+            });
+
+            if (hasMatch) collections.push(collection);
+          });
+
+          return collections.slice(0, 4);
+        }
+
         function renderFallbackProducts(root, searchTerm, products) {
           var results = root && root.querySelector('.search__results');
           if (!results) return;
 
           var html = '<div class="hh-native-search-results">';
+          var fallbackCollections = getFallbackCollections(searchTerm);
 
           if (products.length) {
             html += '<section class="hh-search-section"><h3 class="hh-search-section__title">Products</h3><ul class="hh-native-search-results__grid">';
@@ -1063,6 +1086,18 @@
           } else {
             html += '<div class="hh-native-search-results__empty">לא נמצאו תוצאות עבור "' + escapeHtml(searchTerm) + '".</div>';
           }
+
+          if (fallbackCollections.length) {
+            html += '<section class="hh-search-section"><h3 class="hh-search-section__title">Collections</h3><ul class="hh-native-search-results__links">';
+            html += fallbackCollections.map(function (collection) {
+              return '<li><a class="hh-search-link" href="' + escapeHtml(collection.url) + '">' + escapeHtml(collection.title) + '</a></li>';
+            }).join('');
+            html += '</ul></section>';
+          }
+
+          html += '<section class="hh-search-section"><h3 class="hh-search-section__title">Suggested Search</h3><ul class="hh-native-search-results__links">';
+          html += '<li><a class="hh-search-link" href="{{ routes.search_url }}?type=product&q=' + encodeURIComponent(searchTerm) + '">חפשו "' + escapeHtml(searchTerm) + '"</a></li>';
+          html += '</ul></section>';
 
           html += '</div>';
           results.innerHTML = html;
@@ -1086,6 +1121,28 @@
             .then(function (html) {
               if (requestId !== activeSearchRequestId) return;
               renderFallbackProducts(root, searchTerm, extractProductsFromSearchHtml(html));
+            });
+        }
+
+        function runPredictiveJsonSearch(root, searchTerm, requestId, signal) {
+          var params = new URLSearchParams();
+          params.set('q', searchTerm);
+          params.set('resources[type]', 'product,collection,query');
+          params.set('resources[limit]', '8');
+          params.set('resources[limit_scope]', 'each');
+          params.set('resources[options][unavailable_products]', 'last');
+          params.set('resources[options][fields]', 'title,product_type,variants.title,vendor');
+
+          return fetch('{{ routes.predictive_search_url }}.json?' + params.toString(), {
+            signal: signal
+          })
+            .then(function (response) {
+              if (!response.ok) throw new Error(response.status);
+              return response.json();
+            })
+            .then(function (data) {
+              if (requestId !== activeSearchRequestId) return;
+              renderSearchResults(root, searchTerm, data);
             });
         }
 
@@ -1139,6 +1196,49 @@
         var searchAbortController = null;
         var searchTimer = null;
 
+        function handleNativeSearchInput(input) {
+          var root = input && input.closest('.hh-native-search');
+          var results = root && root.querySelector('.search__results');
+          var searchTerm = input ? input.value.trim() : '';
+
+          syncQueryState(root);
+
+          if (results && !searchTerm) {
+            if (searchAbortController) searchAbortController.abort();
+            window.clearTimeout(searchTimer);
+            results.style.display = 'none';
+            results.innerHTML = '';
+            results.style.background = 'transparent';
+            setSearchLock(true);
+            activateVisibleSearchRoot();
+            return;
+          }
+
+          if (!root || !searchTerm) return;
+
+          window.clearTimeout(searchTimer);
+          searchTimer = window.setTimeout(function () {
+            runNativePredictiveSearch(root, searchTerm);
+          }, 180);
+        }
+
+        function bindNativeSearchInputs() {
+          document.querySelectorAll('.hh-native-search input[type="search"]').forEach(function (input) {
+            if (input.dataset.hhNativeSearchBound === 'true') return;
+            input.dataset.hhNativeSearchBound = 'true';
+
+            input.addEventListener('input', function (event) {
+              event.stopPropagation();
+              event.stopImmediatePropagation();
+              handleNativeSearchInput(input);
+            }, true);
+
+            input.addEventListener('keyup', function () {
+              handleNativeSearchInput(input);
+            });
+          });
+        }
+
         function runNativePredictiveSearch(root, searchTerm) {
           var results = root && root.querySelector('.search__results');
           if (!results) return;
@@ -1154,39 +1254,10 @@
           results.style.display = 'block';
           results.style.background = 'transparent';
 
-          var params = new URLSearchParams();
-          params.set('q', searchTerm);
-          params.set('resources[type]', 'product,collection,query');
-          params.set('resources[limit]', '8');
-          params.set('resources[limit_scope]', 'each');
-          params.set('resources[options][unavailable_products]', 'last');
-          params.set('resources[options][fields]', 'title,product_type,variants.title,vendor');
-
-          fetch('{{ routes.predictive_search_url }}.json?' + params.toString(), {
-            signal: searchAbortController.signal
-          })
-            .then(function (response) {
-              if (!response.ok) throw new Error(response.status);
-              return response.json();
-            })
-            .then(function (data) {
-              if (requestId !== activeSearchRequestId) return;
-              var resources = data && data.resources && data.resources.results ? data.resources.results : {};
-              var products = resources.products || [];
-
-              if (products.length) {
-                renderSearchResults(root, searchTerm, data);
-              } else {
-                runSearchPageFallback(root, searchTerm, requestId, searchAbortController.signal).catch(function (fallbackError) {
-                  if (fallbackError.name === 'AbortError') return;
-                  if (requestId !== activeSearchRequestId) return;
-                  renderSearchResults(root, searchTerm, data);
-                });
-              }
-            })
+          runSearchPageFallback(root, searchTerm, requestId, searchAbortController.signal)
             .catch(function (error) {
               if (error.name === 'AbortError') return;
-              runSearchPageFallback(root, searchTerm, requestId, searchAbortController.signal).catch(function (fallbackError) {
+              runPredictiveJsonSearch(root, searchTerm, requestId, searchAbortController.signal).catch(function (fallbackError) {
                 if (fallbackError.name === 'AbortError') return;
                 if (requestId !== activeSearchRequestId) return;
                 results.innerHTML = '<div class="hh-native-search-results__empty">החיפוש לא נטען כרגע. נסו שוב בעוד רגע.</div>';
@@ -1241,8 +1312,10 @@
         }
 
         document.addEventListener('predictive-search:open', function () {
+          bindNativeSearchInputs();
           setSearchLock(true);
           window.setTimeout(function () {
+            bindNativeSearchInputs();
             activateVisibleSearchRoot();
             var activeRoot = document.querySelector('.hh-native-search.is-active:not(.hh-native-search--inactive-duplicate)');
             resetOpenState(activeRoot);
@@ -1312,27 +1385,11 @@
           event.stopPropagation();
           event.stopImmediatePropagation();
 
-          var root = event.target.closest('.hh-native-search');
-          var results = root && root.querySelector('.search__results');
-          var searchTerm = event.target.value.trim();
-
-          syncQueryState(root);
-
-          if (results && !searchTerm) {
-            if (searchAbortController) searchAbortController.abort();
-            results.style.display = 'none';
-            results.innerHTML = '';
-            results.style.background = 'transparent';
-            setSearchLock(true);
-            activateVisibleSearchRoot();
-            return;
-          }
-
-          window.clearTimeout(searchTimer);
-          searchTimer = window.setTimeout(function () {
-            runNativePredictiveSearch(root, searchTerm);
-          }, 180);
+          handleNativeSearchInput(event.target);
         }, true);
+
+        bindNativeSearchInputs();
+        document.addEventListener('DOMContentLoaded', bindNativeSearchInputs);
       })();
     }
   </script>
