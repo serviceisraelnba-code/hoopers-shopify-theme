@@ -1,85 +1,535 @@
-<div class="search-content" data-section-id="{{ section.id }}" data-section-type="collection-grid">
-  <div class="page-width page-content">
-    {%- render 'breadcrumbs' -%}
+{%- liquid
+  assign search_terms = search.terms | default: ''
+  assign has_search = search.performed
+  assign result_count = search.results_count | default: 0
+  assign paginate_by = section.settings.per_row | times: section.settings.rows_per_page
+-%}
 
-    <header class="section-header">
-      <h1 class="section-header__title">
-        {{ 'general.search.title' | t }}
-      </h1>
-    </header>
+<section class="hh-search-results-page" data-section-id="{{ section.id }}" data-section-type="collection-grid">
+  <div class="hh-search-results-page__hero">
+    <div class="page-width">
+      {%- render 'breadcrumbs' -%}
 
-    {%- render 'predictive-search', context: 'search-page' -%}
+      <div class="hh-search-results-page__header">
+        <p class="hh-search-results-page__kicker">{{ section.settings.kicker }}</p>
+        <h1 class="hh-search-results-page__title">
+          {%- if has_search and search_terms != blank -%}
+            {{ section.settings.results_title }}
+          {%- else -%}
+            {{ section.settings.default_title }}
+          {%- endif -%}
+        </h1>
 
-    {%- if search.performed -%}
-      <hr class="hr--medium">
-
-      <div class="section-header">
-        {%- if search.results_count == 0 -%}
-          <p>
-            {{ 'general.search.no_results_html' | t: terms: search.terms | replace: '*', '' }}
+        {%- if has_search and search_terms != blank -%}
+          <p class="hh-search-results-page__summary">
+            {{ result_count }} תוצאות עבור <span>{{ search_terms | escape }}</span>
           </p>
+        {%- else -%}
+          <p class="hh-search-results-page__summary">{{ section.settings.intro_text }}</p>
         {%- endif -%}
+
+        <form class="hh-search-results-page__form" action="{{ routes.search_url }}" method="get" role="search">
+          <label class="hidden-label" for="SearchPageInput-{{ section.id }}">{{ 'general.search.placeholder' | t }}</label>
+          <input
+            id="SearchPageInput-{{ section.id }}"
+            class="hh-search-results-page__input"
+            type="search"
+            name="q"
+            value="{{ search_terms | escape }}"
+            placeholder="{{ section.settings.search_placeholder }}"
+            autocorrect="off"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+          >
+          <input type="hidden" name="type" value="product">
+          <button class="hh-search-results-page__button" type="submit">
+            {{ section.settings.search_button_text }}
+          </button>
+        </form>
       </div>
-
-      {%- if search.results_count != 0 -%}
-
-        {%- assign paginate_by = section.settings.per_row | times: section.settings.rows_per_page -%}
-        {%- paginate search.results by paginate_by -%}
-
-        <div id="CollectionAjaxContent" class="grid grid--uniform" data-scroll-to>
-
-          <div class="grid__item medium-up--one-fifth grid__item--sidebar">
-            {%- render 'collection-grid-filters',
-              collection: search,
-              enable_sidebar: section.settings.enable_sidebar,
-              filter_style: section.settings.filter_style,
-              collapsed: section.settings.collapsed,
-              enable_color_swatches: section.settings.enable_color_swatches
-            -%}
-          </div>
-
-          <div class="grid__item medium-up--four-fifths grid__item--content">
-            {% render 'collection-grid',
-              collection: search,
-              items: search.results,
-              enable_sidebar: section.settings.enable_sidebar,
-              filter_style: section.settings.filter_style,
-              enable_sort: true,
-              enable_collection_count: true,
-              per_row: section.settings.per_row,
-              mobile_flush_grid: section.settings.mobile_flush_grid
-              quick_shop_enable: settings.quick_shop_enable
-            %}
-
-            {%- if paginate.pages > 1 -%}
-              {%- render 'pagination', paginate: paginate -%}
-            {%- endif -%}
-          </div>
-        </div>
-
-        {%- endpaginate -%}
-
-      {% endif %}
-
-    {%- endif -%}
+    </div>
   </div>
-</div>
+
+  <div class="hh-search-results-page__body">
+    <div class="page-width">
+      {%- if has_search -%}
+        {%- if result_count > 0 -%}
+          {%- paginate search.results by paginate_by -%}
+            <div id="CollectionAjaxContent" class="hh-search-results-page__layout" data-scroll-to>
+              <aside class="hh-search-results-page__sidebar">
+                {%- render 'collection-grid-filters',
+                  collection: search,
+                  enable_sidebar: section.settings.enable_sidebar,
+                  filter_style: section.settings.filter_style,
+                  collapsed: section.settings.collapsed,
+                  enable_color_swatches: section.settings.enable_color_swatches
+                -%}
+              </aside>
+
+              <div class="hh-search-results-page__content">
+                {% render 'collection-grid',
+                  collection: search,
+                  items: search.results,
+                  enable_sidebar: section.settings.enable_sidebar,
+                  filter_style: section.settings.filter_style,
+                  enable_sort: true,
+                  enable_collection_count: true,
+                  per_row: section.settings.per_row,
+                  mobile_flush_grid: section.settings.mobile_flush_grid,
+                  quick_shop_enable: false
+                %}
+
+                {%- if paginate.pages > 1 -%}
+                  {%- render 'pagination', paginate: paginate -%}
+                {%- endif -%}
+              </div>
+            </div>
+          {%- endpaginate -%}
+        {%- else -%}
+          <div class="hh-search-results-page__empty">
+            <p class="hh-search-results-page__empty-kicker">{{ section.settings.empty_kicker }}</p>
+            <h2>{{ section.settings.empty_title }}</h2>
+            <p>{{ 'general.search.no_results_html' | t: terms: search_terms | replace: '*', '' }}</p>
+            <div class="hh-search-results-page__quick-links">
+              <a href="/collections/all">SHOP ALL</a>
+              <a href="/collections/jordan">JORDAN</a>
+              <a href="/collections/fog">FEAR OF GOD</a>
+              <a href="/collections/ילדים">KIDS</a>
+            </div>
+          </div>
+        {%- endif -%}
+      {%- else -%}
+        <div class="hh-search-results-page__empty">
+          <p class="hh-search-results-page__empty-kicker">{{ section.settings.empty_kicker }}</p>
+          <h2>{{ section.settings.default_title }}</h2>
+          <p>{{ section.settings.intro_text }}</p>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
 
 {%- if section.settings.enable_sidebar == false or section.settings.filter_style == 'drawer' -%}
-{% comment %}
-  Override grid styles if sidebar is disabled
-{% endcomment %}
-<style>
-  .search-content .grid__item--sidebar { width: 0; }
-  .search-content .grid__item--content { width: 100%; }
-  .grid__item--sidebar { position: static; overflow: hidden; }
-</style>
+  <style>
+    .hh-search-results-page .hh-search-results-page__sidebar { display: none; }
+    .hh-search-results-page .hh-search-results-page__content { min-width: 0; width: 100%; }
+  </style>
 {%- endif -%}
+
+<style>
+  .hh-search-results-page {
+    --hh-bg: #ece7df;
+    --hh-card: #f5f3ee;
+    --hh-black: #050505;
+    --hh-text: #111111;
+    --hh-muted: rgba(17, 17, 17, 0.62);
+    --hh-border: rgba(17, 17, 17, 0.12);
+    --hh-gold: #c8a56a;
+
+    background: var(--hh-bg);
+    color: var(--hh-text);
+    direction: rtl;
+  }
+
+  .hh-search-results-page .page-width {
+    max-width: 1560px;
+  }
+
+  .hh-search-results-page__hero {
+    background:
+      radial-gradient(circle at 18% 0%, rgba(200, 165, 106, 0.16), transparent 32%),
+      linear-gradient(135deg, #050505 0%, #12100d 100%);
+    color: #fff;
+    padding: clamp(28px, 4vw, 56px) 0 clamp(34px, 5vw, 72px);
+  }
+
+  .hh-search-results-page__hero .breadcrumb,
+  .hh-search-results-page__hero .breadcrumb a {
+    color: rgba(255, 255, 255, 0.66);
+  }
+
+  .hh-search-results-page__header {
+    display: grid;
+    gap: 16px;
+    max-width: 980px;
+    margin: clamp(18px, 4vw, 44px) auto 0;
+    text-align: center;
+  }
+
+  .hh-search-results-page__kicker,
+  .hh-search-results-page__empty-kicker {
+    margin: 0;
+    color: var(--hh-gold);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .hh-search-results-page__title {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(38px, 6vw, 86px);
+    line-height: 0.98;
+    font-weight: 950;
+    letter-spacing: 0;
+  }
+
+  .hh-search-results-page__summary {
+    max-width: 720px;
+    margin: 0 auto;
+    color: rgba(255, 255, 255, 0.76);
+    font-size: clamp(15px, 1.5vw, 18px);
+    font-weight: 700;
+    line-height: 1.7;
+  }
+
+  .hh-search-results-page__summary span {
+    color: #fff;
+    font-weight: 900;
+  }
+
+  .hh-search-results-page__form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    width: min(760px, 100%);
+    margin: 12px auto 0;
+    padding: 8px;
+    border: 1px solid rgba(200, 165, 106, 0.34);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+  }
+
+  .hh-search-results-page__input {
+    min-height: 52px;
+    width: 100%;
+    padding: 0 18px;
+    border: 0;
+    background: transparent;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 800;
+    outline: none;
+  }
+
+  .hh-search-results-page__input::placeholder {
+    color: rgba(255, 255, 255, 0.48);
+  }
+
+  .hh-search-results-page__button {
+    min-height: 52px;
+    padding: 0 24px;
+    border: 0;
+    border-radius: 999px;
+    background: #fff;
+    color: #050505;
+    font-size: 12px;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .hh-search-results-page__body {
+    padding: clamp(28px, 4vw, 56px) 0 clamp(48px, 6vw, 86px);
+  }
+
+  .hh-search-results-page__layout {
+    display: grid;
+    grid-template-columns: minmax(210px, 250px) minmax(0, 1fr);
+    gap: clamp(22px, 3vw, 42px);
+    align-items: start;
+  }
+
+  html[dir="rtl"] .hh-search-results-page__layout,
+  .hh-search-results-page__layout {
+    direction: rtl;
+  }
+
+  .hh-search-results-page__sidebar {
+    min-width: 0;
+  }
+
+  .hh-search-results-page__content {
+    min-width: 0;
+  }
+
+  .hh-search-results-page .collection-filter {
+    margin-bottom: clamp(18px, 2vw, 28px);
+    padding-bottom: 14px;
+    border-color: var(--hh-border);
+    color: var(--hh-text);
+  }
+
+  .hh-search-results-page .collection-filter__item,
+  .hh-search-results-page .collection-filter select,
+  .hh-search-results-page .collection-filter button {
+    color: var(--hh-text);
+  }
+
+  .hh-search-results-page .collection-filter__sort-container select {
+    border-color: var(--hh-border);
+    background-color: var(--hh-card);
+    color: var(--hh-text);
+    font-weight: 800;
+  }
+
+  .hh-search-results-page .collection-sidebar {
+    position: sticky;
+    top: 94px;
+    padding: 18px;
+    border: 1px solid var(--hh-border);
+    background: var(--hh-card);
+  }
+
+  .hh-search-results-page .collection-sidebar__group {
+    border-color: var(--hh-border);
+  }
+
+  .hh-search-results-page .tag-list__header,
+  .hh-search-results-page .collapsible-trigger-btn {
+    color: var(--hh-text);
+    font-size: 12px;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hh-search-results-page .tag__text,
+  .hh-search-results-page .tag__checkbox-wrapper {
+    color: var(--hh-muted);
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  .hh-search-results-page .tag--active .tag__text {
+    color: var(--hh-text);
+  }
+
+  .hh-search-results-page .grid--uniform {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .hh-search-results-page .grid-product {
+    margin-bottom: clamp(26px, 3vw, 46px);
+    padding-left: clamp(8px, 1.2vw, 16px);
+    padding-right: clamp(8px, 1.2vw, 16px);
+  }
+
+  .hh-search-results-page .grid-product__content,
+  .hh-search-results-page .grid-product__link {
+    color: var(--hh-text);
+    text-decoration: none;
+  }
+
+  .hh-search-results-page .grid-product__image-mask,
+  .hh-search-results-page .image-wrap,
+  .hh-search-results-page .grid-product__image-wrapper {
+    overflow: hidden;
+    border: 1px solid var(--hh-border);
+    background: #ded8cd;
+  }
+
+  .hh-search-results-page .grid-product__image-mask img,
+  .hh-search-results-page .image-wrap img,
+  .hh-search-results-page .grid-product__image-wrapper img {
+    transition: transform 420ms ease, filter 260ms ease;
+  }
+
+  .hh-search-results-page .grid-product:hover .grid-product__image-mask img,
+  .hh-search-results-page .grid-product:hover .image-wrap img,
+  .hh-search-results-page .grid-product:hover .grid-product__image-wrapper img {
+    transform: scale(1.035);
+    filter: contrast(1.03);
+  }
+
+  .hh-search-results-page .grid-product__meta {
+    padding-top: 13px;
+    color: var(--hh-text);
+    text-align: right;
+  }
+
+  .hh-search-results-page .grid-product__vendor {
+    margin-bottom: 5px;
+    color: var(--hh-muted);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .hh-search-results-page .grid-product__title {
+    display: -webkit-box;
+    min-height: 2.7em;
+    overflow: hidden;
+    color: var(--hh-text);
+    font-size: clamp(13px, 1.05vw, 15px);
+    font-weight: 850;
+    line-height: 1.35;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .hh-search-results-page .grid-product__price,
+  .hh-search-results-page .grid-product__price span {
+    color: var(--hh-text);
+    font-size: 14px;
+    font-weight: 900;
+  }
+
+  .hh-search-results-page__empty {
+    display: grid;
+    gap: 14px;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: clamp(30px, 5vw, 58px);
+    border: 1px solid var(--hh-border);
+    background: var(--hh-card);
+    text-align: center;
+  }
+
+  .hh-search-results-page__empty h2 {
+    margin: 0;
+    color: var(--hh-text);
+    font-size: clamp(30px, 4vw, 54px);
+    font-weight: 950;
+    line-height: 1;
+  }
+
+  .hh-search-results-page__empty p {
+    margin: 0;
+    color: var(--hh-muted);
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.7;
+  }
+
+  .hh-search-results-page__quick-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 9px;
+    margin-top: 8px;
+  }
+
+  .hh-search-results-page__quick-links a {
+    display: inline-flex;
+    min-height: 38px;
+    align-items: center;
+    padding: 0 14px;
+    border: 1px solid var(--hh-border);
+    border-radius: 999px;
+    color: var(--hh-text);
+    font-size: 12px;
+    font-weight: 900;
+    text-decoration: none;
+  }
+
+  @media screen and (min-width: 769px) {
+    .hh-search-results-page .grid-product {
+      width: 33.333333% !important;
+      flex: 0 0 33.333333% !important;
+      max-width: 33.333333% !important;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .hh-search-results-page__hero {
+      padding-top: 24px;
+    }
+
+    .hh-search-results-page__form {
+      grid-template-columns: 1fr;
+      border-radius: 18px;
+      padding: 10px;
+    }
+
+    .hh-search-results-page__button {
+      width: 100%;
+    }
+
+    .hh-search-results-page__layout {
+      display: block;
+    }
+
+    .hh-search-results-page__sidebar {
+      margin-bottom: 18px;
+    }
+
+    .hh-search-results-page .grid-product {
+      width: 50% !important;
+      flex: 0 0 50% !important;
+      max-width: 50% !important;
+      padding-left: 7px;
+      padding-right: 7px;
+    }
+
+    .hh-search-results-page .collection-sidebar {
+      position: static;
+    }
+
+    .hh-search-results-page__empty {
+      padding: 28px 18px;
+    }
+  }
+</style>
 
 {% schema %}
 {
   "name": "t:sections.main-search.name",
   "settings": [
+    {
+      "type": "text",
+      "id": "kicker",
+      "label": "Kicker",
+      "default": "HOOPERS SEARCH"
+    },
+    {
+      "type": "text",
+      "id": "default_title",
+      "label": "Default title",
+      "default": "חיפוש באתר"
+    },
+    {
+      "type": "text",
+      "id": "results_title",
+      "label": "Results title",
+      "default": "תוצאות חיפוש"
+    },
+    {
+      "type": "textarea",
+      "id": "intro_text",
+      "label": "Intro text",
+      "default": "חפשו גופיות, מכנסיים, קבוצות, שחקנים או קולקציות."
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Search placeholder",
+      "default": "חפשו מוצר, קבוצה או קולקציה..."
+    },
+    {
+      "type": "text",
+      "id": "search_button_text",
+      "label": "Search button text",
+      "default": "SEARCH"
+    },
+    {
+      "type": "text",
+      "id": "empty_kicker",
+      "label": "Empty kicker",
+      "default": "NO RESULTS"
+    },
+    {
+      "type": "text",
+      "id": "empty_title",
+      "label": "Empty title",
+      "default": "לא מצאנו תוצאות"
+    },
     {
       "type": "header",
       "content": "t:sections.main-search.settings.header_filtering_and_sorting"
@@ -123,7 +573,7 @@
       "type": "range",
       "id": "per_row",
       "label": "t:sections.main-search.settings.per_row.label",
-      "default": 4,
+      "default": 3,
       "min": 2,
       "max": 5,
       "step": 1
@@ -132,7 +582,7 @@
       "type": "range",
       "id": "rows_per_page",
       "label": "t:sections.main-search.settings.rows_per_page.label",
-      "default": 7,
+      "default": 8,
       "min": 3,
       "max": 20,
       "step": 1
@@ -146,5 +596,3 @@
   ]
 }
 {% endschema %}
-
-
