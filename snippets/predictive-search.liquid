@@ -587,12 +587,12 @@
         <h3 class="hh-search-section__title" id="hh-popular-searches-{{ context }}">Popular Searches</h3>
         <ul class="hh-search-chips">
           <li><a class="hh-search-chip" href="{{ routes.search_url }}?q={{ 'דני אבדיה' | url_encode }}">דני אבדיה</a></li>
-          <li><a class="hh-search-chip" href="{{ routes.search_url }}?q={{ 'לייקרס' | url_encode }}">לייקרס</a></li>
-          <li><a class="hh-search-chip" href="{{ routes.search_url }}?q={{ 'גולדן סטייט' | url_encode }}">גולדן סטייט</a></li>
-          <li><a class="hh-search-chip" href="{{ routes.search_url }}?q={{ 'Fear Of God' | url_encode }}">Fear Of God</a></li>
-          <li><a class="hh-search-chip" href="{{ routes.search_url }}?q={{ 'Jordan' | url_encode }}">Jordan</a></li>
-          <li><a class="hh-search-chip" href="{{ routes.search_url }}?q={{ 'World Cup' | url_encode }}">World Cup</a></li>
-          <li><a class="hh-search-chip" href="{{ routes.search_url }}?q={{ 'Kids' | url_encode }}">Kids</a></li>
+          <li><a class="hh-search-chip" href="/collections/לוס-אנגלס-לייקרס">לייקרס</a></li>
+          <li><a class="hh-search-chip" href="/collections/גולדן-סטייט-ווריוס">גולדן סטייט</a></li>
+          <li><a class="hh-search-chip" href="/collections/fog">Fear Of God</a></li>
+          <li><a class="hh-search-chip" href="/collections/jordan">Jordan</a></li>
+          <li><a class="hh-search-chip" href="/collections/מונדיאל">World Cup</a></li>
+          <li><a class="hh-search-chip" href="/collections/ילדים">Kids</a></li>
         </ul>
       </section>
 
@@ -705,6 +705,7 @@
       (function () {
         var key = 'hoopers_recently_viewed_products';
         var currentProductScript = document.querySelector('[data-hh-current-product]');
+        var allowClose = false;
 
         document.querySelectorAll('.hh-native-search').forEach(function (root) {
           var container = root.closest('.site-header__search-container');
@@ -719,6 +720,39 @@
         function setSearchLock(isLocked) {
           document.documentElement.classList.toggle('hh-native-search-lock', isLocked);
           document.body.classList.toggle('hh-native-search-lock', isLocked);
+        }
+
+        function getActiveRoots() {
+          return Array.prototype.slice.call(document.querySelectorAll('.hh-native-search.is-active'));
+        }
+
+        function resetNativeSearchRoots() {
+          document.querySelectorAll('.hh-native-search').forEach(function (root) {
+            root.classList.remove('is-active', 'hh-search-has-query', 'hh-native-search--inactive-duplicate');
+            root.style.visibility = '';
+            root.style.opacity = '';
+
+            var results = root.querySelector('.search__results');
+            if (results) {
+              results.style.display = 'none';
+              results.innerHTML = '';
+            }
+          });
+
+          document.querySelectorAll('.hh-native-search-container').forEach(function (container) {
+            container.classList.remove('is-active', 'is-open', 'site-header__search-container--open');
+          });
+        }
+
+        function closeNativeSearch() {
+          allowClose = true;
+          resetNativeSearchRoots();
+          setSearchLock(false);
+          document.body.classList.remove('predictive-overflow-hidden');
+
+          window.setTimeout(function () {
+            allowClose = false;
+          }, 120);
         }
 
         function syncQueryState(root) {
@@ -814,23 +848,43 @@
           }, 60);
         });
 
-        document.addEventListener('predictive-search:close', function () {
-          setSearchLock(false);
-          document.querySelectorAll('.hh-native-search').forEach(function (root) {
-            root.classList.remove('hh-native-search--inactive-duplicate');
-            root.style.visibility = '';
-            root.style.opacity = '';
-          });
-        });
+        document.addEventListener('predictive-search:close-all', function (event) {
+          if (!getActiveRoots().length || allowClose) return;
 
-        document.addEventListener('predictive-search:close-all', function () {
-          setSearchLock(false);
-          document.querySelectorAll('.hh-native-search').forEach(function (root) {
-            root.classList.remove('hh-native-search--inactive-duplicate');
-            root.style.visibility = '';
-            root.style.opacity = '';
-          });
-        });
+          event.preventDefault();
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+          setSearchLock(true);
+          window.setTimeout(activateVisibleSearchRoot, 0);
+        }, true);
+
+        document.addEventListener('predictive-search:close', function (event) {
+          if (!getActiveRoots().length || allowClose) return;
+
+          event.preventDefault();
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+          setSearchLock(true);
+          window.setTimeout(activateVisibleSearchRoot, 0);
+        }, true);
+
+        document.addEventListener('click', function (event) {
+          var closeButton = event.target.closest('.hh-native-search .btn--close-search');
+          if (!closeButton) return;
+
+          event.preventDefault();
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+          closeNativeSearch();
+        }, true);
+
+        document.addEventListener('keydown', function (event) {
+          if (event.key !== 'Escape' && event.key !== 'Esc') return;
+          if (!getActiveRoots().length) return;
+
+          event.preventDefault();
+          closeNativeSearch();
+        }, true);
 
         document.addEventListener('input', function (event) {
           if (!event.target.matches('.hh-native-search input[type="search"]')) return;
