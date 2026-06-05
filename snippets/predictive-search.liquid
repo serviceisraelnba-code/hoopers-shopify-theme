@@ -428,6 +428,37 @@
     color: #fff;
   }
 
+  .hh-native-search-results {
+    display: grid;
+    gap: 28px;
+  }
+
+  .hh-native-search-results__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(12px, 1.8vw, 18px);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .hh-native-search-results__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .hh-native-search-results__empty,
+  .hh-native-search-results__loading {
+    padding: 18px 0;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 15px;
+    font-weight: 700;
+  }
+
   .hh-native-search .predictive-search-results h3,
   .hh-native-search .predictive-search-results .h4 {
     color: #c8a56a;
@@ -525,6 +556,11 @@
     }
 
     .hh-native-search .predictive-search-results ul {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .hh-native-search-results__grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
     }
@@ -771,19 +807,35 @@
           return (!headerStyle || headerStyle.display !== 'none') && (!containerStyle || containerStyle.display !== 'none');
         }
 
+        function isPreferredViewportRoot(root) {
+          var header = root.closest('.site-header');
+          var isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+          if (!header) return false;
+          return isMobile ? header.classList.contains('hh-mobile-header') : header.classList.contains('hh-desktop-header');
+        }
+
         function activateVisibleSearchRoot() {
           var roots = Array.prototype.slice.call(document.querySelectorAll('.hh-native-search'));
           var activeRoots = roots.filter(function (root) { return root.classList.contains('is-active'); });
-          var chosenRoot = activeRoots.find(isUsableRoot) || activeRoots[0] || roots.find(isUsableRoot) || roots[0];
+          var chosenRoot = activeRoots.find(isPreferredViewportRoot) || activeRoots.find(isUsableRoot) || roots.find(isPreferredViewportRoot) || roots.find(isUsableRoot) || activeRoots[0] || roots[0];
 
           roots.forEach(function (root) {
             root.classList.toggle('hh-native-search--inactive-duplicate', !!chosenRoot && root !== chosenRoot);
           });
 
           if (chosenRoot) {
+            var container = chosenRoot.closest('.site-header__search-container');
             var form = chosenRoot.querySelector('form');
             var input = chosenRoot.querySelector('input[type="search"]');
 
+            if (container) {
+              container.classList.add('is-active', 'is-open', 'site-header__search-container--open');
+              container.removeAttribute('hidden');
+              container.setAttribute('aria-hidden', 'false');
+            }
+
+            chosenRoot.classList.add('is-active');
             chosenRoot.style.visibility = 'visible';
             chosenRoot.style.opacity = '1';
 
@@ -796,6 +848,127 @@
               if (input) input.focus();
             }, 90);
           }
+        }
+
+        function escapeHtml(value) {
+          return String(value || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+        }
+
+        function getProductImage(product) {
+          if (product.image) return product.image;
+          if (product.featured_image && product.featured_image.url) return product.featured_image.url;
+          if (product.featured_image) return product.featured_image;
+          return '';
+        }
+
+        function getProductPrice(product) {
+          if (product.price) return product.price;
+          if (product.price_min) return product.price_min;
+          if (product.variants && product.variants[0] && product.variants[0].price) return product.variants[0].price;
+          return '';
+        }
+
+        function renderProductCard(product) {
+          var image = getProductImage(product);
+          var price = getProductPrice(product);
+          var imageMarkup = image ? '<span class="hh-search-product__media"><img src="' + escapeHtml(image) + '" loading="lazy" alt="' + escapeHtml(product.title) + '"></span>' : '<span class="hh-search-product__media"></span>';
+          var priceMarkup = price ? '<span class="hh-search-product__price">' + price + '</span>' : '';
+
+          return '<li><a class="hh-search-product" href="' + escapeHtml(product.url) + '">' + imageMarkup + '<span class="hh-search-product__title">' + escapeHtml(product.title) + '</span>' + priceMarkup + '</a></li>';
+        }
+
+        function renderSearchResults(root, searchTerm, data) {
+          var results = root && root.querySelector('.search__results');
+          if (!results) return;
+
+          var resources = data && data.resources && data.resources.results ? data.resources.results : {};
+          var products = resources.products || [];
+          var collections = resources.collections || [];
+          var queries = resources.queries || [];
+          var html = '<div class="hh-native-search-results">';
+
+          if (products.length) {
+            html += '<section class="hh-search-section"><h3 class="hh-search-section__title">Products</h3><ul class="hh-native-search-results__grid">';
+            html += products.slice(0, 8).map(renderProductCard).join('');
+            html += '</ul></section>';
+          }
+
+          if (collections.length) {
+            html += '<section class="hh-search-section"><h3 class="hh-search-section__title">Collections</h3><ul class="hh-native-search-results__links">';
+            html += collections.slice(0, 8).map(function (collection) {
+              return '<li><a class="hh-search-link" href="' + escapeHtml(collection.url) + '">' + escapeHtml(collection.title) + '</a></li>';
+            }).join('');
+            html += '</ul></section>';
+          }
+
+          if (queries.length) {
+            html += '<section class="hh-search-section"><h3 class="hh-search-section__title">Suggested Searches</h3><ul class="hh-native-search-results__links">';
+            html += queries.slice(0, 6).map(function (query) {
+              var text = query.styled_text || query.text || query.title || '';
+              var url = query.url || ('{{ routes.search_url }}?q=' + encodeURIComponent(text));
+              return '<li><a class="hh-search-link" href="' + escapeHtml(url) + '">' + escapeHtml(text) + '</a></li>';
+            }).join('');
+            html += '</ul></section>';
+          }
+
+          if (!products.length && !collections.length && !queries.length) {
+            html += '<div class="hh-native-search-results__empty">לא מצאנו תוצאות עבור "' + escapeHtml(searchTerm) + '". נסו חיפוש אחר.</div>';
+          }
+
+          html += '</div>';
+          results.innerHTML = html;
+          results.style.display = 'block';
+          root.classList.add('hh-search-has-query');
+          setSearchLock(true);
+          activateVisibleSearchRoot();
+        }
+
+        var searchAbortController = null;
+        var searchTimer = null;
+
+        function runNativePredictiveSearch(root, searchTerm) {
+          var results = root && root.querySelector('.search__results');
+          if (!results) return;
+
+          if (searchAbortController) {
+            searchAbortController.abort();
+          }
+
+          searchAbortController = new AbortController();
+          results.innerHTML = '<div class="hh-native-search-results__loading">מחפש...</div>';
+          results.style.display = 'block';
+
+          var params = new URLSearchParams();
+          params.set('q', searchTerm);
+          params.set('resources[type]', 'product,collection,query');
+          params.set('resources[limit]', '8');
+          params.set('resources[limit_scope]', 'each');
+          params.set('resources[options][unavailable_products]', 'last');
+          params.set('resources[options][fields]', 'title,product_type,variants.title,vendor');
+
+          fetch('{{ routes.predictive_search_url }}.json?' + params.toString(), {
+            signal: searchAbortController.signal
+          })
+            .then(function (response) {
+              if (!response.ok) throw new Error(response.status);
+              return response.json();
+            })
+            .then(function (data) {
+              renderSearchResults(root, searchTerm, data);
+            })
+            .catch(function (error) {
+              if (error.name === 'AbortError') return;
+              results.innerHTML = '<div class="hh-native-search-results__empty">החיפוש לא נטען כרגע. נסו שוב בעוד רגע.</div>';
+              results.style.display = 'block';
+              root.classList.add('hh-search-has-query');
+              setSearchLock(true);
+              activateVisibleSearchRoot();
+            });
         }
 
         function readRecent() {
@@ -848,6 +1021,23 @@
           }, 60);
         });
 
+        document.addEventListener('click', function (event) {
+          var trigger = event.target.closest('.js-search-header, a[href$="/search"], a[href*="/search?"]');
+          if (!trigger || trigger.closest('.hh-native-search')) return;
+
+          var isHeaderTrigger = !!trigger.closest('.hh-header, .site-header, .header-wrapper');
+          if (!isHeaderTrigger) return;
+
+          event.preventDefault();
+
+          document.dispatchEvent(new CustomEvent('predictive-search:open', {
+            detail: { context: 'header' },
+            bubbles: true
+          }));
+
+          window.setTimeout(activateVisibleSearchRoot, 30);
+        }, true);
+
         document.addEventListener('predictive-search:close-all', function (event) {
           if (!getActiveRoots().length || allowClose) return;
 
@@ -888,16 +1078,30 @@
 
         document.addEventListener('input', function (event) {
           if (!event.target.matches('.hh-native-search input[type="search"]')) return;
+
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+
           var root = event.target.closest('.hh-native-search');
           var results = root && root.querySelector('.search__results');
+          var searchTerm = event.target.value.trim();
 
           syncQueryState(root);
 
-          if (results && !event.target.value.trim()) {
+          if (results && !searchTerm) {
+            if (searchAbortController) searchAbortController.abort();
             results.style.display = 'none';
             results.innerHTML = '';
+            setSearchLock(true);
+            activateVisibleSearchRoot();
+            return;
           }
-        });
+
+          window.clearTimeout(searchTimer);
+          searchTimer = window.setTimeout(function () {
+            runNativePredictiveSearch(root, searchTerm);
+          }, 180);
+        }, true);
       })();
     }
   </script>
