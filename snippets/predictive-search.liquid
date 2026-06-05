@@ -5,16 +5,369 @@
   if lightness <= 100
     assign dark_search_bg = true
   endif
+
+  assign trending_collection = collections['הנמכרים-ביותר']
+  assign new_collection = collections['חדש-באתר']
+  assign best_collection = collections['הנמכרים-ביותר']
 -%}
 
-<predictive-search data-context="{{ context }}" data-enabled="{{ settings.predictive_search_enabled }}" data-dark="{{ dark_search_bg }}">
+<style>
+  .hh-native-search {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    display: block;
+    opacity: 0;
+    pointer-events: none;
+    color: #f7f3ea;
+    direction: rtl;
+    transition: opacity 220ms ease;
+  }
+
+  .hh-native-search.is-active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .hh-native-search .predictive__screen {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.66);
+    backdrop-filter: blur(8px);
+  }
+
+  .hh-native-search form {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    display: flex;
+    flex-direction: column;
+    width: min(720px, 100vw);
+    height: 100%;
+    margin: 0;
+    padding: 28px;
+    overflow-y: auto;
+    background:
+      radial-gradient(circle at 20% 0%, rgba(200, 165, 106, 0.16), transparent 28%),
+      linear-gradient(180deg, #070707 0%, #12100d 100%);
+    border-inline-start: 1px solid rgba(200, 165, 106, 0.24);
+    box-shadow: -22px 0 60px rgba(0, 0, 0, 0.5);
+  }
+
+  .hh-native-search__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 22px;
+  }
+
+  .hh-native-search__kicker {
+    margin: 0 0 8px;
+    color: #c8a56a;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+  }
+
+  .hh-native-search__heading {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(30px, 4vw, 52px);
+    line-height: 1.03;
+    font-weight: 900;
+    letter-spacing: 0;
+  }
+
+  .hh-native-search .btn--close-search {
+    position: static;
+    flex: 0 0 auto;
+    display: grid;
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    padding: 0;
+    place-items: center;
+    border: 1px solid rgba(200, 165, 106, 0.36);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .hh-native-search .btn--close-search svg,
+  .hh-native-search .btn--close-search path {
+    width: 18px;
+    height: 18px;
+    stroke: #fff !important;
+  }
+
+  .hh-native-search .search__input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
+    padding: 8px 8px 8px 16px;
+    border: 1px solid rgba(200, 165, 106, 0.34);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .hh-native-search .search__input {
+    width: 100%;
+    min-height: 48px;
+    padding: 0 14px;
+    border: 0;
+    background: transparent;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    outline: none;
+  }
+
+  .hh-native-search .search__input::placeholder {
+    color: rgba(255, 255, 255, 0.52);
+  }
+
+  .hh-native-search .btn--search {
+    display: grid;
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    padding: 0;
+    place-items: center;
+    border: 0;
+    border-radius: 999px;
+    background: #c8a56a;
+    color: #050505;
+    cursor: pointer;
+  }
+
+  .hh-native-search .btn--search svg,
+  .hh-native-search .btn--search path {
+    width: 20px;
+    height: 20px;
+    stroke: #050505 !important;
+  }
+
+  .hh-search-empty {
+    display: grid;
+    gap: 26px;
+  }
+
+  .hh-search-section {
+    display: grid;
+    gap: 13px;
+  }
+
+  .hh-search-section__title {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .hh-search-chips,
+  .hh-search-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .hh-search-chip,
+  .hh-search-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 0 14px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.84);
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: color 180ms ease, border-color 180ms ease, background 180ms ease, transform 180ms ease;
+  }
+
+  .hh-search-chip:hover,
+  .hh-search-link:hover {
+    transform: translateY(-1px);
+    border-color: rgba(200, 165, 106, 0.7);
+    background: rgba(200, 165, 106, 0.12);
+    color: #fff;
+  }
+
+  .hh-search-rail {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(142px, 1fr);
+    gap: 12px;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .hh-search-rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hh-search-product {
+    min-width: 0;
+    color: #fff;
+    text-decoration: none;
+    scroll-snap-align: start;
+  }
+
+  .hh-search-product__media {
+    display: block;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    background: #1a1a1a;
+  }
+
+  .hh-search-product__media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 260ms ease;
+  }
+
+  .hh-search-product:hover img {
+    transform: scale(1.045);
+  }
+
+  .hh-search-product__title {
+    display: -webkit-box;
+    margin: 10px 0 4px;
+    overflow: hidden;
+    color: #fff;
+    font-size: 13px;
+    line-height: 1.35;
+    font-weight: 850;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .hh-search-product__price {
+    color: #c8a56a;
+    font-size: 13px;
+    font-weight: 900;
+  }
+
+  .hh-native-search .search__results {
+    display: none;
+    padding: 6px 0 24px;
+  }
+
+  .hh-native-search .search__results[style*="block"] ~ .hh-search-empty {
+    display: none;
+  }
+
+  .hh-native-search .predictive-search-results {
+    display: grid;
+    gap: 18px;
+    color: #fff;
+  }
+
+  .hh-native-search .predictive-search-results h3,
+  .hh-native-search .predictive-search-results .h4 {
+    color: #c8a56a;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .hh-native-search .predictive-search-results ul {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .hh-native-search .predictive-search-results a {
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .hh-native-search .predictive-result__layout,
+  .hh-native-search .predictive-search__list-item a {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .hh-native-search .grid-product__price,
+  .hh-native-search .predictive-search__item-price {
+    color: #c8a56a !important;
+    font-weight: 900;
+  }
+
+  .hh-native-search .predictive-search__no-results,
+  .hh-native-search .results__search-btn {
+    color: #fff !important;
+  }
+
+  @media screen and (max-width: 749px) {
+    .hh-native-search form {
+      width: 100vw;
+      padding: 22px 16px 26px;
+      border-inline-start: 0;
+    }
+
+    .hh-native-search__top {
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .hh-native-search__heading {
+      font-size: 34px;
+    }
+
+    .hh-native-search .search__input {
+      min-height: 44px;
+      font-size: 16px;
+    }
+
+    .hh-search-rail {
+      grid-auto-columns: 42vw;
+    }
+  }
+</style>
+
+<predictive-search class="hh-native-search" data-context="{{ context }}" data-enabled="true" data-dark="{{ dark_search_bg }}">
   <div class="predictive__screen" data-screen></div>
+
   <form action="{{ routes.search_url }}" method="get" role="search">
-    <label for="Search" class="hidden-label">Search</label>
+    <div class="hh-native-search__top">
+      <div>
+        <p class="hh-native-search__kicker">HOOPERS SEARCH</p>
+        <h2 class="hh-native-search__heading">מה אתם מחפשים?</h2>
+      </div>
+
+      <button class="btn--close-search" type="button" aria-label="סגירת חיפוש">
+        <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-close" viewBox="0 0 64 64"><path d="M19 17.61l27.12 27.13m0-27.13L19 44.74"/></svg>
+      </button>
+    </div>
+
+    <label for="Search-{{ context }}" class="hidden-label">Search</label>
     <div class="search__input-wrap">
       <input
         class="search__input"
-        id="Search"
+        id="Search-{{ context }}"
         type="search"
         name="q"
         value="{{ search.terms | escape }}"
@@ -28,19 +381,196 @@
         autocomplete="off"
         autocapitalize="off"
         spellcheck="false"
-        placeholder="{{ 'general.search.placeholder' | t }}"
+        placeholder="חפשו קבוצה, שחקן, גופיה או מותג..."
         tabindex="0"
       >
       <input name="options[prefix]" type="hidden" value="last">
-      <button class="btn--search" type="submit">
-        <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-search" viewBox="0 0 64 64"><defs><style>.cls-1{fill:none;stroke:#000;stroke-miterlimit:10;stroke-width:2px}</style></defs><path class="cls-1" d="M47.16 28.58A18.58 18.58 0 1 1 28.58 10a18.58 18.58 0 0 1 18.58 18.58zM54 54L41.94 42"/></svg>
+      <button class="btn--search" type="submit" aria-label="חיפוש">
+        <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-search" viewBox="0 0 64 64"><path d="M47.16 28.58A18.58 18.58 0 1 1 28.58 10a18.58 18.58 0 0 1 18.58 18.58zM54 54L41.94 42"/></svg>
         <span class="icon__fallback-text">{{ 'general.search.submit' | t }}</span>
       </button>
     </div>
 
-    <button class="btn--close-search">
-      <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-close" viewBox="0 0 64 64"><defs><style>.cls-1{fill:none;stroke:#000;stroke-miterlimit:10;stroke-width:2px}</style></defs><path class="cls-1" d="M19 17.61l27.12 27.13m0-27.13L19 44.74"/></svg>
-    </button>
     <div id="predictive-search" class="search__results" tabindex="-1"></div>
+
+    <div class="hh-search-empty" data-hh-search-empty>
+      <section class="hh-search-section" aria-labelledby="hh-popular-searches-{{ context }}">
+        <h3 class="hh-search-section__title" id="hh-popular-searches-{{ context }}">Popular Searches</h3>
+        <ul class="hh-search-chips">
+          <li><a class="hh-search-chip" href="{{ routes.search_url }}?q={{ 'דני אבדיה' | url_encode }}">דני אבדיה</a></li>
+          <li><a class="hh-search-chip" href="{{ routes.search_url }}?q={{ 'לייקרס' | url_encode }}">לייקרס</a></li>
+          <li><a class="hh-search-chip" href="{{ routes.search_url }}?q={{ 'גולדן סטייט' | url_encode }}">גולדן סטייט</a></li>
+          <li><a class="hh-search-chip" href="{{ routes.search_url }}?q={{ 'Fear Of God' | url_encode }}">Fear Of God</a></li>
+          <li><a class="hh-search-chip" href="{{ routes.search_url }}?q={{ 'Jordan' | url_encode }}">Jordan</a></li>
+          <li><a class="hh-search-chip" href="{{ routes.search_url }}?q={{ 'World Cup' | url_encode }}">World Cup</a></li>
+          <li><a class="hh-search-chip" href="{{ routes.search_url }}?q={{ 'Kids' | url_encode }}">Kids</a></li>
+        </ul>
+      </section>
+
+      {%- if trending_collection != blank and trending_collection.products_count > 0 -%}
+        <section class="hh-search-section" aria-labelledby="hh-trending-products-{{ context }}">
+          <h3 class="hh-search-section__title" id="hh-trending-products-{{ context }}">Trending Products</h3>
+          <div class="hh-search-rail">
+            {%- for item_product in trending_collection.products limit: 4 -%}
+              <a class="hh-search-product" href="{{ item_product.url }}">
+                <span class="hh-search-product__media">
+                  {%- if item_product.featured_image -%}
+                    {{ item_product.featured_image | image_url: width: 420 | image_tag: loading: 'lazy', sizes: '(max-width: 749px) 42vw, 160px', alt: item_product.title }}
+                  {%- endif -%}
+                </span>
+                <span class="hh-search-product__title">{{ item_product.title }}</span>
+                <span class="hh-search-product__price">{{ item_product.price | money }}</span>
+              </a>
+            {%- endfor -%}
+          </div>
+        </section>
+      {%- endif -%}
+
+      {%- if new_collection != blank and new_collection.products_count > 0 -%}
+        <section class="hh-search-section" aria-labelledby="hh-new-arrivals-{{ context }}">
+          <h3 class="hh-search-section__title" id="hh-new-arrivals-{{ context }}">New Arrivals</h3>
+          <div class="hh-search-rail">
+            {%- for item_product in new_collection.products limit: 4 -%}
+              <a class="hh-search-product" href="{{ item_product.url }}">
+                <span class="hh-search-product__media">
+                  {%- if item_product.featured_image -%}
+                    {{ item_product.featured_image | image_url: width: 420 | image_tag: loading: 'lazy', sizes: '(max-width: 749px) 42vw, 160px', alt: item_product.title }}
+                  {%- endif -%}
+                </span>
+                <span class="hh-search-product__title">{{ item_product.title }}</span>
+                <span class="hh-search-product__price">{{ item_product.price | money }}</span>
+              </a>
+            {%- endfor -%}
+          </div>
+        </section>
+      {%- endif -%}
+
+      {%- if best_collection != blank and best_collection.products_count > 0 -%}
+        <section class="hh-search-section" aria-labelledby="hh-best-sellers-{{ context }}">
+          <h3 class="hh-search-section__title" id="hh-best-sellers-{{ context }}">Best Sellers</h3>
+          <div class="hh-search-rail">
+            {%- for item_product in best_collection.products limit: 4 -%}
+              <a class="hh-search-product" href="{{ item_product.url }}">
+                <span class="hh-search-product__media">
+                  {%- if item_product.featured_image -%}
+                    {{ item_product.featured_image | image_url: width: 420 | image_tag: loading: 'lazy', sizes: '(max-width: 749px) 42vw, 160px', alt: item_product.title }}
+                  {%- endif -%}
+                </span>
+                <span class="hh-search-product__title">{{ item_product.title }}</span>
+                <span class="hh-search-product__price">{{ item_product.price | money }}</span>
+              </a>
+            {%- endfor -%}
+          </div>
+        </section>
+      {%- endif -%}
+
+      <section class="hh-search-section" aria-labelledby="hh-shop-by-team-{{ context }}">
+        <h3 class="hh-search-section__title" id="hh-shop-by-team-{{ context }}">Shop By Team</h3>
+        <ul class="hh-search-links">
+          <li><a class="hh-search-link" href="/collections/לוס-אנגלס-לייקרס">Lakers</a></li>
+          <li><a class="hh-search-link" href="/collections/גולדן-סטייט-ווריוס">Warriors</a></li>
+          <li><a class="hh-search-link" href="/collections/nicks">Knicks</a></li>
+          <li><a class="hh-search-link" href="/collections/בוסטון-סלטיקס">Celtics</a></li>
+          <li><a class="hh-search-link" href="/collections/san-antonio-spurs">Spurs</a></li>
+          <li><a class="hh-search-link" href="/collections/פורטלנד-טרייל-בלייזרס">Trail Blazers</a></li>
+          <li><a class="hh-search-link" href="/collections/oklahoma-city-thunder">Thunder</a></li>
+          <li><a class="hh-search-link" href="/collections/שיקגו-בולס">Bulls</a></li>
+        </ul>
+      </section>
+
+      <section class="hh-search-section" aria-labelledby="hh-featured-collections-{{ context }}">
+        <h3 class="hh-search-section__title" id="hh-featured-collections-{{ context }}">Featured Collections</h3>
+        <ul class="hh-search-links">
+          <li><a class="hh-search-link" href="/collections/גופיות">NBA Jerseys</a></li>
+          <li><a class="hh-search-link" href="/collections/מונדיאל">World Cup</a></li>
+          <li><a class="hh-search-link" href="/collections/fog">Fear Of God</a></li>
+          <li><a class="hh-search-link" href="/collections/jordan">Jordan</a></li>
+          <li><a class="hh-search-link" href="/collections/ילדים">Kids</a></li>
+          <li><a class="hh-search-link" href="/collections/pro-gear">Pro Gear</a></li>
+        </ul>
+      </section>
+
+      <section class="hh-search-section" data-hh-recent-search-section hidden>
+        <h3 class="hh-search-section__title">Recently Viewed</h3>
+        <div class="hh-search-rail" data-hh-recent-search-items></div>
+      </section>
+    </div>
   </form>
+
+  {%- if product != blank -%}
+    <script type="application/json" data-hh-current-product>
+      {
+        "title": {{ product.title | json }},
+        "url": {{ product.url | json }},
+        "price": {{ product.price | money | json }},
+        "image": {% if product.featured_image %}{{ product.featured_image | image_url: width: 420 | json }}{% else %}""{% endif %}
+      }
+    </script>
+  {%- endif -%}
+
+  <script>
+    if (!window.HoopersNativeSearchInit) {
+      window.HoopersNativeSearchInit = true;
+
+      (function () {
+        var key = 'hoopers_recently_viewed_products';
+        var currentProductScript = document.querySelector('[data-hh-current-product]');
+
+        function readRecent() {
+          try {
+            return JSON.parse(window.localStorage.getItem(key) || '[]');
+          } catch (error) {
+            return [];
+          }
+        }
+
+        function writeRecent(items) {
+          try {
+            window.localStorage.setItem(key, JSON.stringify(items.slice(0, 8)));
+          } catch (error) {}
+        }
+
+        if (currentProductScript) {
+          try {
+            var currentProduct = JSON.parse(currentProductScript.textContent || '{}');
+            if (currentProduct && currentProduct.url) {
+              var recent = readRecent().filter(function (item) { return item.url !== currentProduct.url; });
+              recent.unshift(currentProduct);
+              writeRecent(recent);
+            }
+          } catch (error) {}
+        }
+
+        function renderRecent() {
+          var recent = readRecent();
+          document.querySelectorAll('[data-hh-recent-search-section]').forEach(function (section) {
+            var target = section.querySelector('[data-hh-recent-search-items]');
+            if (!target || !recent.length) return;
+
+            target.innerHTML = recent.slice(0, 4).map(function (item) {
+              var safeTitle = String(item.title || '').replace(/"/g, '&quot;');
+              var image = item.image ? '<span class="hh-search-product__media"><img src="' + item.image + '" loading="lazy" alt="' + safeTitle + '"></span>' : '<span class="hh-search-product__media"></span>';
+              return '<a class="hh-search-product" href="' + item.url + '">' + image + '<span class="hh-search-product__title">' + item.title + '</span><span class="hh-search-product__price">' + item.price + '</span></a>';
+            }).join('');
+
+            section.hidden = false;
+          });
+        }
+
+        document.addEventListener('predictive-search:open', function () {
+          window.setTimeout(renderRecent, 60);
+        });
+
+        document.addEventListener('input', function (event) {
+          if (!event.target.matches('.hh-native-search input[type="search"]')) return;
+          var root = event.target.closest('.hh-native-search');
+          var results = root && root.querySelector('.search__results');
+          if (results && !event.target.value.trim()) {
+            results.style.display = 'none';
+            results.innerHTML = '';
+          }
+        });
+      })();
+    }
+  </script>
 </predictive-search>
