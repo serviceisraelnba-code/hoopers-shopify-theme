@@ -11,6 +11,46 @@
   assign best_collection = collections['הנמכרים-ביותר']
 -%}
 
+{%- if context == 'search-page' -%}
+  <predictive-search data-context="{{ context }}" data-enabled="{{ settings.predictive_search_enabled }}" data-dark="{{ dark_search_bg }}">
+    <div class="predictive__screen" data-screen></div>
+    <form action="{{ routes.search_url }}" method="get" role="search">
+      <label for="Search" class="hidden-label">Search</label>
+      <div class="search__input-wrap">
+        <input
+          class="search__input"
+          id="Search"
+          type="search"
+          name="q"
+          value="{{ search.terms | escape }}"
+          role="combobox"
+          aria-expanded="false"
+          aria-owns="predictive-search-results"
+          aria-controls="predictive-search-results"
+          aria-haspopup="listbox"
+          aria-autocomplete="list"
+          autocorrect="off"
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck="false"
+          placeholder="{{ 'general.search.placeholder' | t }}"
+          tabindex="0"
+        >
+        <input name="options[prefix]" type="hidden" value="last">
+        <button class="btn--search" type="submit">
+          <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-search" viewBox="0 0 64 64"><defs><style>.cls-1{fill:none;stroke:#000;stroke-miterlimit:10;stroke-width:2px}</style></defs><path class="cls-1" d="M47.16 28.58A18.58 18.58 0 1 1 28.58 10a18.58 18.58 0 0 1 18.58 18.58zM54 54L41.94 42"/></svg>
+          <span class="icon__fallback-text">{{ 'general.search.submit' | t }}</span>
+        </button>
+      </div>
+
+      <button class="btn--close-search">
+        <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-close" viewBox="0 0 64 64"><defs><style>.cls-1{fill:none;stroke:#000;stroke-miterlimit:10;stroke-width:2px}</style></defs><path class="cls-1" d="M19 17.61l27.12 27.13m0-27.13L19 44.74"/></svg>
+      </button>
+      <div id="predictive-search" class="search__results" tabindex="-1"></div>
+    </form>
+  </predictive-search>
+{%- else -%}
+
 <style>
   .hh-native-search {
     position: fixed;
@@ -29,6 +69,44 @@
     pointer-events: auto;
   }
 
+  .hh-native-search-container {
+    overflow: visible !important;
+  }
+
+  .hh-native-search-container.is-active {
+    position: fixed !important;
+    inset: 0 !important;
+    bottom: auto !important;
+    display: block !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    overflow: visible !important;
+    z-index: 999999 !important;
+  }
+
+  .hh-native-search-container .hh-native-search-shell {
+    position: fixed !important;
+    inset: 0 !important;
+    display: block !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: inherit !important;
+    transform: none !important;
+  }
+
+  .hh-native-search-container .hh-native-search-page {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
   .hh-native-search .predictive__screen {
     position: absolute;
     inset: 0;
@@ -38,20 +116,25 @@
 
   .hh-native-search form {
     position: absolute;
-    inset-block: 0;
-    inset-inline-end: 0;
+    inset: 0;
     display: flex;
     flex-direction: column;
-    width: min(720px, 100vw);
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
     margin: 0;
-    padding: 28px;
+    padding: clamp(22px, 4vw, 48px);
     overflow-y: auto;
     background:
       radial-gradient(circle at 20% 0%, rgba(200, 165, 106, 0.16), transparent 28%),
       linear-gradient(180deg, #070707 0%, #12100d 100%);
-    border-inline-start: 1px solid rgba(200, 165, 106, 0.24);
-    box-shadow: -22px 0 60px rgba(0, 0, 0, 0.5);
+    border: 0;
+    box-shadow: none;
+  }
+
+  .hh-native-search__inner {
+    width: min(1180px, 100%);
+    margin: 0 auto;
   }
 
   .hh-native-search__top {
@@ -108,8 +191,8 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 24px;
-    padding: 8px 8px 8px 16px;
+    margin: 0 0 28px;
+    padding: 10px 10px 10px 18px;
     border: 1px solid rgba(200, 165, 106, 0.34);
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.08);
@@ -117,12 +200,12 @@
 
   .hh-native-search .search__input {
     width: 100%;
-    min-height: 48px;
+    min-height: 56px;
     padding: 0 14px;
     border: 0;
     background: transparent;
     color: #fff;
-    font-size: 18px;
+    font-size: clamp(18px, 2vw, 24px);
     font-weight: 700;
     outline: none;
   }
@@ -133,9 +216,9 @@
 
   .hh-native-search .btn--search {
     display: grid;
-    width: 46px;
-    height: 46px;
-    min-width: 46px;
+    width: 54px;
+    height: 54px;
+    min-width: 54px;
     padding: 0;
     place-items: center;
     border: 0;
@@ -154,7 +237,7 @@
 
   .hh-search-empty {
     display: grid;
-    gap: 26px;
+    gap: clamp(22px, 3vw, 34px);
   }
 
   .hh-search-section {
@@ -209,8 +292,8 @@
   .hh-search-rail {
     display: grid;
     grid-auto-flow: column;
-    grid-auto-columns: minmax(142px, 1fr);
-    gap: 12px;
+    grid-auto-columns: minmax(170px, 1fr);
+    gap: 14px;
     overflow-x: auto;
     overscroll-behavior-inline: contain;
     scroll-snap-type: x mandatory;
@@ -324,6 +407,8 @@
   @media screen and (max-width: 749px) {
     .hh-native-search form {
       width: 100vw;
+      height: 100vh;
+      height: 100dvh;
       padding: 22px 16px 26px;
       border-inline-start: 0;
     }
@@ -338,8 +423,14 @@
     }
 
     .hh-native-search .search__input {
-      min-height: 44px;
+      min-height: 46px;
       font-size: 16px;
+    }
+
+    .hh-native-search .btn--search {
+      width: 46px;
+      height: 46px;
+      min-width: 46px;
     }
 
     .hh-search-rail {
@@ -352,48 +443,49 @@
   <div class="predictive__screen" data-screen></div>
 
   <form action="{{ routes.search_url }}" method="get" role="search">
-    <div class="hh-native-search__top">
-      <div>
-        <p class="hh-native-search__kicker">HOOPERS SEARCH</p>
-        <h2 class="hh-native-search__heading">מה אתם מחפשים?</h2>
+    <div class="hh-native-search__inner">
+      <div class="hh-native-search__top">
+        <div>
+          <p class="hh-native-search__kicker">HOOPERS SEARCH</p>
+          <h2 class="hh-native-search__heading">מה אתם מחפשים?</h2>
+        </div>
+
+        <button class="btn--close-search" type="button" aria-label="סגירת חיפוש">
+          <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-close" viewBox="0 0 64 64"><path d="M19 17.61l27.12 27.13m0-27.13L19 44.74"/></svg>
+        </button>
       </div>
 
-      <button class="btn--close-search" type="button" aria-label="סגירת חיפוש">
-        <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-close" viewBox="0 0 64 64"><path d="M19 17.61l27.12 27.13m0-27.13L19 44.74"/></svg>
-      </button>
-    </div>
+      <label for="Search-{{ context }}" class="hidden-label">Search</label>
+      <div class="search__input-wrap">
+        <input
+          class="search__input"
+          id="Search-{{ context }}"
+          type="search"
+          name="q"
+          value="{{ search.terms | escape }}"
+          role="combobox"
+          aria-expanded="false"
+          aria-owns="predictive-search-results"
+          aria-controls="predictive-search-results"
+          aria-haspopup="listbox"
+          aria-autocomplete="list"
+          autocorrect="off"
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck="false"
+          placeholder="חפשו קבוצה, שחקן, גופיה או מותג..."
+          tabindex="0"
+        >
+        <input name="options[prefix]" type="hidden" value="last">
+        <button class="btn--search" type="submit" aria-label="חיפוש">
+          <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-search" viewBox="0 0 64 64"><path d="M47.16 28.58A18.58 18.58 0 1 1 28.58 10a18.58 18.58 0 0 1 18.58 18.58zM54 54L41.94 42"/></svg>
+          <span class="icon__fallback-text">{{ 'general.search.submit' | t }}</span>
+        </button>
+      </div>
 
-    <label for="Search-{{ context }}" class="hidden-label">Search</label>
-    <div class="search__input-wrap">
-      <input
-        class="search__input"
-        id="Search-{{ context }}"
-        type="search"
-        name="q"
-        value="{{ search.terms | escape }}"
-        role="combobox"
-        aria-expanded="false"
-        aria-owns="predictive-search-results"
-        aria-controls="predictive-search-results"
-        aria-haspopup="listbox"
-        aria-autocomplete="list"
-        autocorrect="off"
-        autocomplete="off"
-        autocapitalize="off"
-        spellcheck="false"
-        placeholder="חפשו קבוצה, שחקן, גופיה או מותג..."
-        tabindex="0"
-      >
-      <input name="options[prefix]" type="hidden" value="last">
-      <button class="btn--search" type="submit" aria-label="חיפוש">
-        <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-search" viewBox="0 0 64 64"><path d="M47.16 28.58A18.58 18.58 0 1 1 28.58 10a18.58 18.58 0 0 1 18.58 18.58zM54 54L41.94 42"/></svg>
-        <span class="icon__fallback-text">{{ 'general.search.submit' | t }}</span>
-      </button>
-    </div>
+      <div id="predictive-search" class="search__results" tabindex="-1"></div>
 
-    <div id="predictive-search" class="search__results" tabindex="-1"></div>
-
-    <div class="hh-search-empty" data-hh-search-empty>
+      <div class="hh-search-empty" data-hh-search-empty>
       <section class="hh-search-section" aria-labelledby="hh-popular-searches-{{ context }}">
         <h3 class="hh-search-section__title" id="hh-popular-searches-{{ context }}">Popular Searches</h3>
         <ul class="hh-search-chips">
@@ -494,6 +586,7 @@
         <h3 class="hh-search-section__title">Recently Viewed</h3>
         <div class="hh-search-rail" data-hh-recent-search-items></div>
       </section>
+      </div>
     </div>
   </form>
 
@@ -515,6 +608,16 @@
       (function () {
         var key = 'hoopers_recently_viewed_products';
         var currentProductScript = document.querySelector('[data-hh-current-product]');
+
+        document.querySelectorAll('.hh-native-search').forEach(function (root) {
+          var container = root.closest('.site-header__search-container');
+          var shell = root.closest('.site-header__search');
+          var page = root.closest('.page-width');
+
+          if (container) container.classList.add('hh-native-search-container');
+          if (shell) shell.classList.add('hh-native-search-shell');
+          if (page) page.classList.add('hh-native-search-page');
+        });
 
         function readRecent() {
           try {
@@ -574,3 +677,4 @@
     }
   </script>
 </predictive-search>
+{%- endif -%}
