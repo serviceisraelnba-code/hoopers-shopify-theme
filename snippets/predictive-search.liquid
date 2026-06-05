@@ -107,6 +107,13 @@
     overflow: visible !important;
   }
 
+  .site-header__search-container.hh-native-search-container:not(.is-active) {
+    display: none !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    visibility: hidden !important;
+  }
+
   .hh-native-search-container.is-active {
     position: fixed !important;
     inset: 0 !important;
@@ -808,8 +815,14 @@
             }
           });
 
-          document.querySelectorAll('.hh-native-search-container').forEach(function (container) {
+          document.querySelectorAll('.site-header__search-container').forEach(function (container) {
+            if (!container.querySelector('.hh-native-search')) return;
             container.classList.remove('is-active', 'is-open', 'site-header__search-container--open');
+            container.setAttribute('aria-hidden', 'true');
+          });
+
+          document.querySelectorAll('.site-header').forEach(function (header) {
+            header.classList.remove('site-header--search-open', 'site-header--is-searching');
           });
         }
 
@@ -837,9 +850,12 @@
 
         function closeNativeSearch() {
           allowClose = true;
+          if (searchAbortController) searchAbortController.abort();
+          window.clearTimeout(searchTimer);
           resetNativeSearchRoots();
           setSearchLock(false);
           document.body.classList.remove('predictive-overflow-hidden');
+          document.documentElement.classList.remove('js-drawer-open', 'js-drawer-open--search', 'js-drawer-closing');
 
           window.setTimeout(function () {
             allowClose = false;
@@ -937,6 +953,92 @@
           return '<li><a class="hh-search-product" href="' + escapeHtml(product.url) + '">' + imageMarkup + '<span class="hh-search-product__title">' + escapeHtml(product.title) + '</span>' + priceMarkup + '</a></li>';
         }
 
+        function normalizeUrl(url) {
+          if (!url) return '';
+          try {
+            return new URL(url, window.location.origin).pathname + new URL(url, window.location.origin).search;
+          } catch (error) {
+            return url;
+          }
+        }
+
+        function getImageFromElement(card) {
+          var image = card.querySelector('img');
+          if (!image) return '';
+
+          var src = image.getAttribute('src') || image.getAttribute('data-src') || image.getAttribute('data-original') || '';
+          var srcset = image.getAttribute('srcset') || image.getAttribute('data-srcset') || '';
+
+          if (!src && srcset) {
+            src = srcset.split(',')[0].trim().split(' ')[0];
+          }
+
+          if (src.indexOf('//') === 0) src = window.location.protocol + src;
+          return src;
+        }
+
+        function extractProductsFromSearchHtml(html) {
+          var doc = new DOMParser().parseFromString(html, 'text/html');
+          var cards = Array.prototype.slice.call(doc.querySelectorAll('.grid-product, .spf-product-card, [data-product-card]'));
+          var seen = {};
+
+          return cards.map(function (card) {
+            var link = card.querySelector('a[href*="/products/"]');
+            var titleNode = card.querySelector('.grid-product__title, .spf-product-card__title a, .spf-product__title, [class*="product__title"]');
+            var priceNode = card.querySelector('.grid-product__price, .spf-product__price, .spf-product-card__price, [class*="product__price"]');
+            var url = link ? normalizeUrl(link.getAttribute('href')) : '';
+            var title = titleNode ? titleNode.textContent.trim() : (link ? link.getAttribute('title') || link.textContent.trim() : '');
+            var price = priceNode ? priceNode.textContent.replace(/\s+/g, ' ').trim() : '';
+            var image = getImageFromElement(card);
+
+            if (!url || !title || seen[url]) return null;
+            seen[url] = true;
+
+            return {
+              title: title,
+              url: url,
+              price: price,
+              image: image
+            };
+          }).filter(Boolean).slice(0, 8);
+        }
+
+        function renderFallbackProducts(root, searchTerm, products) {
+          var results = root && root.querySelector('.search__results');
+          if (!results) return;
+
+          var html = '<div class="hh-native-search-results">';
+
+          if (products.length) {
+            html += '<section class="hh-search-section"><h3 class="hh-search-section__title">Products</h3><ul class="hh-native-search-results__grid">';
+            html += products.map(renderProductCard).join('');
+            html += '</ul></section>';
+          } else {
+            html += '<div class="hh-native-search-results__empty">לא נמצאו תוצאות עבור "' + escapeHtml(searchTerm) + '".</div>';
+          }
+
+          html += '</div>';
+          results.innerHTML = html;
+          results.style.display = 'block';
+          results.style.background = 'transparent';
+          root.classList.add('hh-search-has-query');
+          setSearchLock(true);
+          activateVisibleSearchRoot();
+        }
+
+        function runSearchPageFallback(root, searchTerm) {
+          var url = '{{ routes.search_url }}?type=product&q=' + encodeURIComponent(searchTerm);
+
+          return fetch(url)
+            .then(function (response) {
+              if (!response.ok) throw new Error(response.status);
+              return response.text();
+            })
+            .then(function (html) {
+              renderFallbackProducts(root, searchTerm, extractProductsFromSearchHtml(html));
+            });
+        }
+
         function renderSearchResults(root, searchTerm, data) {
           var results = root && root.querySelector('.search__results');
           if (!results) return;
@@ -1016,16 +1118,27 @@
               return response.json();
             })
             .then(function (data) {
-              renderSearchResults(root, searchTerm, data);
+              var resources = data && data.resources && data.resources.results ? data.resources.results : {};
+              var products = resources.products || [];
+
+              if (products.length) {
+                renderSearchResults(root, searchTerm, data);
+              } else {
+                runSearchPageFallback(root, searchTerm).catch(function () {
+                  renderSearchResults(root, searchTerm, data);
+                });
+              }
             })
             .catch(function (error) {
               if (error.name === 'AbortError') return;
-              results.innerHTML = '<div class="hh-native-search-results__empty">החיפוש לא נטען כרגע. נסו שוב בעוד רגע.</div>';
-              results.style.display = 'block';
-              results.style.background = 'transparent';
-              root.classList.add('hh-search-has-query');
-              setSearchLock(true);
-              activateVisibleSearchRoot();
+              runSearchPageFallback(root, searchTerm).catch(function () {
+                results.innerHTML = '<div class="hh-native-search-results__empty">החיפוש לא נטען כרגע. נסו שוב בעוד רגע.</div>';
+                results.style.display = 'block';
+                results.style.background = 'transparent';
+                root.classList.add('hh-search-has-query');
+                setSearchLock(true);
+                activateVisibleSearchRoot();
+              });
             });
         }
 
