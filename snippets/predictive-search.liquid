@@ -782,17 +782,6 @@
         var key = 'hoopers_recently_viewed_products';
         var currentProductScript = document.querySelector('[data-hh-current-product]');
         var allowClose = false;
-        var debugPrefix = '[HOOPERS search]';
-
-        function debugLog(label, payload) {
-          try {
-            if (payload !== undefined) {
-              console.log(debugPrefix, label, payload);
-            } else {
-              console.log(debugPrefix, label);
-            }
-          } catch (error) {}
-        }
 
         document.querySelectorAll('.hh-native-search').forEach(function (root) {
           var container = root.closest('.site-header__search-container');
@@ -878,6 +867,48 @@
           var input = root.querySelector('input[type="search"]');
           var hasQuery = !!(input && input.value.trim());
           root.classList.toggle('hh-search-has-query', hasQuery);
+        }
+
+        function getSearchRoots(preferredRoot) {
+          var roots = Array.prototype.slice.call(document.querySelectorAll('.hh-native-search'));
+
+          if (preferredRoot && roots.indexOf(preferredRoot) === -1) {
+            roots.unshift(preferredRoot);
+          }
+
+          return roots.length ? roots : (preferredRoot ? [preferredRoot] : []);
+        }
+
+        function setResultsMarkup(preferredRoot, html) {
+          var rendered = false;
+
+          getSearchRoots(preferredRoot).forEach(function (root) {
+            var results = root.querySelector('.search__results');
+            if (!results) return;
+
+            results.innerHTML = html;
+            results.style.display = 'block';
+            results.style.background = 'transparent';
+            root.classList.add('hh-search-has-query');
+            rendered = true;
+          });
+
+          if (rendered) {
+            setSearchLock(true);
+            activateVisibleSearchRoot();
+          }
+        }
+
+        function clearSearchResults(preferredRoot) {
+          getSearchRoots(preferredRoot).forEach(function (root) {
+            var results = root.querySelector('.search__results');
+            if (!results) return;
+
+            results.style.display = 'none';
+            results.innerHTML = '';
+            results.style.background = 'transparent';
+            root.classList.remove('hh-search-has-query');
+          });
         }
 
         function isUsableRoot(root) {
@@ -1058,11 +1089,6 @@
             });
           });
 
-          debugLog('parsed product count', {
-            productLinks: links.length,
-            products: products.length
-          });
-
           return products.slice(0, 8);
         }
 
@@ -1089,15 +1115,6 @@
         }
 
         function renderFallbackProducts(root, searchTerm, products) {
-          var results = root && root.querySelector('.search__results');
-          debugLog('render fallback called', {
-            query: searchTerm,
-            products: products.length,
-            resultsFound: !!results
-          });
-
-          if (!results) return;
-
           var html = '<div class="hh-native-search-results">';
           var fallbackCollections = getFallbackCollections(searchTerm);
 
@@ -1122,42 +1139,20 @@
           html += '</ul></section>';
 
           html += '</div>';
-          results.innerHTML = html;
-          results.style.display = 'block';
-          results.style.background = 'transparent';
-          root.classList.add('hh-search-has-query');
-          setSearchLock(true);
-          activateVisibleSearchRoot();
+          setResultsMarkup(root, html);
         }
 
         var activeSearchRequestId = 0;
 
         function runSearchPageFallback(root, searchTerm, requestId, signal) {
           var url = '{{ routes.search_url }}?type=product&q=' + encodeURIComponent(searchTerm);
-          debugLog('fetch search page', {
-            query: searchTerm,
-            url: url,
-            requestId: requestId,
-            resultsFound: !!(root && root.querySelector('.search__results'))
-          });
 
           return fetch(url, { signal: signal })
             .then(function (response) {
-              debugLog('search page response', {
-                query: searchTerm,
-                status: response.status,
-                ok: response.ok
-              });
               if (!response.ok) throw new Error(response.status);
               return response.text();
             })
             .then(function (html) {
-              debugLog('search page html received', {
-                query: searchTerm,
-                length: html.length,
-                requestId: requestId,
-                activeSearchRequestId: activeSearchRequestId
-              });
               if (requestId !== activeSearchRequestId) return;
               renderFallbackProducts(root, searchTerm, extractProductsFromSearchHtml(html));
             });
@@ -1172,59 +1167,25 @@
           params.set('resources[options][unavailable_products]', 'last');
           params.set('resources[options][fields]', 'title,product_type,variants.title,vendor');
 
-          var url = '{{ routes.predictive_search_url }}.json?' + params.toString();
-          debugLog('fetch predictive json', {
-            query: searchTerm,
-            url: url,
-            requestId: requestId
-          });
-
-          return fetch(url, {
+          return fetch('{{ routes.predictive_search_url }}.json?' + params.toString(), {
             signal: signal
           })
             .then(function (response) {
-              debugLog('predictive json response', {
-                query: searchTerm,
-                status: response.status,
-                ok: response.ok
-              });
               if (!response.ok) throw new Error(response.status);
               return response.json();
             })
             .then(function (data) {
-              var resources = data && data.resources && data.resources.results ? data.resources.results : {};
-              debugLog('predictive json parsed', {
-                query: searchTerm,
-                products: resources.products ? resources.products.length : 0,
-                collections: resources.collections ? resources.collections.length : 0,
-                queries: resources.queries ? resources.queries.length : 0
-              });
               if (requestId !== activeSearchRequestId) return;
               renderSearchResults(root, searchTerm, data);
             });
         }
 
         function renderSearchResults(root, searchTerm, data) {
-          var results = root && root.querySelector('.search__results');
-          debugLog('render json called', {
-            query: searchTerm,
-            resultsFound: !!results
-          });
-
-          if (!results) return;
-
           var resources = data && data.resources && data.resources.results ? data.resources.results : {};
           var products = resources.products || [];
           var collections = resources.collections || [];
           var queries = resources.queries || [];
           var html = '<div class="hh-native-search-results">';
-
-          debugLog('render json counts', {
-            query: searchTerm,
-            products: products.length,
-            collections: collections.length,
-            queries: queries.length
-          });
 
           if (products.length) {
             html += '<section class="hh-search-section"><h3 class="hh-search-section__title">Products</h3><ul class="hh-native-search-results__grid">';
@@ -1255,12 +1216,7 @@
           }
 
           html += '</div>';
-          results.innerHTML = html;
-          results.style.display = 'block';
-          results.style.background = 'transparent';
-          root.classList.add('hh-search-has-query');
-          setSearchLock(true);
-          activateVisibleSearchRoot();
+          setResultsMarkup(root, html);
         }
 
         var searchAbortController = null;
@@ -1271,21 +1227,12 @@
           var results = root && root.querySelector('.search__results');
           var searchTerm = input ? input.value.trim() : '';
 
-          debugLog('input event fired', {
-            query: searchTerm,
-            rootFound: !!root,
-            resultsFound: !!results,
-            activeRoot: !!(root && root.classList.contains('is-active'))
-          });
-
           syncQueryState(root);
 
-          if (results && !searchTerm) {
+          if (!searchTerm) {
             if (searchAbortController) searchAbortController.abort();
             window.clearTimeout(searchTimer);
-            results.style.display = 'none';
-            results.innerHTML = '';
-            results.style.background = 'transparent';
+            clearSearchResults(root);
             setSearchLock(true);
             activateVisibleSearchRoot();
             return;
@@ -1295,9 +1242,6 @@
 
           window.clearTimeout(searchTimer);
           searchTimer = window.setTimeout(function () {
-            debugLog('debounced search fired', {
-              query: searchTerm
-            });
             runNativePredictiveSearch(root, searchTerm);
           }, 180);
         }
@@ -1306,10 +1250,6 @@
           document.querySelectorAll('.hh-native-search input[type="search"]').forEach(function (input) {
             if (input.dataset.hhNativeSearchBound === 'true') return;
             input.dataset.hhNativeSearchBound = 'true';
-            debugLog('bound input', {
-              id: input.id,
-              value: input.value || ''
-            });
 
             input.addEventListener('input', function (event) {
               event.stopPropagation();
@@ -1333,12 +1273,7 @@
 
         function runNativePredictiveSearch(root, searchTerm) {
           var results = root && root.querySelector('.search__results');
-          debugLog('run search called', {
-            query: searchTerm,
-            resultsFound: !!results
-          });
-
-          if (!results) return;
+          if (!root || !results) return;
 
           if (searchAbortController) {
             searchAbortController.abort();
@@ -1347,9 +1282,7 @@
           searchAbortController = new AbortController();
           activeSearchRequestId += 1;
           var requestId = activeSearchRequestId;
-          results.innerHTML = '<div class="hh-native-search-results__loading">מחפש...</div>';
-          results.style.display = 'block';
-          results.style.background = 'transparent';
+          setResultsMarkup(root, '<div class="hh-native-search-results"><div class="hh-native-search-results__loading">מחפש...</div></div>');
 
           runSearchPageFallback(root, searchTerm, requestId, searchAbortController.signal)
             .catch(function (error) {
