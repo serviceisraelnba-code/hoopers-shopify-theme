@@ -47,6 +47,17 @@
             {{ section.settings.search_button_text }}
           </button>
         </form>
+
+        <nav class="hh-search-results-page__popular" aria-label="Popular searches">
+          <span>חיפושים פופולריים</span>
+          <a href="{{ routes.search_url }}?q={{ 'דני אבדיה' | url_encode }}&type=product">דני אבדיה</a>
+          <a href="/collections/jordan">Jordan</a>
+          <a href="/collections/fog">Fear Of God</a>
+          <a href="/collections/מונדיאל">World Cup</a>
+          <a href="/collections/ילדים">Kids</a>
+          <a href="/collections/לוס-אנגלס-לייקרס">Lakers</a>
+          <a href="/collections/גולדן-סטייט-ווריוס">Golden State</a>
+        </nav>
       </div>
     </div>
   </div>
@@ -89,12 +100,16 @@
         {%- else -%}
           <div class="hh-search-results-page__empty">
             <p class="hh-search-results-page__empty-kicker">{{ section.settings.empty_kicker }}</p>
-            <h2>{{ section.settings.empty_title }}</h2>
-            <p>{{ 'general.search.no_results_html' | t: terms: search_terms | replace: '*', '' }}</p>
-            <div class="hh-search-results-page__quick-links">
+            <h2>לא מצאנו תוצאות עבור "{{ search_terms | escape }}"</h2>
+            <p>נסו חיפוש אחר או עברו לאחת הקולקציות הפופולריות.</p>
+            <div class="hh-search-results-page__quick-links" aria-label="Suggested searches">
+              <a href="{{ routes.search_url }}?q={{ 'דני אבדיה' | url_encode }}&type=product">דני אבדיה</a>
+              <a href="/collections/לוס-אנגלס-לייקרס">Lakers</a>
+              <a href="/collections/גולדן-סטייט-ווריוס">Golden State</a>
               <a href="/collections/all">SHOP ALL</a>
               <a href="/collections/jordan">JORDAN</a>
               <a href="/collections/fog">FEAR OF GOD</a>
+              <a href="/collections/מונדיאל">WORLD CUP</a>
               <a href="/collections/ילדים">KIDS</a>
             </div>
           </div>
@@ -133,7 +148,9 @@
   }
 
   .hh-search-results-page .page-width {
-    max-width: 1560px;
+    max-width: 1760px;
+    padding-left: clamp(12px, 2vw, 32px);
+    padding-right: clamp(12px, 2vw, 32px);
   }
 
   .hh-search-results-page__hero {
@@ -151,8 +168,8 @@
 
   .hh-search-results-page__header {
     display: grid;
-    gap: 16px;
-    max-width: 980px;
+    gap: 15px;
+    max-width: 1080px;
     margin: clamp(18px, 4vw, 44px) auto 0;
     text-align: center;
   }
@@ -193,20 +210,21 @@
   .hh-search-results-page__form {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    gap: 10px;
-    width: min(760px, 100%);
+    gap: 8px;
+    width: min(840px, 100%);
     margin: 12px auto 0;
-    padding: 8px;
-    border: 1px solid rgba(200, 165, 106, 0.34);
+    padding: 7px;
+    border: 1px solid rgba(200, 165, 106, 0.42);
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.09);
     backdrop-filter: blur(10px);
+    box-shadow: 0 18px 52px rgba(0, 0, 0, 0.28);
   }
 
   .hh-search-results-page__input {
-    min-height: 52px;
+    min-height: 50px;
     width: 100%;
-    padding: 0 18px;
+    padding: 0 18px 0 10px;
     border: 0;
     background: transparent;
     color: #fff;
@@ -220,27 +238,76 @@
   }
 
   .hh-search-results-page__button {
-    min-height: 52px;
-    padding: 0 24px;
-    border: 0;
+    min-height: 50px;
+    padding: 0 28px;
+    border: 1px solid rgba(200, 165, 106, 0.72);
     border-radius: 999px;
-    background: #fff;
+    background: var(--hh-gold);
     color: #050505;
     font-size: 12px;
     font-weight: 950;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     cursor: pointer;
+    transition: transform 180ms ease, background 180ms ease, color 180ms ease;
+  }
+
+  .hh-search-results-page__button:hover {
+    transform: translateY(-1px);
+    background: #fff;
+    color: #050505;
+  }
+
+  .hh-search-results-page__popular {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    width: min(980px, 100%);
+    margin: 3px auto 0;
+  }
+
+  .hh-search-results-page__popular span {
+    display: inline-flex;
+    min-height: 32px;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .hh-search-results-page__popular a {
+    display: inline-flex;
+    min-height: 32px;
+    align-items: center;
+    padding: 0 12px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 12px;
+    font-weight: 850;
+    line-height: 1;
+    text-decoration: none;
+    transition: border-color 180ms ease, color 180ms ease, background 180ms ease;
+  }
+
+  .hh-search-results-page__popular a:hover {
+    border-color: rgba(200, 165, 106, 0.68);
+    background: rgba(200, 165, 106, 0.12);
+    color: #fff;
   }
 
   .hh-search-results-page__body {
-    padding: clamp(28px, 4vw, 56px) 0 clamp(48px, 6vw, 86px);
+    padding: clamp(24px, 3vw, 44px) 0 clamp(48px, 6vw, 86px);
   }
 
   .hh-search-results-page__layout {
     display: grid;
-    grid-template-columns: minmax(210px, 250px) minmax(0, 1fr);
-    gap: clamp(22px, 3vw, 42px);
+    grid-template-columns: minmax(220px, 238px) minmax(0, 1fr);
+    gap: clamp(18px, 2vw, 30px);
     align-items: start;
   }
 
@@ -258,9 +325,11 @@
   }
 
   .hh-search-results-page .collection-filter {
-    margin-bottom: clamp(18px, 2vw, 28px);
-    padding-bottom: 14px;
+    margin-bottom: clamp(16px, 1.8vw, 24px);
+    padding: 12px 14px;
+    border: 1px solid var(--hh-border);
     border-color: var(--hh-border);
+    background: var(--hh-card);
     color: var(--hh-text);
   }
 
@@ -280,7 +349,7 @@
   .hh-search-results-page .collection-sidebar {
     position: sticky;
     top: 94px;
-    padding: 18px;
+    padding: 16px;
     border: 1px solid var(--hh-border);
     background: var(--hh-card);
   }
@@ -315,9 +384,9 @@
   }
 
   .hh-search-results-page .grid-product {
-    margin-bottom: clamp(26px, 3vw, 46px);
-    padding-left: clamp(8px, 1.2vw, 16px);
-    padding-right: clamp(8px, 1.2vw, 16px);
+    margin-bottom: clamp(22px, 2.6vw, 38px);
+    padding-left: clamp(7px, 0.9vw, 13px);
+    padding-right: clamp(7px, 0.9vw, 13px);
   }
 
   .hh-search-results-page .grid-product__content,
@@ -427,6 +496,13 @@
     font-size: 12px;
     font-weight: 900;
     text-decoration: none;
+    transition: background 180ms ease, border-color 180ms ease, color 180ms ease;
+  }
+
+  .hh-search-results-page__quick-links a:hover {
+    border-color: rgba(200, 165, 106, 0.72);
+    background: var(--hh-black);
+    color: #fff;
   }
 
   @media screen and (min-width: 769px) {
@@ -443,13 +519,53 @@
     }
 
     .hh-search-results-page__form {
-      grid-template-columns: 1fr;
-      border-radius: 18px;
-      padding: 10px;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 6px;
+      width: 100%;
+      margin-top: 8px;
+      padding: 5px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .hh-search-results-page__input {
+      min-height: 42px;
+      padding: 0 12px 0 6px;
+      font-size: 14px;
+      font-weight: 800;
     }
 
     .hh-search-results-page__button {
-      width: 100%;
+      min-height: 42px;
+      width: auto;
+      padding: 0 14px;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+    }
+
+    .hh-search-results-page__popular {
+      justify-content: flex-start;
+      gap: 7px;
+      margin-top: 2px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      flex-wrap: nowrap;
+      scrollbar-width: none;
+    }
+
+    .hh-search-results-page__popular::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hh-search-results-page__popular span,
+    .hh-search-results-page__popular a {
+      flex: 0 0 auto;
+    }
+
+    .hh-search-results-page__popular span {
+      min-height: 30px;
+      font-size: 10px;
+      letter-spacing: 0.08em;
     }
 
     .hh-search-results-page__layout {
