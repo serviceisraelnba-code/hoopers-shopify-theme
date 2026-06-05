@@ -1,0 +1,257 @@
+<section class="hoopers-collection-faq" dir="rtl">
+  <div class="hoopers-collection-faq__inner">
+    {% if section.settings.title != blank or section.settings.intro_text != blank %}
+      <header class="hoopers-collection-faq__header">
+        {% if section.settings.title != blank %}
+          <h2 class="hoopers-collection-faq__title">{{ section.settings.title }}</h2>
+        {% endif %}
+
+        {% if section.settings.intro_text != blank %}
+          <div class="hoopers-collection-faq__intro">
+            {{ section.settings.intro_text }}
+          </div>
+        {% endif %}
+      </header>
+    {% endif %}
+
+    {% if section.blocks.size > 0 %}
+      <div class="hoopers-collection-faq__items">
+        {% for block in section.blocks %}
+          {% if block.settings.question != blank or block.settings.answer != blank %}
+            <details class="hoopers-collection-faq__item" {% if forloop.first %}open{% endif %} {{ block.shopify_attributes }}>
+              <summary class="hoopers-collection-faq__question">
+                <span>{{ block.settings.question }}</span>
+                <span class="hoopers-collection-faq__icon" aria-hidden="true"></span>
+              </summary>
+
+              {% if block.settings.answer != blank %}
+                <div class="hoopers-collection-faq__answer">
+                  {{ block.settings.answer }}
+                </div>
+              {% endif %}
+            </details>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  .hoopers-collection-faq {
+    --hh-bg: #ece7df;
+    --hh-card: #f7f4ee;
+    --hh-text: #111111;
+    --hh-muted: rgba(17, 17, 17, 0.72);
+    --hh-border: rgba(17, 17, 17, 0.14);
+    --hh-gold: #c8a56a;
+
+    background: var(--hh-bg);
+    color: var(--hh-text);
+    padding: clamp(42px, 6vw, 76px) 0;
+  }
+
+  .hoopers-collection-faq__inner {
+    width: min(100%, 1180px);
+    margin: 0 auto;
+    padding: 0 clamp(16px, 3vw, 40px);
+  }
+
+  .hoopers-collection-faq__header {
+    max-width: 860px;
+    margin: 0 auto clamp(24px, 4vw, 38px);
+    text-align: center;
+  }
+
+  .hoopers-collection-faq__title {
+    margin: 0;
+    color: var(--hh-text);
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 950;
+    line-height: 1.08;
+    letter-spacing: 0;
+  }
+
+  .hoopers-collection-faq__intro {
+    margin: 16px auto 0;
+    color: var(--hh-muted);
+    font-size: clamp(14px, 1.4vw, 17px);
+    font-weight: 600;
+    line-height: 1.8;
+  }
+
+  .hoopers-collection-faq__intro p {
+    margin: 0;
+  }
+
+  .hoopers-collection-faq__items {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    gap: 10px;
+  }
+
+  .hoopers-collection-faq__item {
+    background: var(--hh-card);
+    border: 1px solid var(--hh-border);
+  }
+
+  .hoopers-collection-faq__question {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 18px 20px;
+    color: var(--hh-text);
+    font-size: clamp(15px, 1.5vw, 18px);
+    font-weight: 900;
+    line-height: 1.35;
+  }
+
+  .hoopers-collection-faq__question::-webkit-details-marker {
+    display: none;
+  }
+
+  .hoopers-collection-faq__icon {
+    position: relative;
+    width: 16px;
+    height: 16px;
+    flex: 0 0 16px;
+  }
+
+  .hoopers-collection-faq__icon::before,
+  .hoopers-collection-faq__icon::after {
+    content: "";
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: 14px;
+    height: 2px;
+    background: var(--hh-gold);
+    transform: translate(-50%, -50%);
+    transition: transform 180ms ease;
+  }
+
+  .hoopers-collection-faq__icon::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+
+  .hoopers-collection-faq__item[open] .hoopers-collection-faq__icon::after {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  .hoopers-collection-faq__answer {
+    padding: 0 20px 20px;
+    color: var(--hh-muted);
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.8;
+  }
+
+  .hoopers-collection-faq__answer p {
+    margin: 0;
+  }
+
+  @media screen and (max-width: 640px) {
+    .hoopers-collection-faq {
+      padding: 38px 0 48px;
+    }
+
+    .hoopers-collection-faq__question {
+      padding: 16px;
+    }
+
+    .hoopers-collection-faq__answer {
+      padding: 0 16px 16px;
+      font-size: 14px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Collection FAQ intro",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title",
+      "default": "שאלות נפוצות"
+    },
+    {
+      "type": "richtext",
+      "id": "intro_text",
+      "label": "Intro text",
+      "default": "<p>קולקציית Jordan של HOOPERS משלבת השראה מעולם הכדורסל עם סטייל רחוב מודרני. כאן תוכלו למצוא מגוון מכנסי Jordan בצבעים ודגמים שונים שמתאימים ליום יום, לאימונים וללוק אופנתי בהשראת תרבות ה־NBA.</p>"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq_item",
+      "name": "FAQ item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection FAQ intro",
+      "blocks": [
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "האם מכנסי Jordan מגיעים בגזרה רחבה?",
+            "answer": "<p>כן. רוב הדגמים בקולקציה מגיעים בגזרה משוחררת ונוחה שמתאימה לסטייל רחוב וללבישה יומיומית.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "איזו מידה מומלץ לבחור?",
+            "answer": "<p>ברוב הדגמים אנחנו ממליצים לבחור מידה אחת מעל המידה הרגילה להתאמה משוחררת ונוחה יותר.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "האם המכנסיים מתאימים גם ליום יום?",
+            "answer": "<p>כן. מכנסי Jordan מתאימים גם ליום יום, גם לסטייל רחוב וגם לשילוב עם טישרטים, גופיות ונעלי סניקרס.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "תוך כמה זמן מגיע המשלוח?",
+            "answer": "<p>זמני השילוח הם עד 14 ימי עסקים.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "האם אפשר להחליף מידה?",
+            "answer": "<p>כן. ניתן לבצע החלפת מידה בהתאם למדיניות ההחלפות באתר, כל עוד המוצר במצב חדש ולא נעשה בו שימוש.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "האם יש משלוח חינם?",
+            "answer": "<p>כן. משלוח חינם בקנייה מעל 300₪.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,366 @@
+{% liquid
+assign hero_desktop_image = section.settings.hero_desktop_image
+if hero_desktop_image == blank
+assign hero_desktop_image = section.settings.hero_image
+endif
+assign hero_mobile_image = section.settings.hero_mobile_image
+
+assign editorial_desktop_image = section.settings.editorial_desktop_image
+if editorial_desktop_image == blank
+assign editorial_desktop_image = section.settings.editorial_image
+endif
+assign editorial_mobile_image = section.settings.editorial_mobile_image
+%}
+
+<section class="hoopers-home" dir="rtl"> <div class="hh-hero"> {%- if section.settings.button_1_link != blank -%} <a class="hh-hero__full-link" href="{{ section.settings.button_1_link }}" aria-label="{{ section.settings.hero_title | default: section.settings.button_1_text | default: 'HOOPERS' | escape }}"></a> {%- endif -%}
+<picture class="hh-hero__media">
+  {%- if hero_mobile_image != blank -%}
+    <source media="(max-width: 749px)" srcset="{{ hero_mobile_image | image_url: width: 900 }}">
+  {%- endif -%}
+  {%- if hero_desktop_image != blank -%}
+    {{ hero_desktop_image | image_url: width: 2400 | image_tag: loading: 'eager', class: 'hh-hero__image', alt: section.settings.hero_title }}
+  {%- endif -%}
+</picture>
+
+<div class="hh-hero__overlay"></div>
+
+<div class="hh-hero__content">
+  {%- if section.settings.brand_text != blank -%}
+    <p class="hh-hero__brand">{{ section.settings.brand_text }}</p>
+  {%- endif -%}
+  {%- if section.settings.hero_kicker != blank -%}
+    <p class="hh-kicker">{{ section.settings.hero_kicker }}</p>
+  {%- endif -%}
+  {%- if section.settings.hero_title != blank -%}
+    <h1>{{ section.settings.hero_title }}</h1>
+  {%- endif -%}
+  {%- if section.settings.hero_subtitle != blank -%}
+    <div class="hh-hero__subtitle">{{ section.settings.hero_subtitle }}</div>
+  {%- endif -%}
+
+  <div class="hh-buttons">
+    {%- if section.settings.button_1_text != blank and section.settings.button_1_link != blank -%}
+      <a class="hh-button hh-button--light" href="{{ section.settings.button_1_link }}">{{ section.settings.button_1_text }}</a>
+    {%- endif -%}
+    {%- if section.settings.button_2_text != blank and section.settings.button_2_link != blank -%}
+      <a class="hh-button hh-button--dark" href="{{ section.settings.button_2_link }}">{{ section.settings.button_2_text }}</a>
+    {%- endif -%}
+  </div>
+</div>
+</div> <div class="hh-vibes"> <div class="hh-wrap"> {%- if section.settings.vibe_title != blank -%} <h2 class="hh-section-title">{{ section.settings.vibe_title }}</h2> {%- endif -%}
+  <div class="hh-vibe-grid">
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'vibe_card' -%}
+        {% liquid
+          assign vibe_desktop_image = block.settings.image
+          assign vibe_mobile_image = block.settings.mobile_image
+        %}
+        <a class="hh-vibe-card" {% if block.settings.link != blank %}href="{{ block.settings.link }}"{% endif %} {{ block.shopify_attributes }}>
+          <picture>
+            {%- if vibe_mobile_image != blank -%}
+              <source media="(max-width: 749px)" srcset="{{ vibe_mobile_image | image_url: width: 700 }}">
+            {%- endif -%}
+            {%- if vibe_desktop_image != blank -%}
+              {{ vibe_desktop_image | image_url: width: 900 | image_tag: loading: 'lazy', alt: block.settings.title }}
+            {%- endif -%}
+          </picture>
+          <span class="hh-vibe-card__shade"></span>
+          {%- if block.settings.title != blank -%}
+            <span class="hh-vibe-card__title">{{ block.settings.title }}</span>
+          {%- endif -%}
+        </a>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+
+  {%- if section.settings.vibe_button_text != blank -%}
+    <div class="hh-centered-cta">
+      <a class="hh-button hh-button--outline-gold" href="{% if section.settings.vibe_button_link != blank %}{{ section.settings.vibe_button_link }}{% else %}#{% endif %}">
+        {{ section.settings.vibe_button_text }}
+      </a>
+    </div>
+  {%- endif -%}
+</div>
+</div> <div class="hh-trust"> <div class="hh-wrap hh-trust__grid"> <div class="hh-trust__item"> <span class="hh-trust__icon">▱</span> <div>{{ section.settings.benefit_1 }}</div> </div> <div class="hh-trust__item"> <span class="hh-trust__icon">↻</span> <div>{{ section.settings.benefit_2 }}</div> </div> <div class="hh-trust__item"> <span class="hh-trust__icon">☆</span> <div>{{ section.settings.benefit_3 }}</div> </div> <div class="hh-trust__item"> <span class="hh-trust__icon">▣</span> <div>{{ section.settings.benefit_4 }}</div> </div> </div> </div>
+{%- if section.settings.marquee_text != blank -%}
+<div class="hh-marquee" aria-hidden="true">
+<div class="hh-marquee__track">
+<span>{{ section.settings.marquee_text }}</span>
+<span>{{ section.settings.marquee_text }}</span>
+<span>{{ section.settings.marquee_text }}</span>
+</div>
+</div>
+{%- endif -%}
+
+<div class="hh-products"> <div class="hh-wrap"> {%- if section.settings.products_title != blank -%} <h2 class="hh-section-title">{{ section.settings.products_title }}</h2> {%- endif -%}
+  {%- if section.settings.products_collection != blank -%}
+    <div class="hh-product-grid">
+      {%- for product in section.settings.products_collection.products limit: section.settings.products_limit -%}
+        <a class="hh-product-card" href="{{ product.url }}">
+          <div class="hh-product-card__image">
+            {%- if product.featured_image != blank -%}
+              {{ product.featured_image | image_url: width: 700 | image_tag: loading: 'lazy', alt: product.title }}
+            {%- endif -%}
+          </div>
+          <h3>{{ product.title }}</h3>
+          <p>{{ product.price | money }}</p>
+        </a>
+      {%- endfor -%}
+    </div>
+
+    <div class="hh-swipe-dots hh-swipe-dots--dark" aria-hidden="true">
+      {%- for product in section.settings.products_collection.products limit: section.settings.products_limit -%}
+        <span></span>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+
+  {%- if section.settings.products_button_text != blank -%}
+    <div class="hh-centered-cta">
+      <a class="hh-button hh-button--outline-gold" href="{% if section.settings.products_button_link != blank %}{{ section.settings.products_button_link }}{% else %}#{% endif %}">
+        {{ section.settings.products_button_text }}
+      </a>
+    </div>
+  {%- endif -%}
+</div>
+</div> <div class="hh-why"> <div class="hh-wrap"> {%- if section.settings.why_kicker != blank -%} <p class="hh-why__kicker">{{ section.settings.why_kicker }}</p> {%- endif -%} {%- if section.settings.why_title != blank -%} <h2 class="hh-why__title">{{ section.settings.why_title }}</h2> {%- endif -%}
+  <div class="hh-why__grid">
+    <div class="hh-why-card">
+      <span class="hh-why-card__icon">◇</span>
+      <h3>{{ section.settings.why_1_title }}</h3>
+      <p>{{ section.settings.why_1_text }}</p>
+    </div>
+    <div class="hh-why-card">
+      <span class="hh-why-card__icon">↔</span>
+      <h3>{{ section.settings.why_2_title }}</h3>
+      <p>{{ section.settings.why_2_text }}</p>
+    </div>
+    <div class="hh-why-card">
+      <span class="hh-why-card__icon">✦</span>
+      <h3>{{ section.settings.why_3_title }}</h3>
+      <p>{{ section.settings.why_3_text }}</p>
+    </div>
+  </div>
+
+  <div class="hh-swipe-dots hh-swipe-dots--light" aria-hidden="true">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+</div> <div class="hh-editorial"> <div class="hh-editorial__inner"> {%- if section.settings.editorial_link != blank -%} <a class="hh-editorial__media hh-editorial__media--link" href="{{ section.settings.editorial_link }}" aria-label="{{ section.settings.editorial_title | default: section.settings.editorial_button | default: 'Shop The Look' | escape }}"> {%- else -%} <div class="hh-editorial__media"> {%- endif -%} <picture> {%- if editorial_mobile_image != blank -%} <source media="(max-width: 749px)" srcset="{{ editorial_mobile_image | image_url: width: 900 }}"> {%- endif -%} {%- if editorial_desktop_image != blank -%} {{ editorial_desktop_image | image_url: width: 2400 | image_tag: loading: 'lazy', class: 'hh-editorial__image', alt: section.settings.editorial_title }} {%- endif -%} </picture> {%- if section.settings.editorial_link != blank -%} </a> {%- else -%} </div> {%- endif -%}
+  <div class="hh-editorial__overlay"></div>
+
+  <div class="hh-editorial__content">
+    {%- if section.settings.editorial_kicker != blank -%}
+      <p class="hh-kicker">{{ section.settings.editorial_kicker }}</p>
+    {%- endif -%}
+    {%- if section.settings.editorial_title != blank -%}
+      <h2>{{ section.settings.editorial_title }}</h2>
+    {%- endif -%}
+    {%- if section.settings.editorial_text != blank -%}
+      <p>{{ section.settings.editorial_text }}</p>
+    {%- endif -%}
+    {%- if section.settings.editorial_button != blank and section.settings.editorial_link != blank -%}
+      <a class="hh-button hh-button--light hh-editorial__button" href="{{ section.settings.editorial_link }}">{{ section.settings.editorial_button }}</a>
+    {%- endif -%}
+  </div>
+</div>
+</div> <div class="hh-community"> <div class="hh-wrap"> {%- if section.settings.community_kicker != blank -%} <p class="hh-community__kicker">{{ section.settings.community_kicker }}</p> {%- endif -%} {%- if section.settings.community_title != blank -%} <h2 class="hh-community__title">{{ section.settings.community_title }}</h2> {%- endif -%}
+  <div class="hh-community__grid">
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'community_image' -%}
+        {% liquid
+          assign community_media_type = block.settings.media_type | default: 'image'
+          assign community_alt = block.settings.alt_text | default: block.settings.alt
+        %}
+        <div class="hh-community-card" {{ block.shopify_attributes }}>
+          {%- if community_media_type == 'video' and block.settings.video != blank -%}
+            {{ block.settings.video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true, poster: block.settings.video_poster_image, class: 'hh-community-card__media' }}
+            <span class="hh-community-card__play">▶</span>
+          {%- elsif block.settings.image != blank -%}
+            {{ block.settings.image | image_url: width: 700 | image_tag: loading: 'lazy', class: 'hh-community-card__media', alt: community_alt }}
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</div>
+</div> <div class="hh-tour"> <div class="hh-wrap"> {%- if section.settings.tour_kicker != blank -%} <p class="hh-tour__kicker">{{ section.settings.tour_kicker }}</p> {%- endif -%} {%- if section.settings.tour_title != blank -%} <h2 class="hh-tour__title">{{ section.settings.tour_title }}</h2> {%- endif -%} {%- if section.settings.tour_text != blank -%} <div class="hh-tour__text">{{ section.settings.tour_text | newline_to_br }}</div> {%- endif -%}
+  <div class="hh-tour__grid">
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'tour_image' -%}
+        <div class="hh-tour-card" {{ block.shopify_attributes }}>
+          {%- if block.settings.image != blank -%}
+            {{ block.settings.image | image_url: width: 900 | image_tag: loading: 'lazy', alt: block.settings.alt_text }}
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+
+  {%- if section.settings.tour_button_text != blank -%}
+    <div class="hh-tour__cta">
+      <a class="hh-button hh-button--light" href="{% if section.settings.tour_button_link != blank %}{{ section.settings.tour_button_link }}{% else %}#{% endif %}">
+        {{ section.settings.tour_button_text }}
+      </a>
+    </div>
+  {%- endif -%}
+</div>
+</div> <div class="hh-faq"> <div class="hh-wrap"> {%- if section.settings.faq_kicker != blank -%} <p class="hh-faq__kicker">{{ section.settings.faq_kicker }}</p> {%- endif -%} {%- if section.settings.faq_title != blank -%} <h2 class="hh-faq__title">{{ section.settings.faq_title }}</h2> {%- endif -%}
+  <div class="hh-faq__list">
+    {%- for i in (1..5) -%}
+      {% liquid
+        assign question_key = 'faq_' | append: i | append: '_question'
+        assign answer_key = 'faq_' | append: i | append: '_answer'
+        assign question = section.settings[question_key]
+        assign answer = section.settings[answer_key]
+      %}
+      {%- if question != blank or answer != blank -%}
+        <details class="hh-faq__item">
+          <summary>{{ question }}</summary>
+          <div>{{ answer }}</div>
+        </details>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</div>
+</div> </section> <style> .hoopers-home { --hh-black: #050505; --hh-soft-black: #0d0d0d; --hh-cream: #f4efe7; --hh-white: #ffffff; --hh-gold: #c6a36b; --hh-muted: rgba(255, 255, 255, 0.72); background: var(--hh-cream); color: var(--hh-black); font-family: inherit; overflow: hidden; } .hoopers-home * { box-sizing: border-box; } .hoopers-home a { color: inherit; text-decoration: none; } .hh-wrap { width: min(1440px, calc(100% - 32px)); margin: 0 auto; } .hh-kicker, .hh-section-title, .hh-community__kicker, .hh-tour__kicker, .hh-faq__kicker { margin: 0; letter-spacing: 0.28em; text-transform: uppercase; font-size: 12px; font-weight: 800; } .hh-section-title { margin-bottom: 28px; text-align: center; font-size: clamp(20px, 2vw, 28px); } .hh-hero { position: relative; isolation: isolate; background: var(--hh-black); } .hh-hero__media, .hh-hero__media img { display: block; width: 100%; } .hh-hero__media img { height: auto; object-fit: cover; object-position: center center; } .hh-hero__overlay { position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(0, 0, 0, 0.48), rgba(0, 0, 0, 0.08) 58%, rgba(0, 0, 0, 0.14)), linear-gradient(0deg, rgba(0, 0, 0, 0.1), transparent 36%); pointer-events: none; } .hh-hero__full-link { position: absolute; inset: 0; z-index: 3; } .hh-hero__content { position: absolute; inset: auto auto 12% 4%; z-index: 4; width: min(620px, 88vw); direction: ltr; color: var(--hh-white); pointer-events: none; } .hh-hero__content a, .hh-hero__content button { pointer-events: auto; } .hh-hero__brand { margin: 0 0 18px; color: var(--hh-gold); letter-spacing: 0.36em; font-size: 12px; font-weight: 800; } .hh-hero h1 { margin: 8px 0 16px; font-size: clamp(42px, 7vw, 112px); line-height: 0.92; letter-spacing: 0.02em; text-transform: uppercase; } .hh-hero__subtitle { max-width: 470px; color: rgba(255, 255, 255, 0.88); font-size: clamp(16px, 1.6vw, 22px); line-height: 1.55; direction: rtl; } .hh-buttons { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; } .hh-button { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 26px; border: 1px solid currentColor; font-size: 13px; font-weight: 900; letter-spacing: 0.05em; text-transform: uppercase; transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease; } .hh-button--light { background: var(--hh-white); color: var(--hh-black); border-color: var(--hh-white); } .hh-button--dark { background: rgba(0, 0, 0, 0.25); color: var(--hh-white); border-color: rgba(255, 255, 255, 0.55); } .hh-button--outline-gold { background: transparent; color: var(--hh-black); border-color: var(--hh-gold); } .hh-button:hover { background: var(--hh-gold); border-color: var(--hh-gold); color: var(--hh-black); } .hh-vibes { padding: 42px 0 46px; background: var(--hh-cream); } .hh-vibe-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; } .hh-vibe-card { position: relative; display: block; min-height: 240px; overflow: hidden; background: #111; } .hh-vibe-card picture, .hh-vibe-card img { width: 100%; height: 100%; display: block; } .hh-vibe-card picture { position: absolute; inset: 0; } .hh-vibe-card img { object-fit: cover; transition: transform 0.45s ease; } .hh-vibe-card:hover img { transform: scale(1.04); } .hh-vibe-card__shade { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(0, 0, 0, 0.64), rgba(0, 0, 0, 0.08)); } .hh-vibe-card__title { position: absolute; left: 14px; right: 14px; bottom: 26px; color: var(--hh-white); text-align: center; font-size: clamp(20px, 2.1vw, 34px); font-weight: 950; line-height: 1; letter-spacing: 0.04em; text-transform: uppercase; } .hh-vibe-card__title:after { content: ""; display: block; width: 72px; height: 2px; margin: 16px auto 0; background: var(--hh-gold); } .hh-centered-cta { margin-top: 28px; text-align: center; } .hh-swipe-dots { display: none; } .hh-trust { padding: 28px 0; background: var(--hh-soft-black); color: var(--hh-white); } .hh-trust__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; } .hh-trust__item { display: flex; align-items: center; justify-content: center; gap: 14px; min-height: 64px; padding: 0 22px; border-left: 1px solid rgba(198, 163, 107, 0.35); color: rgba(255, 255, 255, 0.9); text-align: right; font-size: 15px; line-height: 1.45; } .hh-trust__item:last-child { border-left: 0; } .hh-trust__icon { color: var(--hh-gold); font-size: 30px; line-height: 1; } .hh-marquee { overflow: hidden; background: #111; color: var(--hh-gold); border-top: 1px solid rgba(198, 163, 107, 0.25); border-bottom: 1px solid rgba(198, 163, 107, 0.25); } .hh-marquee__track { display: flex; width: max-content; animation: hh-marquee 28s linear infinite; } .hh-marquee span { padding: 12px 42px; white-space: nowrap; font-size: 12px; font-weight: 900; letter-spacing: 0.2em; text-transform: uppercase; } @keyframes hh-marquee { to { transform: translateX(50%); } } .hh-products { padding: 54px 0 64px; background: var(--hh-cream); } .hh-product-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 18px; } .hh-product-card { display: block; text-align: center; } .hh-product-card__image { aspect-ratio: 3 / 4; overflow: hidden; background: #ddd; } .hh-product-card img { width: 100%; height: 100%; object-fit: cover; } .hh-product-card h3 { margin: 12px 0 4px; font-size: 14px; font-weight: 700; line-height: 1.3; } .hh-product-card p { margin: 0; font-size: 14px; } .hh-why { padding: 68px 0 76px; background: #050607; color: var(--hh-white); } .hh-why__kicker { margin: 0 0 14px; color: var(--hh-gold); text-align: center; font-size: 11px; font-weight: 900; letter-spacing: 0.22em; text-transform: uppercase; } .hh-why__title { margin: 0 0 34px; text-align: center; font-size: clamp(30px, 4vw, 58px); line-height: 1.12; font-weight: 950; letter-spacing: 0; text-transform: none; } .hh-why__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; } .hh-why-card { min-height: 210px; padding: 34px 30px; border: 1px solid rgba(255, 255, 255, 0.13); background: rgba(255, 255, 255, 0.025); } .hh-why-card__icon { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; margin-bottom: 28px; border: 1px solid rgba(198, 163, 107, 0.55); color: var(--hh-gold); } .hh-why-card h3 { margin: 0 0 12px; font-size: clamp(20px, 1.8vw, 28px); line-height: 1.25; font-weight: 900; } .hh-why-card p { margin: 0; color: rgba(255, 255, 255, 0.68); font-size: 15px; line-height: 1.75; } .hh-editorial { background: var(--hh-black); } .hh-editorial__inner { position: relative; isolation: isolate; background: var(--hh-black); } .hh-editorial__media, .hh-editorial__media picture, .hh-editorial__media img { display: block; width: 100%; } .hh-editorial__media img { height: auto; object-fit: cover; object-position: center center; } .hh-editorial__overlay { position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(0, 0, 0, 0.44), rgba(0, 0, 0, 0.06) 64%, rgba(0, 0, 0, 0.14)), linear-gradient(0deg, rgba(0, 0, 0, 0.14), transparent 42%); pointer-events: none; } .hh-editorial__media--link { position: relative; z-index: 0; } .hh-editorial__content { position: absolute; left: 6%; bottom: 12%; z-index: 2; width: min(520px, 86vw); color: var(--hh-white); direction: rtl; } .hh-editorial__content h2 { margin: 10px 0 14px; font-size: clamp(36px, 6vw, 92px); line-height: 0.98; font-weight: 950; letter-spacing: 0.01em; text-transform: uppercase; } .hh-editorial__content p { margin: 0; max-width: 460px; color: rgba(255, 255, 255, 0.86); font-size: clamp(16px, 1.4vw, 21px); line-height: 1.65; } .hh-editorial__button { margin-top: 26px; } .hh-community, .hh-tour { padding: 58px 0 70px; background: var(--hh-soft-black); color: var(--hh-white); } .hh-community__kicker, .hh-tour__kicker { color: var(--hh-gold); text-align: center; } .hh-community__title, .hh-tour__title { margin: 8px 0 28px; text-align: center; font-size: clamp(24px, 3vw, 44px); line-height: 1.1; font-weight: 950; letter-spacing: 0.16em; text-transform: uppercase; } .hh-tour__text { max-width: 680px; margin: -12px auto 32px; color: rgba(255, 255, 255, 0.75); text-align: center; font-size: 16px; line-height: 1.8; } .hh-community__grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; } .hh-community-card, .hh-tour-card { position: relative; aspect-ratio: 4 / 5; overflow: hidden; background: #151515; } .hh-community-card__media, .hh-community-card img, .hh-community-card video, .hh-tour-card img { width: 100%; height: 100%; object-fit: cover; display: block; } .hh-community-card__play { position: absolute; left: 12px; bottom: 12px; display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; background: rgba(255, 255, 255, 0.86); color: var(--hh-black); font-size: 12px; } .hh-tour { border-top: 1px solid rgba(198, 163, 107, 0.22); } .hh-tour__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; } .hh-tour__cta { margin-top: 30px; text-align: center; } .hh-faq { padding: 72px 0; background: var(--hh-cream); color: var(--hh-black); } .hh-faq__kicker { color: var(--hh-gold); text-align: center; } .hh-faq__title { margin: 10px 0 32px; text-align: center; font-size: clamp(32px, 4vw, 58px); line-height: 1.1; font-weight: 950; } .hh-faq__list { max-width: 920px; margin: 0 auto; border-top: 1px solid rgba(0, 0, 0, 0.16); } .hh-faq__item { border-bottom: 1px solid rgba(0, 0, 0, 0.16); } .hh-faq__item summary { position: relative; cursor: pointer; list-style: none; padding: 22px 44px 22px 0; font-size: clamp(18px, 1.8vw, 24px); font-weight: 850; } .hh-faq__item summary::-webkit-details-marker { display: none; } .hh-faq__item summary:before { content: "+"; position: absolute; right: 0; top: 22px; color: var(--hh-gold); font-size: 26px; line-height: 1; } .hh-faq__item[open] summary:before { content: "-"; } .hh-faq__item div { padding: 0 44px 24px 0; color: rgba(0, 0, 0, 0.68); font-size: 16px; line-height: 1.8; } @media (max-width: 989px) { .hh-vibe-grid, .hh-product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .hh-community__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .hh-trust__grid, .hh-tour__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .hh-why__grid { grid-template-columns: 1fr; } } @media (max-width: 749px) { .hh-wrap { width: min(100% - 24px, 640px); } .hh-hero { min-height: 560px; } .hh-hero__media { position: absolute; inset: 0; height: 100%; } .hh-hero__media img { height: 100%; object-position: center center; } .hh-hero__overlay { background: linear-gradient(0deg, rgba(0, 0, 0, 0.56), rgba(0, 0, 0, 0.05) 60%), linear-gradient(90deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.03)); } .hh-hero__content { left: 18px; right: 18px; bottom: 38px; width: auto; } .hh-hero h1 { font-size: clamp(42px, 14vw, 68px); } .hh-buttons { gap: 10px; } .hh-button { min-height: 44px; padding: 0 18px; font-size: 12px; } .hh-vibes, .hh-products, .hh-why, .hh-community, .hh-tour, .hh-faq { padding-top: 42px; padding-bottom: 48px; } .hh-vibe-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; } .hh-vibe-card { min-height: 170px; } .hh-vibe-card__title { font-size: 22px; } .hh-trust__grid { grid-template-columns: 1fr; } .hh-trust__item { justify-content: flex-start; border-left: 0; border-bottom: 1px solid rgba(198, 163, 107, 0.25); } .hh-trust__item:last-child { border-bottom: 0; } .hh-product-grid { display: grid; grid-auto-flow: column; grid-auto-columns: 62vw; grid-template-columns: none; gap: 14px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none; } .hh-product-grid::-webkit-scrollbar { display: none; } .hh-product-card { scroll-snap-align: start; } .hh-swipe-dots { display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: 18px; } .hh-swipe-dots span { width: 6px; height: 6px; border-radius: 999px; opacity: 0.42; } .hh-swipe-dots span:first-child { width: 18px; opacity: 1; } .hh-swipe-dots--dark span { background: var(--hh-black); } .hh-swipe-dots--light span { background: var(--hh-gold); } .hh-why__title { font-size: 34px; letter-spacing: 0; text-transform: none; } .hh-why__grid { display: grid; grid-auto-flow: column; grid-auto-columns: 82vw; grid-template-columns: none; gap: 14px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none; } .hh-why__grid::-webkit-scrollbar { display: none; } .hh-why-card { min-height: auto; padding: 28px 22px; scroll-snap-align: start; } .hh-editorial__media, .hh-editorial__media picture, .hh-editorial__media img { width: 100%; height: auto; display: block; } .hh-editorial__media img { object-fit: cover; object-position: center center; } .hh-editorial__overlay { background: linear-gradient(0deg, rgba(0, 0, 0, 0.46), rgba(0, 0, 0, 0.05) 62%), linear-gradient(90deg, rgba(0, 0, 0, 0.18), transparent); } .hh-editorial__content { left: 18px; right: 18px; bottom: 28px; width: auto; } .hh-editorial__content h2 { font-size: clamp(34px, 11vw, 54px); } .hh-community__title, .hh-tour__title { letter-spacing: 0.08em; } .hh-community__grid, .hh-tour__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; } .hh-faq__item summary { padding-left: 0; font-size: 18px; } } </style>
+{% schema %}
+{
+"name": "HOOPERS Luxury Home",
+"settings": [
+{ "type": "image_picker", "id": "hero_desktop_image", "label": "Hero desktop image" },
+{ "type": "image_picker", "id": "hero_mobile_image", "label": "Hero mobile image" },
+{ "type": "image_picker", "id": "hero_image", "label": "Legacy hero image" },
+{ "type": "text", "id": "brand_text", "label": "Brand text" },
+{ "type": "text", "id": "hero_kicker", "label": "Hero kicker" },
+{ "type": "textarea", "id": "hero_title", "label": "Hero title", "default": "SPORT MEETS STYLE" },
+{ "type": "textarea", "id": "hero_subtitle", "label": "Hero subtitle", "default": "קולקציות כדורסל, כדורגל וסטריטוור שנבנו לאנשים שחיים את התרבות." },
+{ "type": "text", "id": "button_1_text", "label": "Button 1 text", "default": "SHOP NEW ARRIVALS" },
+{ "type": "url", "id": "button_1_link", "label": "Button 1 link" },
+{ "type": "text", "id": "button_2_text", "label": "Button 2 text", "default": "SHOP JERSEYS" },
+{ "type": "url", "id": "button_2_link", "label": "Button 2 link" },
+
+{ "type": "text", "id": "vibe_title", "label": "Shop by vibe title", "default": "SHOP BY VIBE" },
+{ "type": "text", "id": "vibe_button_text", "label": "Vibe button text", "default": "לכל הקולקציות" },
+{ "type": "url", "id": "vibe_button_link", "label": "Vibe button link" },
+
+{ "type": "text", "id": "benefit_1", "label": "Benefit 1", "default": "משלוחים חינם מעל ₪300" },
+{ "type": "text", "id": "benefit_2", "label": "Benefit 2", "default": "החלפת מידה בקלות ובמהירות" },
+{ "type": "text", "id": "benefit_3", "label": "Benefit 3", "default": "אלפי לקוחות מרוצים בביקורות אמיתיות" },
+{ "type": "text", "id": "benefit_4", "label": "Benefit 4", "default": "תשלום מאובטח 100% בטוח" },
+{ "type": "text", "id": "marquee_text", "label": "Marquee", "default": "HOOPERS • BORN TO PLAY • SPORT MEETS STYLE •" },
+
+{ "type": "text", "id": "products_title", "label": "Products title", "default": "BEST SELLERS" },
+{ "type": "collection", "id": "products_collection", "label": "Best sellers collection" },
+{ "type": "range", "id": "products_limit", "label": "Products limit", "min": 2, "max": 12, "step": 1, "default": 6 },
+{ "type": "text", "id": "products_button_text", "label": "Products button text", "default": "לכל הנמכרים ביותר" },
+{ "type": "url", "id": "products_button_link", "label": "Products button link" },
+
+{ "type": "text", "id": "why_kicker", "label": "Why kicker", "default": "WHY HOOPERS" },
+{ "type": "text", "id": "why_title", "label": "Why title", "default": "למה לבחור ב-HOOPERS" },
+{ "type": "text", "id": "why_1_title", "label": "Why 1 title", "default": "קולקציות שנבחרות לפי סטייל" },
+{ "type": "textarea", "id": "why_1_text", "label": "Why 1 text", "default": "פריטים של כדורסל, כדורגל וסטריטוור שנבחרים לפי מראה, איכות והתאמה ליום-יום." },
+{ "type": "text", "id": "why_2_title", "label": "Why 2 title", "default": "החלפת מידה פשוטה" },
+{ "type": "textarea", "id": "why_2_text", "label": "Why 2 text", "default": "אפשרות להחלפת מידה בצורה פשוטה, ברורה ומהירה." },
+{ "type": "text", "id": "why_3_title", "label": "Why 3 title", "default": "שירות אישי ומהיר" },
+{ "type": "textarea", "id": "why_3_text", "label": "Why 3 text", "default": "אנחנו כאן לפני ואחרי ההזמנה כדי לעזור בבחירה, מידה וכל שאלה." },
+
+{ "type": "image_picker", "id": "editorial_desktop_image", "label": "Editorial desktop image" },
+{ "type": "image_picker", "id": "editorial_mobile_image", "label": "Editorial mobile image" },
+{ "type": "image_picker", "id": "editorial_image", "label": "Legacy editorial image" },
+{ "type": "text", "id": "editorial_kicker", "label": "Editorial kicker", "default": "SHOP THE LOOK" },
+{ "type": "textarea", "id": "editorial_title", "label": "Editorial title", "default": "OUTFIT INSPIRATION" },
+{ "type": "textarea", "id": "editorial_text", "label": "Editorial text", "default": "בנה את הלוק המלא עם שילובים שמרגישים פרימיום על המגרש וברחוב." },
+{ "type": "text", "id": "editorial_button", "label": "Editorial button", "default": "SHOP THE EDIT" },
+{ "type": "url", "id": "editorial_link", "label": "Editorial link" },
+
+{ "type": "text", "id": "community_kicker", "label": "Community kicker", "default": "HOOPERS COMMUNITY" },
+{ "type": "text", "id": "community_title", "label": "Community title", "default": "LIVE THE CULTURE" },
+
+{ "type": "text", "id": "tour_kicker", "label": "Tour kicker", "default": "HOOPERS ON TOUR" },
+{ "type": "text", "id": "tour_title", "label": "Tour title", "default": "מהאתר אל השטח" },
+{ "type": "textarea", "id": "tour_text", "label": "Tour text", "default": "HOOPERS היא לא רק חנות אונליין.\nאנחנו פוגשים את הקהילה שלנו גם בדוכנים, פופ־אפים ואירועים ברחבי הארץ." },
+{ "type": "text", "id": "tour_button_text", "label": "Tour button text", "default": "עקבו אחרינו באינסטגרם" },
+{ "type": "url", "id": "tour_button_link", "label": "Tour button link" },
+
+{ "type": "text", "id": "faq_kicker", "label": "FAQ kicker", "default": "FAQ" },
+{ "type": "text", "id": "faq_title", "label": "FAQ title", "default": "שאלות נפוצות" },
+{ "type": "text", "id": "faq_1_question", "label": "FAQ 1 question", "default": "תוך כמה זמן מגיע המשלוח?" },
+{ "type": "textarea", "id": "faq_1_answer", "label": "FAQ 1 answer", "default": "זמני השילוח הם עד 14 ימי עסקים. לאחר ביצוע ההזמנה תקבלו עדכונים לגבי סטטוס המשלוח." },
+{ "type": "text", "id": "faq_2_question", "label": "FAQ 2 question", "default": "איך מחליפים מידה?" },
+{ "type": "textarea", "id": "faq_2_answer", "label": "FAQ 2 answer", "default": "ניתן לבצע החלפת מידה עד 14 ימים מקבלת החבילה, כל עוד המוצר חדש, לא נעשה בו שימוש והטיקט לא הוסר." },
+{ "type": "text", "id": "faq_3_question", "label": "FAQ 3 question", "default": "איך יודעים איזו מידה לבחור?" },
+{ "type": "textarea", "id": "faq_3_answer", "label": "FAQ 3 answer", "default": "מומלץ לבדוק את טבלת המידות בעמוד המוצר. אם אתם בין מידות או אוהבים התאמה משוחררת, לרוב כדאי לבחור מידה אחת מעל." },
+{ "type": "text", "id": "faq_4_question", "label": "FAQ 4 question", "default": "האם התשלום באתר מאובטח?" },
+{ "type": "textarea", "id": "faq_4_answer", "label": "FAQ 4 answer", "default": "כן. התשלום באתר מתבצע בצורה מאובטחת ומוגנת." },
+{ "type": "text", "id": "faq_5_question", "label": "FAQ 5 question", "default": "איך יוצרים קשר?" },
+{ "type": "textarea", "id": "faq_5_answer", "label": "FAQ 5 answer", "default": "ניתן ליצור איתנו קשר דרך עמוד יצירת הקשר באתר או באינסטגרם של HOOPERS." }
+],
+"blocks": [
+{
+"type": "vibe_card",
+"name": "Vibe card",
+"settings": [
+{ "type": "image_picker", "id": "image", "label": "Desktop image" },
+{ "type": "image_picker", "id": "mobile_image", "label": "Mobile image" },
+{ "type": "text", "id": "title", "label": "Title" },
+{ "type": "url", "id": "link", "label": "Link" }
+]
+},
+{
+"type": "community_image",
+"name": "Community image",
+"settings": [
+{
+"type": "select",
+"id": "media_type",
+"label": "Media type",
+"default": "image",
+"options": [
+{ "value": "image", "label": "Image" },
+{ "value": "video", "label": "Video" }
+]
+},
+{ "type": "image_picker", "id": "image", "label": "Image" },
+{ "type": "video", "id": "video", "label": "Video" },
+{ "type": "image_picker", "id": "video_poster_image", "label": "Video poster image" },
+{ "type": "text", "id": "alt_text", "label": "Alt text" },
+{ "type": "text", "id": "alt", "label": "Legacy alt text" }
+]
+},
+{
+"type": "tour_image",
+"name": "Tour image",
+"settings": [
+{ "type": "image_picker", "id": "image", "label": "Image" },
+{ "type": "text", "id": "alt_text", "label": "Alt text" }
+]
+}
+],
+"presets": [
+{
+"name": "HOOPERS Luxury Home",
+"blocks": [
+{ "type": "vibe_card", "settings": { "title": "JERSEYS" } },
+{ "type": "vibe_card", "settings": { "title": "WORLD CUP" } },
+{ "type": "vibe_card", "settings": { "title": "JORDAN" } },
+{ "type": "vibe_card", "settings": { "title": "FEAR OF GOD" } },
+{ "type": "vibe_card", "settings": { "title": "SHORTS" } },
+{ "type": "vibe_card", "settings": { "title": "KIDS" } },
+{ "type": "community_image" },
+{ "type": "community_image" },
+{ "type": "community_image" },
+{ "type": "community_image" },
+{ "type": "community_image" },
+{ "type": "community_image" },
+{ "type": "tour_image" },
+{ "type": "tour_image" },
+{ "type": "tour_image" },
+{ "type": "tour_image" }
+]
+}
+]
+}
+{% endschema %}

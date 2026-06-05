@@ -1,0 +1,178 @@
+<section class="hpt-why" dir="rtl">
+  <div class="hpt-wrap">
+    {%- if section.settings.title != blank -%}
+      <h2 class="hpt-why__title">{{ section.settings.title }}</h2>
+    {%- endif -%}
+
+    <div class="hpt-why__grid">
+      <div class="hpt-why-card">
+        <span class="hpt-why-card__icon">◇</span>
+        <h3>{{ section.settings.card_1_title }}</h3>
+      </div>
+      <div class="hpt-why-card">
+        <span class="hpt-why-card__icon">↔</span>
+        <h3>{{ section.settings.card_2_title }}</h3>
+      </div>
+      <div class="hpt-why-card">
+        <span class="hpt-why-card__icon">✦</span>
+        <h3>{{ section.settings.card_3_title }}</h3>
+      </div>
+    </div>
+
+    <div class="hpt-why__dots" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hpt-wrap {
+    width: min(1320px, calc(100% - 32px));
+    margin: 0 auto;
+  }
+
+  .hpt-why {
+    padding: 64px 0;
+    background: #ece7df;
+    color: #050505;
+  }
+
+  .hpt-why__title {
+    margin: 0 0 28px;
+    text-align: center;
+    font-size: clamp(30px, 3.6vw, 52px);
+    line-height: 1.12;
+    font-weight: 950;
+    letter-spacing: 0;
+  }
+
+  .hpt-why__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .hpt-why-card {
+    min-height: 160px;
+    padding: 28px;
+    border: 1px solid rgba(5, 5, 5, 0.12);
+    background: #f5f3ee;
+  }
+
+  .hpt-why-card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    margin-bottom: 22px;
+    border: 1px solid rgba(200, 165, 106, 0.65);
+    color: #c8a56a;
+  }
+
+  .hpt-why-card h3 {
+    margin: 0;
+    font-size: clamp(19px, 1.8vw, 28px);
+    line-height: 1.28;
+    font-weight: 950;
+  }
+
+  .hpt-why__dots {
+    display: none;
+  }
+
+  @media (max-width: 749px) {
+    .hpt-why {
+      padding: 46px 0;
+      overflow: hidden;
+    }
+
+    .hpt-why__title {
+      text-align: right;
+      font-size: 34px;
+    }
+
+    .hpt-why__grid {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 82vw;
+      grid-template-columns: none;
+      gap: 12px;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .hpt-why__grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hpt-why-card {
+      min-height: 170px;
+      padding: 24px 20px;
+      scroll-snap-align: start;
+    }
+
+    .hpt-why__dots {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      margin-top: 18px;
+    }
+
+    .hpt-why__dots span {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #050505;
+      opacity: 0.38;
+    }
+
+    .hpt-why__dots span:first-child {
+      width: 18px;
+      opacity: 1;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "HOOPERS Why Product",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "למה לקנות ב-HOOPERS?"
+    },
+    {
+      "type": "text",
+      "id": "card_1_title",
+      "label": "Card 1 title",
+      "default": "קולקציות שנבחרות לפי סטייל"
+    },
+    {
+      "type": "text",
+      "id": "card_2_title",
+      "label": "Card 2 title",
+      "default": "החלפת מידה פשוטה"
+    },
+    {
+      "type": "text",
+      "id": "card_3_title",
+      "label": "Card 3 title",
+      "default": "שירות אישי ומהיר"
+    }
+  ],
+  "presets": [
+    {
+      "name": "HOOPERS Why Product"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,1010 @@
+{%- liquid
+  assign hero_title = section.settings.hero_title | default: 'SHOP BY TEAM'
+  assign hero_subtitle = section.settings.hero_subtitle | default: 'בחרו את קבוצת ה־NBA שלכם וגלו את כל הגופיות, המכנסים והקולקציות הזמינות באתר.'
+-%}
+
+<section id="hoopers-all-teams-{{ section.id }}" class="hat" dir="rtl">
+  <style>
+    #hoopers-all-teams-{{ section.id }} {
+      --hat-black: #050505;
+      --hat-ink: #101010;
+      --hat-cream: #f4f0e8;
+      --hat-muted: #8d877d;
+      --hat-gold: #c8a56a;
+      --hat-line: rgba(200,165,106,0.28);
+      --hat-card: #111;
+      background: var(--hat-cream);
+      color: var(--hat-ink);
+      overflow: hidden;
+    }
+
+    #hoopers-all-teams-{{ section.id }} * {
+      box-sizing: border-box;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-page-width {
+      width: min(100% - 32px, 1320px);
+      margin: 0 auto;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-hero {
+      position: relative;
+      min-height: clamp(430px, 58vw, 680px);
+      display: flex;
+      align-items: center;
+      background: var(--hat-black);
+      color: #fff;
+      overflow: hidden;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-hero__media {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-hero__media img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      filter: brightness(0.82) saturate(1.02) contrast(1.06);
+      transform: scale(1.01);
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-hero__overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background: linear-gradient(90deg, rgba(5,5,5,0.96), rgba(5,5,5,0.78), rgba(5,5,5,0.58));
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-hero__content {
+      position: relative;
+      z-index: 3;
+      width: min(100% - 32px, 1320px);
+      margin: 0 auto;
+      padding: 76px 0;
+      text-align: center;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-hero--left .hat-hero__content {
+      text-align: left;
+      direction: ltr;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-hero--right .hat-hero__content {
+      text-align: right;
+      direction: rtl;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 18px;
+      color: var(--hat-gold);
+      font-size: 12px;
+      line-height: 1;
+      font-weight: 950;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-kicker::before,
+    #hoopers-all-teams-{{ section.id }} .hat-kicker::after {
+      content: "";
+      width: 34px;
+      height: 1px;
+      background: var(--hat-gold);
+      opacity: 0.75;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-hero--left .hat-kicker::after,
+    #hoopers-all-teams-{{ section.id }} .hat-hero--right .hat-kicker::before {
+      display: none;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-hero h1 {
+      margin: 0;
+      color: #fff;
+      font-size: clamp(44px, 8vw, 118px);
+      line-height: 0.9;
+      font-weight: 950;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-hero p {
+      max-width: 760px;
+      margin: 24px auto 0;
+      color: rgba(255,255,255,0.82);
+      font-size: clamp(16px, 2vw, 22px);
+      line-height: 1.7;
+      font-weight: 650;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-hero--left p {
+      margin-left: 0;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-hero--right p {
+      margin-right: 0;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-hero__button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      margin-top: 30px;
+      padding: 0 24px;
+      border: 1px solid var(--hat-gold);
+      background: var(--hat-gold);
+      color: #050505;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-hero__button:hover {
+      transform: translateY(-2px);
+      background: #fff;
+      border-color: #fff;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-section {
+      padding: clamp(42px, 6vw, 78px) 0;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-section--dark {
+      background: var(--hat-black);
+      color: #fff;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-heading {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--hat-line);
+      padding-bottom: 18px;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-heading h2 {
+      margin: 0;
+      color: inherit;
+      font-size: clamp(25px, 3vw, 42px);
+      line-height: 1;
+      font-weight: 950;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-heading p {
+      max-width: 560px;
+      margin: 0;
+      color: var(--hat-muted);
+      font-size: 15px;
+      line-height: 1.7;
+      font-weight: 650;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-section--dark .hat-heading p {
+      color: rgba(255,255,255,0.58);
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-featured-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-teams-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-team-card {
+      position: relative;
+      min-height: 300px;
+      display: flex;
+      align-items: end;
+      overflow: hidden;
+      border-radius: 8px;
+      background:
+        radial-gradient(circle at 50% 12%, rgba(200,165,106,0.2), transparent 38%),
+        linear-gradient(135deg, #181818, #050505);
+      color: #fff;
+      text-decoration: none;
+      box-shadow: 0 22px 60px rgba(0,0,0,0.24);
+      transform: translateZ(0);
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-teams-grid .hat-team-card {
+      min-height: 245px;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-team-card img {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(1.05) saturate(1.08) contrast(1.04);
+      transform: scale(1.01);
+      transition: transform 0.55s ease, filter 0.55s ease;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-team-card__placeholder {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background:
+        linear-gradient(135deg, rgba(200,165,106,0.2), transparent 34%),
+        radial-gradient(circle at 70% 18%, rgba(255,255,255,0.08), transparent 28%),
+        linear-gradient(160deg, #1b1b1b, #050505 76%);
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-team-card__overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background: linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0.42));
+      transition: background 0.28s ease;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-team-card__chip {
+      position: absolute;
+      top: 14px;
+      inset-inline-start: 14px;
+      z-index: 3;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 24px;
+      padding: 0 10px;
+      border: 1px solid rgba(200,165,106,0.72);
+      background: rgba(200,165,106,0.96);
+      color: #050505;
+      font-size: 10px;
+      line-height: 1;
+      font-weight: 950;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-team-card__content {
+      position: relative;
+      z-index: 4;
+      width: 100%;
+      padding: 22px;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-team-card__name {
+      position: relative;
+      z-index: 4;
+      display: block;
+      color: #fff;
+      font-size: clamp(22px, 2.2vw, 34px);
+      line-height: 0.95;
+      font-weight: 950;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      text-align: center;
+      text-shadow: 0 6px 24px rgba(0,0,0,0.9), 0 1px 2px rgba(0,0,0,1);
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-teams-grid .hat-team-card__name {
+      font-size: clamp(18px, 1.6vw, 25px);
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-team-card:hover img {
+      transform: scale(1.075);
+      filter: brightness(1.15) saturate(1.12) contrast(1.06);
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-team-card:hover .hat-team-card__overlay {
+      background: linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.34));
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-search {
+      max-width: 760px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-search h2 {
+      margin: 0 0 18px;
+      color: var(--hat-ink);
+      font-size: clamp(25px, 3vw, 42px);
+      line-height: 1;
+      font-weight: 950;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-search input {
+      width: 100%;
+      min-height: 58px;
+      padding: 0 20px;
+      border: 1px solid rgba(16,16,16,0.14);
+      border-radius: 0;
+      background: #fff;
+      color: var(--hat-ink);
+      font-size: 17px;
+      font-weight: 750;
+      text-align: center;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-search input:focus {
+      border-color: var(--hat-gold);
+      box-shadow: 0 0 0 3px rgba(200,165,106,0.16);
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-empty {
+      display: none;
+      margin-top: 22px;
+      color: var(--hat-muted);
+      font-size: 15px;
+      font-weight: 750;
+      text-align: center;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-empty.is-visible {
+      display: block;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-conference-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-conference {
+      border: 1px solid rgba(200,165,106,0.22);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.04);
+      padding: clamp(22px, 3vw, 34px);
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-conference h3 {
+      margin: 0 0 12px;
+      color: var(--hat-gold);
+      font-size: 13px;
+      font-weight: 950;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-conference p {
+      margin: 0;
+      color: rgba(255,255,255,0.76);
+      font-size: 16px;
+      line-height: 1.8;
+      font-weight: 650;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-seo {
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-seo h2 {
+      margin: 0 0 18px;
+      color: var(--hat-ink);
+      font-size: clamp(25px, 3vw, 42px);
+      line-height: 1;
+      font-weight: 950;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-seo p {
+      margin: 0;
+      color: #3b3935;
+      font-size: clamp(16px, 2vw, 19px);
+      line-height: 1.9;
+      font-weight: 650;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-cta {
+      padding: clamp(42px, 6vw, 70px);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(200,165,106,0.18), transparent 34%),
+        var(--hat-black);
+      color: #fff;
+      text-align: center;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-cta h2 {
+      margin: 0 0 14px;
+      color: #fff;
+      font-size: clamp(28px, 4vw, 54px);
+      line-height: 1;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-cta p {
+      max-width: 660px;
+      margin: 0 auto 24px;
+      color: rgba(255,255,255,0.72);
+      font-size: 17px;
+      line-height: 1.75;
+      font-weight: 650;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-cta a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 24px;
+      background: var(--hat-gold);
+      color: #050505;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    #hoopers-all-teams-{{ section.id }} .hat-cta a:hover {
+      transform: translateY(-2px);
+      background: #fff;
+    }
+
+    #hoopers-all-teams-{{ section.id }}.hat-js .hat-reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+
+    #hoopers-all-teams-{{ section.id }}.hat-js .hat-reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media screen and (max-width: 990px) {
+      #hoopers-all-teams-{{ section.id }} .hat-featured-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      #hoopers-all-teams-{{ section.id }} .hat-teams-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      #hoopers-all-teams-{{ section.id }} .hat-heading {
+        display: block;
+      }
+
+      #hoopers-all-teams-{{ section.id }} .hat-heading p {
+        margin-top: 12px;
+      }
+    }
+
+    @media screen and (max-width: 640px) {
+      #hoopers-all-teams-{{ section.id }} .hat-page-width {
+        width: min(100% - 24px, 1320px);
+      }
+
+      #hoopers-all-teams-{{ section.id }} .hat-hero {
+        min-height: 520px;
+      }
+
+      #hoopers-all-teams-{{ section.id }} .hat-hero__overlay {
+        background: linear-gradient(180deg, rgba(5,5,5,0.54), rgba(5,5,5,0.9));
+      }
+
+      #hoopers-all-teams-{{ section.id }} .hat-hero__content {
+        width: min(100% - 24px, 1320px);
+      }
+
+      #hoopers-all-teams-{{ section.id }} .hat-featured-grid,
+      #hoopers-all-teams-{{ section.id }} .hat-teams-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      #hoopers-all-teams-{{ section.id }} .hat-team-card,
+      #hoopers-all-teams-{{ section.id }} .hat-teams-grid .hat-team-card {
+        min-height: 214px;
+        border-radius: 7px;
+      }
+
+      #hoopers-all-teams-{{ section.id }} .hat-team-card__content {
+        padding: 15px 10px;
+      }
+
+      #hoopers-all-teams-{{ section.id }} .hat-team-card__chip {
+        top: 10px;
+        inset-inline-start: 10px;
+      }
+
+      #hoopers-all-teams-{{ section.id }} .hat-conference-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #hoopers-all-teams-{{ section.id }} * {
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+
+  {%- if section.settings.show_hero -%}
+    <header class="hat-hero hat-hero--{{ section.settings.hero_text_align | default: 'center' }}">
+      {%- if section.settings.hero_image_desktop != blank or section.settings.hero_image_mobile != blank -%}
+        <picture class="hat-hero__media">
+          {%- if section.settings.hero_image_mobile != blank -%}
+            <source media="(max-width: 640px)" srcset="{{ section.settings.hero_image_mobile | image_url: width: 900 }}">
+          {%- endif -%}
+          {%- if section.settings.hero_image_desktop != blank -%}
+            {{ section.settings.hero_image_desktop | image_url: width: 2200 | image_tag: loading: 'eager', widths: '900, 1400, 1800, 2200', alt: hero_title }}
+          {%- elsif section.settings.hero_image_mobile != blank -%}
+            {{ section.settings.hero_image_mobile | image_url: width: 1200 | image_tag: loading: 'eager', widths: '700, 900, 1200', alt: hero_title }}
+          {%- endif -%}
+        </picture>
+      {%- endif -%}
+      <span class="hat-hero__overlay" aria-hidden="true"></span>
+
+      <div class="hat-hero__content">
+        {%- if section.settings.hero_label != blank -%}
+          <p class="hat-kicker">{{ section.settings.hero_label }}</p>
+        {%- endif -%}
+        <h1>{{ hero_title }}</h1>
+        {%- if hero_subtitle != blank -%}
+          <p>{{ hero_subtitle }}</p>
+        {%- endif -%}
+        {%- if section.settings.hero_button_text != blank and section.settings.hero_button_link != blank -%}
+          <a class="hat-hero__button" href="{{ section.settings.hero_button_link }}">{{ section.settings.hero_button_text }}</a>
+        {%- endif -%}
+      </div>
+    </header>
+  {%- endif -%}
+
+  <div class="hat-section">
+    <div class="hat-page-width">
+      <div class="hat-heading">
+        <h2>{{ section.settings.featured_title | default: 'Featured Teams' }}</h2>
+      </div>
+
+      <div class="hat-featured-grid">
+        {%- assign featured_count = 0 -%}
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'team' and block.settings.featured and featured_count < 6 -%}
+            {%- assign featured_count = featured_count | plus: 1 -%}
+            {%- liquid
+              assign chip_label = block.settings.chip_label
+              if chip_label == blank
+                if block.settings.conference == 'east'
+                  assign chip_label = 'EAST'
+                else
+                  assign chip_label = 'WEST'
+                endif
+              endif
+              assign image_alt = block.settings.image_alt | default: block.settings.team_name
+            -%}
+            <a
+              class="hat-team-card hat-reveal"
+              href="{{ block.settings.link | default: '#' }}"
+              data-team-card
+              data-team-name="{{ block.settings.team_name | downcase | escape }}"
+              {{ block.shopify_attributes }}>
+              {%- if block.settings.image != blank -%}
+                {{ block.settings.image | image_url: width: 900 | image_tag: loading: 'lazy', widths: '320, 520, 700, 900', sizes: '(min-width: 990px) 33vw, 50vw', alt: image_alt }}
+              {%- else -%}
+                <span class="hat-team-card__placeholder" aria-hidden="true"></span>
+              {%- endif -%}
+              <span class="hat-team-card__overlay" aria-hidden="true"></span>
+              <span class="hat-team-card__chip">{{ chip_label }}</span>
+              <span class="hat-team-card__content">
+                <span class="hat-team-card__name">{{ block.settings.team_name }}</span>
+              </span>
+            </a>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+
+  <div class="hat-section">
+    <div class="hat-page-width">
+      <div class="hat-search">
+        <h2>{{ section.settings.search_title | default: 'חפשו קבוצה' }}</h2>
+        <input type="search" data-team-search placeholder="{{ section.settings.search_placeholder | default: 'Lakers, Warriors, Celtics...' }}" aria-label="{{ section.settings.search_title | default: 'חפשו קבוצה' }}">
+        <div class="hat-empty" data-team-empty>{{ section.settings.no_results_text | default: 'לא נמצאו קבוצות תואמות.' }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hat-section">
+    <div class="hat-page-width">
+      <div class="hat-heading">
+        <h2>{{ section.settings.all_teams_title | default: 'All NBA Teams' }}</h2>
+      </div>
+
+      <div class="hat-teams-grid" data-team-grid>
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'team' -%}
+            {%- liquid
+              assign chip_label = block.settings.chip_label
+              if chip_label == blank
+                if block.settings.conference == 'east'
+                  assign chip_label = 'EAST'
+                else
+                  assign chip_label = 'WEST'
+                endif
+              endif
+              assign image_alt = block.settings.image_alt | default: block.settings.team_name
+            -%}
+            <a
+              class="hat-team-card hat-reveal"
+              href="{{ block.settings.link | default: '#' }}"
+              data-team-card
+              data-team-name="{{ block.settings.team_name | downcase | escape }}"
+              data-team-conference="{{ block.settings.conference | escape }}"
+              {{ block.shopify_attributes }}>
+              {%- if block.settings.image != blank -%}
+                {{ block.settings.image | image_url: width: 720 | image_tag: loading: 'lazy', widths: '240, 360, 520, 720', sizes: '(min-width: 990px) 20vw, (min-width: 640px) 33vw, 50vw', alt: image_alt }}
+              {%- else -%}
+                <span class="hat-team-card__placeholder" aria-hidden="true"></span>
+              {%- endif -%}
+              <span class="hat-team-card__overlay" aria-hidden="true"></span>
+              <span class="hat-team-card__chip">{{ chip_label }}</span>
+              <span class="hat-team-card__content">
+                <span class="hat-team-card__name">{{ block.settings.team_name }}</span>
+              </span>
+            </a>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+
+  <div class="hat-section hat-section--dark">
+    <div class="hat-page-width">
+      <div class="hat-heading">
+        <h2>{{ section.settings.conference_title | default: 'בחרו לפי קונפרנס' }}</h2>
+      </div>
+
+      <div class="hat-conference-grid">
+        <div class="hat-conference hat-reveal">
+          <h3>{{ section.settings.east_title | default: 'Eastern Conference' }}</h3>
+          <p>{{ section.settings.east_text | default: 'Knicks, Celtics, Bulls, Heat, Cavaliers, Magic, Hawks, Pistons, Pacers, Bucks, 76ers, Raptors, Nets, Hornets, Wizards.' }}</p>
+        </div>
+        <div class="hat-conference hat-reveal">
+          <h3>{{ section.settings.west_title | default: 'Western Conference' }}</h3>
+          <p>{{ section.settings.west_text | default: 'Lakers, Warriors, Spurs, Thunder, Mavericks, Nuggets, Timberwolves, Grizzlies, Suns, Clippers, Rockets, Pelicans, Kings, Trail Blazers, Jazz.' }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hat-section">
+    <div class="hat-page-width">
+      <div class="hat-seo">
+        <h2>{{ section.settings.seo_title | default: 'גופיות NBA לפי קבוצות' }}</h2>
+        <p>{{ section.settings.seo_text | default: 'באתר HOOPERS תוכלו למצוא גופיות NBA, מכנסי NBA וביגוד כדורסל ממגוון קבוצות הליגה כולל Lakers, Warriors, Celtics, Bulls, Knicks, Spurs, Heat, Suns, Mavericks ועוד.' }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="hat-section">
+    <div class="hat-page-width">
+      <div class="hat-cta">
+        <h2>{{ section.settings.cta_title | default: 'לא מצאתם את הקבוצה שלכם?' }}</h2>
+        <p>{{ section.settings.cta_text | default: 'צרו קשר עם HOOPERS ואנחנו נבדוק אם ניתן להוסיף אותה.' }}</p>
+        {%- if section.settings.cta_button_text != blank and section.settings.cta_button_link != blank -%}
+          <a href="{{ section.settings.cta_button_link }}">{{ section.settings.cta_button_text }}</a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const root = document.getElementById('hoopers-all-teams-{{ section.id }}');
+      if (!root) return;
+
+      root.classList.add('hat-js');
+
+      const search = root.querySelector('[data-team-search]');
+      const cards = Array.from(root.querySelectorAll('[data-team-card]'));
+      const empty = root.querySelector('[data-team-empty]');
+
+      if (search) {
+        search.addEventListener('input', () => {
+          const value = search.value.trim().toLowerCase();
+          let visibleCount = 0;
+
+          cards.forEach((card) => {
+            const name = card.dataset.teamName || '';
+            const isVisible = !value || name.includes(value);
+            card.style.display = isVisible ? '' : 'none';
+            if (isVisible) visibleCount += 1;
+          });
+
+          if (empty) {
+            empty.classList.toggle('is-visible', visibleCount === 0);
+          }
+        });
+      }
+
+      const revealItems = root.querySelectorAll('.hat-reveal');
+      if (!('IntersectionObserver' in window)) {
+        revealItems.forEach((item) => item.classList.add('is-visible'));
+        return;
+      }
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        });
+      }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
+
+      revealItems.forEach((item) => observer.observe(item));
+    })();
+  </script>
+</section>
+
+{% schema %}
+{
+  "name": "HOOPERS Shop By Team",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_hero",
+      "label": "Show hero section",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image_desktop",
+      "label": "Hero desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image_mobile",
+      "label": "Hero mobile image"
+    },
+    {
+      "type": "select",
+      "id": "hero_text_align",
+      "label": "Hero text alignment",
+      "default": "center",
+      "options": [
+        { "value": "center", "label": "Center" },
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "hero_label",
+      "label": "Hero small label",
+      "default": "NBA"
+    },
+    {
+      "type": "text",
+      "id": "hero_title",
+      "label": "Hero title",
+      "default": "SHOP BY TEAM"
+    },
+    {
+      "type": "textarea",
+      "id": "hero_subtitle",
+      "label": "Hero subtitle",
+      "default": "בחרו את קבוצת ה־NBA שלכם וגלו את כל הגופיות, המכנסים והקולקציות הזמינות באתר."
+    },
+    {
+      "type": "text",
+      "id": "hero_button_text",
+      "label": "Hero button text"
+    },
+    {
+      "type": "url",
+      "id": "hero_button_link",
+      "label": "Hero button link"
+    },
+    {
+      "type": "text",
+      "id": "featured_title",
+      "label": "Featured section title",
+      "default": "Featured Teams"
+    },
+    {
+      "type": "text",
+      "id": "search_title",
+      "label": "Search title",
+      "default": "חפשו קבוצה"
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Search placeholder",
+      "default": "Lakers, Warriors, Celtics..."
+    },
+    {
+      "type": "text",
+      "id": "no_results_text",
+      "label": "No results text",
+      "default": "לא נמצאו קבוצות תואמות."
+    },
+    {
+      "type": "text",
+      "id": "all_teams_title",
+      "label": "All teams title",
+      "default": "All NBA Teams"
+    },
+    {
+      "type": "text",
+      "id": "conference_title",
+      "label": "Conference section title",
+      "default": "בחרו לפי קונפרנס"
+    },
+    {
+      "type": "text",
+      "id": "east_title",
+      "label": "East title",
+      "default": "Eastern Conference"
+    },
+    {
+      "type": "textarea",
+      "id": "east_text",
+      "label": "East text",
+      "default": "Knicks, Celtics, Bulls, Heat, Cavaliers, Magic, Hawks, Pistons, Pacers, Bucks, 76ers, Raptors, Nets, Hornets, Wizards."
+    },
+    {
+      "type": "text",
+      "id": "west_title",
+      "label": "West title",
+      "default": "Western Conference"
+    },
+    {
+      "type": "textarea",
+      "id": "west_text",
+      "label": "West text",
+      "default": "Lakers, Warriors, Spurs, Thunder, Mavericks, Nuggets, Timberwolves, Grizzlies, Suns, Clippers, Rockets, Pelicans, Kings, Trail Blazers, Jazz."
+    },
+    {
+      "type": "text",
+      "id": "seo_title",
+      "label": "SEO title",
+      "default": "גופיות NBA לפי קבוצות"
+    },
+    {
+      "type": "textarea",
+      "id": "seo_text",
+      "label": "SEO text",
+      "default": "באתר HOOPERS תוכלו למצוא גופיות NBA, מכנסי NBA וביגוד כדורסל ממגוון קבוצות הליגה כולל Lakers, Warriors, Celtics, Bulls, Knicks, Spurs, Heat, Suns, Mavericks ועוד."
+    },
+    {
+      "type": "text",
+      "id": "cta_title",
+      "label": "CTA title",
+      "default": "לא מצאתם את הקבוצה שלכם?"
+    },
+    {
+      "type": "textarea",
+      "id": "cta_text",
+      "label": "CTA text",
+      "default": "צרו קשר עם HOOPERS ואנחנו נבדוק אם ניתן להוסיף אותה."
+    },
+    {
+      "type": "text",
+      "id": "cta_button_text",
+      "label": "CTA button text",
+      "default": "צור קשר"
+    },
+    {
+      "type": "url",
+      "id": "cta_button_link",
+      "label": "CTA button link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "team",
+      "name": "Team card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Featured player image"
+        },
+        {
+          "type": "text",
+          "id": "image_alt",
+          "label": "Image alt text",
+          "default": "NBA player image"
+        },
+        {
+          "type": "text",
+          "id": "team_name",
+          "label": "Team name",
+          "default": "Lakers"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Team link"
+        },
+        {
+          "type": "text",
+          "id": "chip_label",
+          "label": "Conference chip label",
+          "default": "WEST"
+        },
+        {
+          "type": "select",
+          "id": "conference",
+          "label": "Conference",
+          "default": "west",
+          "options": [
+            { "value": "west", "label": "West" },
+            { "value": "east", "label": "East" }
+          ]
+        },
+        {
+          "type": "checkbox",
+          "id": "featured",
+          "label": "Show in Featured Teams",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "HOOPERS Shop By Team",
+      "blocks": [
+        { "type": "team", "settings": { "team_name": "Lakers", "chip_label": "WEST", "conference": "west", "featured": true, "image_alt": "LeBron James" } },
+        { "type": "team", "settings": { "team_name": "Warriors", "chip_label": "WEST", "conference": "west", "featured": true, "image_alt": "Stephen Curry" } },
+        { "type": "team", "settings": { "team_name": "Spurs", "chip_label": "WEST", "conference": "west", "featured": true, "image_alt": "Victor Wembanyama" } },
+        { "type": "team", "settings": { "team_name": "Knicks", "chip_label": "EAST", "conference": "east", "featured": true, "image_alt": "Jalen Brunson" } },
+        { "type": "team", "settings": { "team_name": "Celtics", "chip_label": "EAST", "conference": "east", "featured": true, "image_alt": "Jayson Tatum" } },
+        { "type": "team", "settings": { "team_name": "Bulls", "chip_label": "EAST", "conference": "east", "featured": true, "image_alt": "Michael Jordan" } },
+        { "type": "team", "settings": { "team_name": "Thunder", "chip_label": "WEST", "conference": "west", "image_alt": "Shai Gilgeous-Alexander" } },
+        { "type": "team", "settings": { "team_name": "Mavericks", "chip_label": "WEST", "conference": "west", "image_alt": "Cooper Flagg" } },
+        { "type": "team", "settings": { "team_name": "Nuggets", "chip_label": "WEST", "conference": "west", "image_alt": "Nikola Jokic" } },
+        { "type": "team", "settings": { "team_name": "Timberwolves", "chip_label": "WEST", "conference": "west", "image_alt": "Anthony Edwards" } },
+        { "type": "team", "settings": { "team_name": "Grizzlies", "chip_label": "WEST", "conference": "west", "image_alt": "Ja Morant" } },
+        { "type": "team", "settings": { "team_name": "Suns", "chip_label": "WEST", "conference": "west", "image_alt": "Devin Booker" } },
+        { "type": "team", "settings": { "team_name": "Clippers", "chip_label": "WEST", "conference": "west", "image_alt": "Kawhi Leonard" } },
+        { "type": "team", "settings": { "team_name": "Rockets", "chip_label": "WEST", "conference": "west", "image_alt": "Kevin Durant" } },
+        { "type": "team", "settings": { "team_name": "Pelicans", "chip_label": "WEST", "conference": "west", "image_alt": "Zion Williamson" } },
+        { "type": "team", "settings": { "team_name": "Kings", "chip_label": "WEST", "conference": "west", "image_alt": "Domantas Sabonis" } },
+        { "type": "team", "settings": { "team_name": "Trail Blazers", "chip_label": "WEST", "conference": "west", "image_alt": "Deni Avdija" } },
+        { "type": "team", "settings": { "team_name": "Jazz", "chip_label": "WEST", "conference": "west", "image_alt": "Lauri Markkanen" } },
+        { "type": "team", "settings": { "team_name": "Heat", "chip_label": "EAST", "conference": "east", "image_alt": "Tyler Herro" } },
+        { "type": "team", "settings": { "team_name": "Cavaliers", "chip_label": "EAST", "conference": "east", "image_alt": "Donovan Mitchell" } },
+        { "type": "team", "settings": { "team_name": "Magic", "chip_label": "EAST", "conference": "east", "image_alt": "Paolo Banchero" } },
+        { "type": "team", "settings": { "team_name": "Hawks", "chip_label": "EAST", "conference": "east", "image_alt": "Jalen Johnson" } },
+        { "type": "team", "settings": { "team_name": "Pistons", "chip_label": "EAST", "conference": "east", "image_alt": "Cade Cunningham" } },
+        { "type": "team", "settings": { "team_name": "Pacers", "chip_label": "EAST", "conference": "east", "image_alt": "Tyrese Haliburton" } },
+        { "type": "team", "settings": { "team_name": "Bucks", "chip_label": "EAST", "conference": "east", "image_alt": "Giannis Antetokounmpo" } },
+        { "type": "team", "settings": { "team_name": "76ers", "chip_label": "EAST", "conference": "east", "image_alt": "Joel Embiid" } },
+        { "type": "team", "settings": { "team_name": "Raptors", "chip_label": "EAST", "conference": "east", "image_alt": "Scottie Barnes" } },
+        { "type": "team", "settings": { "team_name": "Nets", "chip_label": "EAST", "conference": "east", "image_alt": "Ben Saraf" } },
+        { "type": "team", "settings": { "team_name": "Hornets", "chip_label": "EAST", "conference": "east", "image_alt": "LaMelo Ball" } },
+        { "type": "team", "settings": { "team_name": "Wizards", "chip_label": "EAST", "conference": "east", "image_alt": "Trae Young" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,566 @@
+{% liquid
+  assign hero_overlay = section.settings.hero_overlay | divided_by: 100.0
+%}
+
+<section class="hoopers-about" dir="rtl">
+  <div class="ha-hero" style="--ha-overlay: {{ hero_overlay }};">
+    {% if section.settings.hero_desktop_image != blank %}
+      <picture class="ha-hero__media">
+        {% if section.settings.hero_mobile_image != blank %}
+          <source media="(max-width: 749px)" srcset="{{ section.settings.hero_mobile_image | image_url: width: 900 }}">
+        {% endif %}
+        {{ section.settings.hero_desktop_image | image_url: width: 2400 | image_tag: loading: 'eager', class: 'ha-hero__image', alt: section.settings.hero_heading }}
+      </picture>
+    {% else %}
+      <div class="ha-hero__placeholder"></div>
+    {% endif %}
+
+    <div class="ha-hero__overlay"></div>
+    <div class="ha-hero__content">
+      <p class="ha-kicker">{{ section.settings.hero_kicker }}</p>
+      <h1>{{ section.settings.hero_heading }}</h1>
+      <p>{{ section.settings.hero_subtitle }}</p>
+      {% if section.settings.hero_button_text != blank and section.settings.hero_button_link != blank %}
+        <a class="ha-button ha-button--light" href="{{ section.settings.hero_button_link }}">{{ section.settings.hero_button_text }}</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="ha-story ha-container">
+    <div class="ha-story__text">
+      <p class="ha-kicker">{{ section.settings.story_kicker }}</p>
+      <h2>{{ section.settings.story_title }}</h2>
+      <div class="ha-rte">{{ section.settings.story_text }}</div>
+    </div>
+    <div class="ha-story__media">
+      {% if section.settings.story_image != blank %}
+        {{ section.settings.story_image | image_url: width: 1200 | image_tag: loading: 'lazy', class: 'ha-image', alt: section.settings.story_title }}
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="ha-do">
+    <div class="ha-container">
+      <header class="ha-section-head">
+        <p class="ha-kicker">{{ section.settings.do_kicker }}</p>
+        <h2>{{ section.settings.do_title }}</h2>
+      </header>
+
+      <div class="ha-card-grid ha-card-grid--4">
+        {% for i in (1..4) %}
+          {% assign icon_id = 'do_' | append: i | append: '_icon' %}
+          {% assign title_id = 'do_' | append: i | append: '_title' %}
+          {% assign text_id = 'do_' | append: i | append: '_text' %}
+          <article class="ha-card">
+            <div class="ha-card__icon">{{ section.settings[icon_id] }}</div>
+            <h3>{{ section.settings[title_id] }}</h3>
+            <p>{{ section.settings[text_id] }}</p>
+          </article>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="ha-tour">
+    <div class="ha-container">
+      <header class="ha-section-head ha-section-head--light">
+        <p class="ha-kicker">{{ section.settings.tour_kicker }}</p>
+        <h2>{{ section.settings.tour_title }}</h2>
+        <p>{{ section.settings.tour_text }}</p>
+      </header>
+
+      <div class="ha-tour__grid">
+        {% for block in section.blocks %}
+          {% if block.type == 'tour_image' %}
+            <figure class="ha-tour__item" {{ block.shopify_attributes }}>
+              {% if block.settings.image != blank %}
+                {{ block.settings.image | image_url: width: 900 | image_tag: loading: 'lazy', class: 'ha-image', alt: block.settings.caption }}
+              {% endif %}
+              {% if block.settings.caption != blank %}
+                <figcaption>{{ block.settings.caption }}</figcaption>
+              {% endif %}
+            </figure>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="ha-stats">
+    <div class="ha-container ha-stats__grid">
+      {% for i in (1..4) %}
+        {% assign value_id = 'stat_' | append: i | append: '_value' %}
+        {% assign label_id = 'stat_' | append: i | append: '_label' %}
+        <div class="ha-stat">
+          <strong>{{ section.settings[value_id] }}</strong>
+          <span>{{ section.settings[label_id] }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="ha-why">
+    <div class="ha-container">
+      <header class="ha-section-head">
+        <p class="ha-kicker">{{ section.settings.why_kicker }}</p>
+        <h2>{{ section.settings.why_title }}</h2>
+      </header>
+
+      <div class="ha-card-grid ha-card-grid--3">
+        {% for i in (1..3) %}
+          {% assign icon_id = 'why_' | append: i | append: '_icon' %}
+          {% assign title_id = 'why_' | append: i | append: '_title' %}
+          {% assign text_id = 'why_' | append: i | append: '_text' %}
+          <article class="ha-card ha-card--cream">
+            <div class="ha-card__icon">{{ section.settings[icon_id] }}</div>
+            <h3>{{ section.settings[title_id] }}</h3>
+            <p>{{ section.settings[text_id] }}</p>
+          </article>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="ha-final">
+    <div class="ha-final__inner">
+      <p class="ha-kicker">{{ section.settings.final_kicker }}</p>
+      <h2>{{ section.settings.final_title }}</h2>
+      <p>{{ section.settings.final_text }}</p>
+      {% if section.settings.final_button_text != blank and section.settings.final_button_link != blank %}
+        <a class="ha-button ha-button--gold" href="{{ section.settings.final_button_link }}">{{ section.settings.final_button_text }}</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<style>
+  .hoopers-about {
+    --ha-black: #050505;
+    --ha-cream: #ece7df;
+    --ha-soft: #f7f4ee;
+    --ha-gold: #c8a56a;
+    --ha-text: #111;
+    --ha-muted: rgba(17,17,17,.68);
+    background: var(--ha-cream);
+    color: var(--ha-text);
+  }
+
+  .ha-container {
+    width: min(100%, 1480px);
+    margin: 0 auto;
+    padding: 0 clamp(16px, 3vw, 44px);
+  }
+
+  .ha-hero {
+    position: relative;
+    min-height: clamp(520px, 82vh, 820px);
+    display: grid;
+    align-items: end;
+    overflow: hidden;
+    background: var(--ha-black);
+    color: #fff;
+  }
+
+  .ha-hero__media,
+  .ha-hero__image,
+  .ha-hero__placeholder {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .ha-hero__image {
+    object-fit: cover;
+  }
+
+  .ha-hero__placeholder {
+    background: linear-gradient(135deg, #050505, #24211b);
+  }
+
+  .ha-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(0,0,0,var(--ha-overlay)), rgba(0,0,0,.18));
+  }
+
+  .ha-hero__content {
+    position: relative;
+    z-index: 2;
+    max-width: 760px;
+    padding: clamp(42px, 7vw, 92px);
+  }
+
+  .ha-kicker {
+    margin: 0 0 12px;
+    color: var(--ha-gold);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+
+  .ha-hero h1,
+  .ha-section-head h2,
+  .ha-story h2,
+  .ha-final h2 {
+    margin: 0;
+    font-weight: 950;
+    letter-spacing: 0;
+    line-height: .98;
+  }
+
+  .ha-hero h1 {
+    max-width: 680px;
+    font-size: clamp(48px, 9vw, 118px);
+  }
+
+  .ha-hero__content p:not(.ha-kicker),
+  .ha-final p,
+  .ha-section-head p:not(.ha-kicker) {
+    margin: 18px 0 0;
+    font-size: clamp(16px, 1.7vw, 22px);
+    font-weight: 650;
+    line-height: 1.6;
+  }
+
+  .ha-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    margin-top: 28px;
+    padding: 0 26px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 950;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+
+  .ha-button--light {
+    background: #fff;
+    color: #050505;
+  }
+
+  .ha-button--gold {
+    background: var(--ha-gold);
+    color: #050505;
+  }
+
+  .ha-story {
+    display: grid;
+    grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+    gap: clamp(24px, 5vw, 76px);
+    align-items: center;
+    padding-top: clamp(56px, 8vw, 110px);
+    padding-bottom: clamp(56px, 8vw, 110px);
+  }
+
+  .ha-story h2,
+  .ha-section-head h2,
+  .ha-final h2 {
+    font-size: clamp(34px, 5vw, 72px);
+  }
+
+  .ha-rte {
+    margin-top: 20px;
+    color: var(--ha-muted);
+    font-size: clamp(15px, 1.4vw, 18px);
+    font-weight: 600;
+    line-height: 1.9;
+  }
+
+  .ha-rte p {
+    margin: 0;
+  }
+
+  .ha-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ha-story__media {
+    min-height: 520px;
+    background: #ddd5c9;
+    overflow: hidden;
+  }
+
+  .ha-do,
+  .ha-why {
+    padding: clamp(54px, 7vw, 96px) 0;
+  }
+
+  .ha-do {
+    background: var(--ha-soft);
+  }
+
+  .ha-section-head {
+    max-width: 820px;
+    margin: 0 auto clamp(28px, 4vw, 46px);
+    text-align: center;
+  }
+
+  .ha-section-head--light {
+    color: #fff;
+  }
+
+  .ha-card-grid {
+    display: grid;
+    gap: 14px;
+  }
+
+  .ha-card-grid--4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .ha-card-grid--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .ha-card {
+    min-height: 230px;
+    padding: clamp(22px, 2.6vw, 34px);
+    background: #0b0b0b;
+    color: #fff;
+    border: 1px solid rgba(200,165,106,.28);
+  }
+
+  .ha-card--cream {
+    background: var(--ha-soft);
+    color: var(--ha-text);
+    border-color: rgba(17,17,17,.1);
+  }
+
+  .ha-card__icon {
+    margin-bottom: 28px;
+    font-size: 28px;
+  }
+
+  .ha-card h3 {
+    margin: 0 0 10px;
+    font-size: clamp(19px, 2vw, 26px);
+    font-weight: 950;
+    line-height: 1.15;
+  }
+
+  .ha-card p {
+    margin: 0;
+    color: inherit;
+    opacity: .72;
+    font-size: 14px;
+    font-weight: 650;
+    line-height: 1.7;
+  }
+
+  .ha-tour {
+    padding: clamp(56px, 8vw, 110px) 0;
+    background: var(--ha-black);
+    color: #fff;
+  }
+
+  .ha-tour__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .ha-tour__item {
+    margin: 0;
+    min-height: 420px;
+    overflow: hidden;
+    background: #111;
+  }
+
+  .ha-tour__item figcaption {
+    padding: 12px 4px 0;
+    color: rgba(255,255,255,.7);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .ha-stats {
+    padding: clamp(34px, 5vw, 64px) 0;
+    background: #111;
+    color: #fff;
+    border-top: 1px solid rgba(255,255,255,.1);
+    border-bottom: 1px solid rgba(255,255,255,.1);
+  }
+
+  .ha-stats__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .ha-stat {
+    text-align: center;
+    padding: 18px;
+  }
+
+  .ha-stat strong {
+    display: block;
+    color: var(--ha-gold);
+    font-size: clamp(26px, 3vw, 42px);
+    font-weight: 950;
+    line-height: 1;
+  }
+
+  .ha-stat span {
+    display: block;
+    margin-top: 9px;
+    color: rgba(255,255,255,.78);
+    font-size: 14px;
+    font-weight: 750;
+  }
+
+  .ha-final {
+    padding: clamp(56px, 8vw, 110px) 16px;
+    background: #050505;
+    color: #fff;
+    text-align: center;
+  }
+
+  .ha-final__inner {
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  @media screen and (max-width: 980px) {
+    .ha-story,
+    .ha-card-grid--4,
+    .ha-card-grid--3,
+    .ha-tour__grid,
+    .ha-stats__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .ha-story {
+      align-items: start;
+    }
+  }
+
+  @media screen and (max-width: 640px) {
+    .ha-hero {
+      min-height: 620px;
+    }
+
+    .ha-hero__content {
+      padding: 34px 18px;
+    }
+
+    .ha-story,
+    .ha-card-grid--4,
+    .ha-card-grid--3,
+    .ha-tour__grid,
+    .ha-stats__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .ha-story__media,
+    .ha-tour__item {
+      min-height: 360px;
+    }
+
+    .ha-card {
+      min-height: auto;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "HOOPERS About Page",
+  "settings": [
+    { "type": "image_picker", "id": "hero_desktop_image", "label": "Hero desktop image" },
+    { "type": "image_picker", "id": "hero_mobile_image", "label": "Hero mobile image" },
+    { "type": "range", "id": "hero_overlay", "label": "Hero overlay opacity", "min": 0, "max": 80, "step": 5, "default": 45 },
+    { "type": "text", "id": "hero_kicker", "label": "Hero kicker", "default": "ABOUT HOOPERS" },
+    { "type": "text", "id": "hero_heading", "label": "Hero heading", "default": "Born To Play." },
+    { "type": "text", "id": "hero_subtitle", "label": "Hero subtitle", "default": "הבית של ספורט, סטייל וקהילה בישראל." },
+    { "type": "text", "id": "hero_button_text", "label": "Hero button text", "default": "SHOP NOW" },
+    { "type": "url", "id": "hero_button_link", "label": "Hero button link" },
+
+    { "type": "text", "id": "story_kicker", "label": "Story kicker", "default": "OUR STORY" },
+    { "type": "text", "id": "story_title", "label": "Story title", "default": "הסיפור שלנו" },
+    { "type": "richtext", "id": "story_text", "label": "Story text", "default": "<p>HOOPERS נולד מתוך אהבה אמיתית לכדורסל, אופנה ותרבות רחוב. מה שהתחיל כרעיון פשוט להפוך גופיות ופריטי ספורט לחלק מהסטייל היומיומי, הפך למותג ישראלי שמחבר בין קהילה, עיצוב ואהבה למשחק.</p>" },
+    { "type": "image_picker", "id": "story_image", "label": "Story image" },
+
+    { "type": "text", "id": "do_kicker", "label": "What we do kicker", "default": "WHAT WE DO" },
+    { "type": "text", "id": "do_title", "label": "What we do title", "default": "ספורט, סטייל ותרבות" },
+
+    { "type": "text", "id": "do_1_icon", "label": "Card 1 icon", "default": "🏀" },
+    { "type": "text", "id": "do_1_title", "label": "Card 1 title", "default": "Basketball Culture" },
+    { "type": "textarea", "id": "do_1_text", "label": "Card 1 text", "default": "פריטים שמחוברים לאהבה למשחק ולתרבות הכדורסל." },
+
+    { "type": "text", "id": "do_2_icon", "label": "Card 2 icon", "default": "👕" },
+    { "type": "text", "id": "do_2_title", "label": "Card 2 title", "default": "Streetwear Style" },
+    { "type": "textarea", "id": "do_2_text", "label": "Card 2 text", "default": "סטייל רחוב נקי שאפשר ללבוש ביום יום." },
+
+    { "type": "text", "id": "do_3_icon", "label": "Card 3 icon", "default": "🔥" },
+    { "type": "text", "id": "do_3_title", "label": "Card 3 title", "default": "Limited Drops" },
+    { "type": "textarea", "id": "do_3_text", "label": "Card 3 text", "default": "קולקציות מתחלפות ופריטים שלא רואים בכל מקום." },
+
+    { "type": "text", "id": "do_4_icon", "label": "Card 4 icon", "default": "❤️" },
+    { "type": "text", "id": "do_4_title", "label": "Card 4 title", "default": "Community First" },
+    { "type": "textarea", "id": "do_4_text", "label": "Card 4 text", "default": "מותג שנבנה סביב אנשים, מגרשים וקהילה." },
+
+    { "type": "text", "id": "tour_kicker", "label": "Tour kicker", "default": "HOOPERS ON TOUR" },
+    { "type": "text", "id": "tour_title", "label": "Tour title", "default": "מהאתר אל השטח" },
+    { "type": "textarea", "id": "tour_text", "label": "Tour text", "default": "מהדוכנים, הפופ-אפים והמפגשים עם הקהילה — HOOPERS חי גם מחוץ למסך." },
+
+    { "type": "text", "id": "stat_1_value", "label": "Stat 1 value", "default": "750+" },
+    { "type": "text", "id": "stat_1_label", "label": "Stat 1 label", "default": "פריטים" },
+    { "type": "text", "id": "stat_2_value", "label": "Stat 2 value", "default": "מאות" },
+    { "type": "text", "id": "stat_2_label", "label": "Stat 2 label", "default": "לקוחות מרוצים" },
+    { "type": "text", "id": "stat_3_value", "label": "Stat 3 value", "default": "כל יום" },
+    { "type": "text", "id": "stat_3_label", "label": "Stat 3 label", "default": "קהילה שגדלה" },
+    { "type": "text", "id": "stat_4_value", "label": "Stat 4 value", "default": "מהיר" },
+    { "type": "text", "id": "stat_4_label", "label": "Stat 4 label", "default": "שירות אישי" },
+
+    { "type": "text", "id": "why_kicker", "label": "Why kicker", "default": "WHY HOOPERS" },
+    { "type": "text", "id": "why_title", "label": "Why title", "default": "למה לבחור ב-HOOPERS" },
+
+    { "type": "text", "id": "why_1_icon", "label": "Why 1 icon", "default": "✦" },
+    { "type": "text", "id": "why_1_title", "label": "Why 1 title", "default": "איכות שמרגישים" },
+    { "type": "textarea", "id": "why_1_text", "label": "Why 1 text", "default": "בחירה קפדנית של פריטים שנראים טוב ומרגישים טוב." },
+
+    { "type": "text", "id": "why_2_icon", "label": "Why 2 icon", "default": "◇" },
+    { "type": "text", "id": "why_2_title", "label": "Why 2 title", "default": "סטייל שלא רואים בכל מקום" },
+    { "type": "textarea", "id": "why_2_text", "label": "Why 2 text", "default": "קולקציות שמחברות בין ספורט, רחוב ואופנה." },
+
+    { "type": "text", "id": "why_3_icon", "label": "Why 3 icon", "default": "✓" },
+    { "type": "text", "id": "why_3_title", "label": "Why 3 title", "default": "שירות אישי ומהיר" },
+    { "type": "textarea", "id": "why_3_text", "label": "Why 3 text", "default": "אנחנו כאן לפני ואחרי ההזמנה לכל שאלה." },
+
+    { "type": "text", "id": "final_kicker", "label": "Final kicker", "default": "HOOPERS FAMILY" },
+    { "type": "text", "id": "final_title", "label": "Final title", "default": "JOIN THE HOOPERS FAMILY" },
+    { "type": "text", "id": "final_text", "label": "Final subtitle", "default": "הצטרפו לקהילה שחיה ספורט, סטייל ותרבות." },
+    { "type": "text", "id": "final_button_text", "label": "Final button text", "default": "SHOP NOW" },
+    { "type": "url", "id": "final_button_link", "label": "Final button link", "default": "/collections/all" }
+  ],
+  "blocks": [
+    {
+      "type": "tour_image",
+      "name": "Tour image",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "caption", "label": "Caption" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "HOOPERS About Page",
+      "blocks": [
+        { "type": "tour_image" },
+        { "type": "tour_image" },
+        { "type": "tour_image" }
+      ]
+    }
+  ]
+}
+{% endschema %}

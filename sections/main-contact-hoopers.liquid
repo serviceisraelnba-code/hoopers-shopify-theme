@@ -1,0 +1,584 @@
+{%- liquid
+  assign section_id = 'hoopers-contact-' | append: section.id
+-%}
+
+<style>
+  #{{ section_id }} {
+    --hc-black: #050505;
+    --hc-cream: #f7f2e8;
+    --hc-ink: #111111;
+    --hc-muted: rgba(17, 17, 17, 0.64);
+    --hc-gold: #c8a56a;
+    --hc-border: rgba(5, 5, 5, 0.1);
+    background: var(--hc-cream);
+    color: var(--hc-ink);
+    direction: rtl;
+  }
+
+  #{{ section_id }} * {
+    box-sizing: border-box;
+  }
+
+  #{{ section_id }} .hc-page-width {
+    width: min(100%, 1240px);
+    margin: 0 auto;
+    padding: 0 18px;
+  }
+
+  #{{ section_id }} .hc-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--hc-black);
+    color: #fff;
+    padding: 92px 0 58px;
+  }
+
+  #{{ section_id }} .hc-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(5, 5, 5, 0), rgba(5, 5, 5, 0.55)),
+      radial-gradient(circle at 16% 16%, rgba(200, 165, 106, 0.18), transparent 34%);
+    pointer-events: none;
+  }
+
+  #{{ section_id }} .hc-hero__content {
+    position: relative;
+    z-index: 2;
+    max-width: 850px;
+  }
+
+  #{{ section_id }} .hc-kicker {
+    margin: 0 0 16px;
+    color: var(--hc-gold);
+    font-size: 11px;
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  #{{ section_id }} .hc-title {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(40px, 6vw, 76px);
+    line-height: 0.98;
+    font-weight: 950;
+    letter-spacing: 0.01em;
+  }
+
+  #{{ section_id }} .hc-subtitle {
+    max-width: 760px;
+    margin: 20px 0 0;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: clamp(16px, 2vw, 22px);
+    line-height: 1.55;
+    font-weight: 650;
+  }
+
+  #{{ section_id }} .hc-section {
+    padding: 42px 0;
+  }
+
+  #{{ section_id }} .hc-cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: -28px;
+    position: relative;
+    z-index: 3;
+  }
+
+  #{{ section_id }} .hc-card {
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #fff;
+    border: 1px solid var(--hc-border);
+    padding: 24px;
+    color: var(--hc-ink);
+    text-decoration: none;
+    transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+  }
+
+  #{{ section_id }} .hc-card:hover,
+  #{{ section_id }} .hc-card:focus-visible {
+    transform: translateY(-4px);
+    border-color: rgba(200, 165, 106, 0.58);
+    box-shadow: 0 18px 44px rgba(5, 5, 5, 0.08);
+  }
+
+  #{{ section_id }} .hc-card__label {
+    margin: 0 0 12px;
+    color: var(--hc-gold);
+    font-size: 11px;
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  #{{ section_id }} .hc-card__title {
+    margin: 0;
+    font-size: 27px;
+    line-height: 1.05;
+    font-weight: 950;
+  }
+
+  #{{ section_id }} .hc-card__text {
+    margin: 16px 0 0;
+    color: var(--hc-ink);
+    font-size: 17px;
+    line-height: 1.35;
+    font-weight: 800;
+  }
+
+  #{{ section_id }} .hc-card__small {
+    margin: 10px 0 0;
+    color: var(--hc-muted);
+    font-size: 14px;
+    line-height: 1.45;
+    font-weight: 600;
+  }
+
+  #{{ section_id }} .hc-card__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    min-height: 42px;
+    margin-top: 20px;
+    padding: 0 18px;
+    background: var(--hc-black);
+    color: #fff;
+    font-size: 12px;
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  #{{ section_id }} .hc-info-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 18px;
+    align-items: stretch;
+  }
+
+  #{{ section_id }} .hc-panel {
+    background: var(--hc-black);
+    color: #fff;
+    padding: 30px;
+    border: 1px solid rgba(200, 165, 106, 0.22);
+  }
+
+  #{{ section_id }} .hc-panel--light {
+    background: #fff;
+    color: var(--hc-ink);
+    border-color: var(--hc-border);
+  }
+
+  #{{ section_id }} .hc-panel__title {
+    margin: 0 0 22px;
+    color: inherit;
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: 0.02em;
+  }
+
+  #{{ section_id }} .hc-list {
+    display: grid;
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  #{{ section_id }} .hc-list li {
+    position: relative;
+    padding-right: 20px;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 16px;
+    line-height: 1.5;
+    font-weight: 700;
+  }
+
+  #{{ section_id }} .hc-list li::before {
+    content: "";
+    position: absolute;
+    top: 0.68em;
+    right: 0;
+    width: 7px;
+    height: 7px;
+    background: var(--hc-gold);
+  }
+
+  #{{ section_id }} .hc-form {
+    display: grid;
+    gap: 16px;
+  }
+
+  #{{ section_id }} .hc-form__row {
+    display: grid;
+    gap: 8px;
+  }
+
+  #{{ section_id }} .hc-form label {
+    color: var(--hc-ink);
+    font-size: 12px;
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  #{{ section_id }} .hc-form input,
+  #{{ section_id }} .hc-form textarea {
+    width: 100%;
+    min-height: 52px;
+    border: 1px solid rgba(5, 5, 5, 0.16);
+    background: #fdfaf4;
+    color: var(--hc-ink);
+    padding: 14px 16px;
+    font: inherit;
+    font-size: 16px;
+    line-height: 1.35;
+    border-radius: 0;
+    box-shadow: none;
+    outline: none;
+    direction: rtl;
+  }
+
+  #{{ section_id }} .hc-form textarea {
+    min-height: 158px;
+    resize: vertical;
+  }
+
+  #{{ section_id }} .hc-form input:focus,
+  #{{ section_id }} .hc-form textarea:focus {
+    border-color: var(--hc-gold);
+    background: #fff;
+  }
+
+  #{{ section_id }} .hc-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    width: fit-content;
+    padding: 0 28px;
+    border: 0;
+    background: var(--hc-black);
+    color: #fff;
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-radius: 0;
+    transition: background 0.22s ease, color 0.22s ease;
+  }
+
+  #{{ section_id }} .hc-button:hover,
+  #{{ section_id }} .hc-button:focus-visible {
+    background: var(--hc-gold);
+    color: var(--hc-black);
+  }
+
+  #{{ section_id }} .hc-form-message {
+    margin: 0 0 18px;
+    padding: 14px 16px;
+    font-size: 15px;
+    line-height: 1.45;
+    font-weight: 700;
+  }
+
+  #{{ section_id }} .hc-form-message--success {
+    background: rgba(200, 165, 106, 0.18);
+    color: var(--hc-ink);
+    border: 1px solid rgba(200, 165, 106, 0.45);
+  }
+
+  #{{ section_id }} .hc-form-message--error {
+    background: rgba(160, 0, 0, 0.08);
+    color: #8a0000;
+    border: 1px solid rgba(160, 0, 0, 0.22);
+  }
+
+  #{{ section_id }} .hc-trust {
+    background: var(--hc-black);
+    color: #fff;
+    padding: 38px 0;
+    border-top: 1px solid rgba(200, 165, 106, 0.22);
+  }
+
+  #{{ section_id }} .hc-trust__inner {
+    display: grid;
+    grid-template-columns: 180px minmax(0, 1fr);
+    gap: 24px;
+    align-items: center;
+  }
+
+  #{{ section_id }} .hc-trust__title {
+    margin: 0;
+    color: var(--hc-gold);
+    font-size: 28px;
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  #{{ section_id }} .hc-trust__items {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  #{{ section_id }} .hc-trust__item {
+    min-height: 70px;
+    display: flex;
+    align-items: center;
+    padding: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    line-height: 1.35;
+    font-weight: 800;
+  }
+
+  @media screen and (max-width: 900px) {
+    #{{ section_id }} .hc-cards,
+    #{{ section_id }} .hc-info-grid {
+      grid-template-columns: 1fr;
+    }
+
+    #{{ section_id }} .hc-trust__inner {
+      grid-template-columns: 1fr;
+    }
+
+    #{{ section_id }} .hc-trust__items {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media screen and (max-width: 640px) {
+    #{{ section_id }} .hc-page-width {
+      padding: 0 14px;
+    }
+
+    #{{ section_id }} .hc-hero {
+      padding: 74px 0 48px;
+    }
+
+    #{{ section_id }} .hc-section {
+      padding: 32px 0;
+    }
+
+    #{{ section_id }} .hc-cards {
+      gap: 12px;
+      margin-top: -18px;
+    }
+
+    #{{ section_id }} .hc-card,
+    #{{ section_id }} .hc-panel {
+      padding: 22px;
+    }
+
+    #{{ section_id }} .hc-trust__items {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    #{{ section_id }} .hc-button {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #{{ section_id }} * {
+      transition: none !important;
+    }
+  }
+</style>
+
+<section id="{{ section_id }}">
+  <div class="hc-hero">
+    <div class="hc-page-width">
+      <div class="hc-hero__content">
+        <p class="hc-kicker">{{ section.settings.hero_kicker }}</p>
+        <h1 class="hc-title">{{ section.settings.hero_title }}</h1>
+        <div class="hc-subtitle">{{ section.settings.hero_subtitle }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hc-page-width">
+    <div class="hc-cards">
+      <a class="hc-card" href="mailto:{{ section.settings.email_text }}">
+        <span>
+          <p class="hc-card__label">{{ section.settings.email_label }}</p>
+          <h2 class="hc-card__title">{{ section.settings.email_title }}</h2>
+          <p class="hc-card__text">{{ section.settings.email_text }}</p>
+          <p class="hc-card__small">{{ section.settings.email_small_text }}</p>
+        </span>
+      </a>
+
+      <a class="hc-card" href="{{ section.settings.instagram_link }}" target="_blank" rel="noopener">
+        <span>
+          <p class="hc-card__label">{{ section.settings.instagram_label }}</p>
+          <h2 class="hc-card__title">{{ section.settings.instagram_title }}</h2>
+          <p class="hc-card__text">{{ section.settings.instagram_text }}</p>
+          <p class="hc-card__small">{{ section.settings.instagram_small_text }}</p>
+        </span>
+      </a>
+
+      <a class="hc-card" href="{{ section.settings.guides_link }}">
+        <span>
+          <p class="hc-card__label">{{ section.settings.guides_label }}</p>
+          <h2 class="hc-card__title">{{ section.settings.guides_title }}</h2>
+          <p class="hc-card__small">{{ section.settings.guides_text }}</p>
+        </span>
+        <span class="hc-card__button">{{ section.settings.guides_button_text }}</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="hc-section">
+    <div class="hc-page-width">
+      <div class="hc-info-grid">
+        <div class="hc-panel">
+          <h2 class="hc-panel__title">{{ section.settings.before_title }}</h2>
+          <ul class="hc-list">
+            <li>{{ section.settings.before_item_1 }}</li>
+            <li>{{ section.settings.before_item_2 }}</li>
+            <li>{{ section.settings.before_item_3 }}</li>
+          </ul>
+        </div>
+
+        <div class="hc-panel hc-panel--light">
+          {%- form 'contact', id: 'HoopersContactForm', class: 'hc-form' -%}
+            {%- if form.posted_successfully? -%}
+              <p class="hc-form-message hc-form-message--success">{{ section.settings.success_message }}</p>
+            {%- endif -%}
+
+            {%- if form.errors -%}
+              <div class="hc-form-message hc-form-message--error">
+                {{ form.errors | default_errors }}
+              </div>
+            {%- endif -%}
+
+            <div class="hc-form__row">
+              <label for="HoopersContactName">{{ section.settings.name_label }}</label>
+              <input
+                id="HoopersContactName"
+                type="text"
+                name="contact[name]"
+                value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
+                autocomplete="name"
+                required>
+            </div>
+
+            <div class="hc-form__row">
+              <label for="HoopersContactEmail">{{ section.settings.email_field_label }}</label>
+              <input
+                id="HoopersContactEmail"
+                type="email"
+                name="contact[email]"
+                value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+                autocorrect="off"
+                autocapitalize="off"
+                autocomplete="email"
+                required>
+            </div>
+
+            <div class="hc-form__row">
+              <label for="HoopersContactMessage">{{ section.settings.message_label }}</label>
+              <textarea
+                id="HoopersContactMessage"
+                name="contact[body]"
+                required>{% if form.body %}{{ form.body }}{% endif %}</textarea>
+            </div>
+
+            <button type="submit" class="hc-button">{{ section.settings.form_button_text }}</button>
+          {%- endform -%}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hc-trust">
+    <div class="hc-page-width">
+      <div class="hc-trust__inner">
+        <h2 class="hc-trust__title">{{ section.settings.trust_title }}</h2>
+        <div class="hc-trust__items">
+          <div class="hc-trust__item">{{ section.settings.trust_item_1 }}</div>
+          <div class="hc-trust__item">{{ section.settings.trust_item_2 }}</div>
+          <div class="hc-trust__item">{{ section.settings.trust_item_3 }}</div>
+          <div class="hc-trust__item">{{ section.settings.trust_item_4 }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "HOOPERS Contact",
+  "settings": [
+    { "type": "header", "content": "Hero" },
+    { "type": "text", "id": "hero_kicker", "label": "Hero kicker", "default": "CONTACT" },
+    { "type": "text", "id": "hero_title", "label": "Hero title", "default": "צרו קשר עם HOOPERS" },
+    { "type": "textarea", "id": "hero_subtitle", "label": "Hero subtitle", "default": "יש לכם שאלה על מידה, משלוח, החלפה או הזמנה? צוות HOOPERS כאן כדי לעזור." },
+
+    { "type": "header", "content": "Email card" },
+    { "type": "text", "id": "email_label", "label": "Email card label", "default": "EMAIL" },
+    { "type": "text", "id": "email_title", "label": "Email card title", "default": "אימייל" },
+    { "type": "text", "id": "email_text", "label": "Email text", "default": "serviceisraelnba@gmail.com" },
+    { "type": "text", "id": "email_small_text", "label": "Email small text", "default": "מענה בדרך כלל תוך יום עסקים." },
+
+    { "type": "header", "content": "Instagram card" },
+    { "type": "text", "id": "instagram_label", "label": "Instagram card label", "default": "INSTAGRAM" },
+    { "type": "text", "id": "instagram_title", "label": "Instagram card title", "default": "אינסטגרם" },
+    { "type": "text", "id": "instagram_text", "label": "Instagram text", "default": "@hoopers.il" },
+    { "type": "url", "id": "instagram_link", "label": "Instagram link" },
+    { "type": "text", "id": "instagram_small_text", "label": "Instagram small text", "default": "השקות, עדכונים ותוכן יומי." },
+
+    { "type": "header", "content": "Guides card" },
+    { "type": "text", "id": "guides_label", "label": "Guides card label", "default": "GUIDES" },
+    { "type": "text", "id": "guides_title", "label": "Guides card title", "default": "מדריכים ושאלות נפוצות" },
+    { "type": "textarea", "id": "guides_text", "label": "Guides card text", "default": "לפני שפונים אלינו, אפשר לבדוק את מרכז המדריכים שלנו." },
+    { "type": "text", "id": "guides_button_text", "label": "Guides button text", "default": "למרכז המדריכים" },
+    { "type": "url", "id": "guides_link", "label": "Guides link" },
+
+    { "type": "header", "content": "Before contacting" },
+    { "type": "text", "id": "before_title", "label": "Block title", "default": "לפני שפונים אלינו" },
+    { "type": "text", "id": "before_item_1", "label": "Item 1", "default": "משלוחים: עד 14 ימי עסקים" },
+    { "type": "text", "id": "before_item_2", "label": "Item 2", "default": "החלפת מידה: אפשרית בהתאם למדיניות ההחלפות באתר" },
+    { "type": "text", "id": "before_item_3", "label": "Item 3", "default": "מעקב משלוח: נשלח למייל לאחר יציאת ההזמנה" },
+
+    { "type": "header", "content": "Contact form" },
+    { "type": "text", "id": "name_label", "label": "Name label", "default": "שם" },
+    { "type": "text", "id": "email_field_label", "label": "Email field label", "default": "אימייל" },
+    { "type": "text", "id": "message_label", "label": "Message label", "default": "הודעה" },
+    { "type": "text", "id": "form_button_text", "label": "Button text", "default": "שלח פנייה" },
+    { "type": "text", "id": "success_message", "label": "Success message", "default": "תודה, הפנייה נשלחה בהצלחה. נחזור אליכם בהקדם." },
+
+    { "type": "header", "content": "Trust block" },
+    { "type": "text", "id": "trust_title", "label": "Trust title", "default": "HOOPERS" },
+    { "type": "text", "id": "trust_item_1", "label": "Trust item 1", "default": "משלוח חינם מעל 300₪" },
+    { "type": "text", "id": "trust_item_2", "label": "Trust item 2", "default": "החלפת מידה" },
+    { "type": "text", "id": "trust_item_3", "label": "Trust item 3", "default": "שירות אישי" },
+    { "type": "text", "id": "trust_item_4", "label": "Trust item 4", "default": "מענה מהיר" }
+  ],
+  "presets": [
+    {
+      "name": "HOOPERS Contact"
+    }
+  ]
+}
+{% endschema %}

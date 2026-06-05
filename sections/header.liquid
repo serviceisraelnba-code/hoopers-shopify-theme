@@ -1,23 +1,11 @@
 {%- liquid
-  assign main_menu = linklists[section.settings.main_menu_link_list]
-  assign toolbar_menu = linklists[section.settings.toolbar_menu]
-
-  assign logo_alignment = 'left'
-  if section.settings.main_menu_alignment == 'center-left' or section.settings.main_menu_alignment == 'center-split' or section.settings.main_menu_alignment == 'center' or section.settings.main_menu_alignment == 'center-drawer'
-    assign logo_alignment = 'center'
-  endif
-
-  assign dropdown_alignment = 'left'
-  if section.settings.main_menu_alignment == 'left-center' or section.settings.main_menu_alignment == 'center-split' or section.settings.main_menu_alignment == 'center'
-    assign dropdown_alignment = 'center'
-  endif
-
   assign template_name = template | replace: '.', ' ' | truncatewords: 2, '' | handle
 
   assign sticky_header = false
   if section.settings.header_style == 'sticky'
     assign sticky_header = true
   endif
+
   assign overlay_header = false
   if template_name == 'index' and section.settings.sticky_index
     assign overlay_header = true
@@ -25,177 +13,1119 @@
   if template_name contains 'collection' and collection.image and section.settings.sticky_collection
     assign overlay_header = true
   endif
+
+  assign nba_label = section.settings.nba_label | default: 'NBA'
+  assign world_label = section.settings.world_label | default: 'WORLD CUP'
+  assign streetwear_label = section.settings.streetwear_label | default: 'STREETWEAR'
+  assign pro_label = section.settings.pro_label | default: 'PRO GEAR'
+  assign sale_label = section.settings.sale_label | default: 'SALE'
+  assign new_arrivals_label = section.settings.new_arrivals_label | default: 'NEW ARRIVALS'
+  assign best_sellers_label = section.settings.best_sellers_label | default: 'BEST SELLERS'
+  assign kids_label = section.settings.kids_label | default: 'KIDS'
+  assign care_label = section.settings.care_label | default: 'CUSTOMER CARE'
+
+    assign nba_link = section.settings.nba_link | default: '/collections/nba'
+  assign nba_retro_label = section.settings.nba_retro_label | default: 'Retro'
+  assign nba_retro_link = section.settings.nba_retro_link | default: '/collections/retro'
+  assign nba_winter_label = section.settings.nba_winter_label | default: 'Winter'
+  assign nba_winter_link = section.settings.nba_winter_link | default: '/collections/winter'
+  assign world_link = section.settings.world_link | default: '/collections/world-cup'
+  assign streetwear_link = section.settings.streetwear_link | default: '/collections/streetwear'
+  assign pro_link = section.settings.pro_link | default: '/collections/pro-gear'
+  assign sale_link = section.settings.sale_link | default: '/collections/sale'
+  assign new_arrivals_link = section.settings.new_arrivals_link | default: '/collections/new-arrivals'
+  assign best_sellers_link = section.settings.best_sellers_link | default: '/collections/best-sellers'
+  assign kids_link = section.settings.kids_link | default: '/collections/kids'
+  assign care_link = section.settings.care_link | default: '/pages/contact'
+
+  assign nba_secondary_visible = false
+  if section.settings.nba_team_1_label != blank or section.settings.nba_team_2_label != blank or section.settings.nba_team_3_label != blank or section.settings.nba_team_4_label != blank or section.settings.nba_team_5_label != blank or section.settings.nba_team_6_label != blank or section.settings.nba_team_7_label != blank
+    assign nba_secondary_visible = true
+  endif
+
+  assign world_secondary_visible = false
+  if section.settings.world_secondary_1_label != blank
+    assign world_secondary_visible = true
+  endif
+
+  assign streetwear_secondary_visible = false
+  if section.settings.streetwear_secondary_1_label != blank
+    assign streetwear_secondary_visible = true
+  endif
+
+  assign pro_secondary_visible = false
+  if section.settings.pro_secondary_1_label != blank
+    assign pro_secondary_visible = true
+  endif
+
+  assign sale_secondary_visible = false
+  if section.settings.sale_secondary_1_label != blank
+    assign sale_secondary_visible = true
+  endif
+
+  assign kids_secondary_visible = false
+  if section.settings.kids_secondary_1_label != blank
+    assign kids_secondary_visible = true
+  endif
+
+  assign care_secondary_visible = false
+  if section.settings.care_secondary_1_label != blank
+    assign care_secondary_visible = true
+  endif
 -%}
 
-{%- render 'drawer-menu',
-  section: section,
-  main_menu: main_menu,
-  toolbar_menu: toolbar_menu,
-  logo_alignment: logo_alignment
--%}
 {%- render 'cart-drawer' -%}
 
 <style>
-  .site-nav__link,
-  .site-nav__dropdown-link:not(.site-nav__dropdown-link--top-level) {
-    font-size: {{ settings.type_navigation_size }}px;
+  #shopify-section-{{ section.id }} {
+    --hh-black: #050505;
+    --hh-gold: #c8a56a;
+    position: relative;
+    z-index: 30;
   }
-  {% if settings.type_navigation_capitalize %}
-    .site-nav__link, .mobile-nav__link--top-level {
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-    }
-    .mobile-nav__link--top-level {
-      font-size: 1.1em;
-    }
-  {% endif %}
 
-  {% if mainmenu.length > 6 %}
-    .site-nav__link {
-      padding-left: 10px;
-      padding-right: 10px;
-    }
-  {% endif %}
+  #shopify-section-{{ section.id }} .hh-header {
+    background: rgba(5, 5, 5, 0.94);
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(14px);
+  }
 
-  {% unless section.settings.mega_menu_images %}
-    .megamenu__collection-image {
-      display: none;
-    }
-  {% endunless %}
+  #shopify-section-{{ section.id }} .header-wrapper--sticky .hh-header,
+  #shopify-section-{{ section.id }} .header-wrapper.is-light .hh-header {
+    background: rgba(5, 5, 5, 0.84);
+  }
 
-  {%- if settings.color_header == settings.color_body_bg or settings.color_body_bg contains settings.color_header -%}
-    .site-header {
-      box-shadow: 0 0 1px rgba(0,0,0,0.2);
-    }
+  #shopify-section-{{ section.id }} .hh-header .page-width {
+    max-width: none;
+    padding-left: 32px;
+    padding-right: 32px;
+  }
 
-    .toolbar + .header-sticky-wrapper .site-header {
-      border-top: 0;
-    }
-  {%- endif -%}
-  .extra--styled---div{
-    border-radius: 50%;
-    background: #fff;
+  #shopify-section-{{ section.id }} .hh-header__inner {
+    position: relative;
+    min-height: 82px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(180px, 16vw, 260px) minmax(0, 1fr);
+    align-items: center;
+    gap: 24px;
+  }
+
+  #shopify-section-{{ section.id }} .hh-header__left,
+  #shopify-section-{{ section.id }} .hh-header__right {
+    min-width: 0;
     display: flex;
     align-items: center;
   }
-  .collection_menu_main_img .extra--styled---div{
-    border: 1px solid #dfdcdc;
+
+  #shopify-section-{{ section.id }} .hh-header__left {
+    justify-content: flex-end;
   }
-  .collection_menu_main_img:hover .extra--styled---div{
-    border: 1px solid #0770cf !important;
+
+  #shopify-section-{{ section.id }} .hh-header__right {
+    justify-content: space-between;
+    gap: 18px;
   }
-  .collection_menu_main_img:hover{
-    color: #0770cf !important;
+
+  #shopify-section-{{ section.id }} .hh-header__logo {
+    grid-column: 2;
+    justify-self: center;
+    width: 100%;
+    max-width: 260px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    z-index: 3;
   }
-  #shopify-section-{{ section.id }} .site-nav__dropdown.megamenu .grid__item{
-    margin-left: 20px;
-    border-left: 1px solid #dfdfdf;
-    padding-left: 20px !important;
+
+  #shopify-section-{{ section.id }} .hh-header__logo .site-header__logo,
+  #shopify-section-{{ section.id }} .hh-header__logo .site-header__logo-link {
+    margin: 0 auto;
+    color: #fff !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
-   /* .mobile-nav__child-item, */
-  .line_style_top_bottom{
-    border-bottom: 1px solid #e1e1e1;
-    padding-bottom: 5px;
-    padding-top: 5px;
+
+  #shopify-section-{{ section.id }} .hh-header__logo img,
+  #shopify-section-{{ section.id }} .hh-mobile-header__logo img {
+    filter: brightness(0) invert(1);
+  }
+
+  #shopify-section-{{ section.id }} .hh-header__logo a,
+  #shopify-section-{{ section.id }} .hh-mobile-header__logo a {
+    color: #fff !important;
+  }
+
+  #shopify-section-{{ section.id }} .hh-nav {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  #shopify-section-{{ section.id }} .hh-nav__item {
+    position: static;
+  }
+
+  #shopify-section-{{ section.id }} .hh-nav__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 82px;
+    color: #fff;
+    font-size: 12.5px;
+    line-height: 1;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  #shopify-section-{{ section.id }} .hh-nav__item--mega > .hh-nav__link::after {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-right: 1.5px solid var(--hh-gold);
+    border-bottom: 1.5px solid var(--hh-gold);
+    transform: rotate(45deg) translateY(-2px);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  #shopify-section-{{ section.id }} .hh-nav__link:hover,
+  #shopify-section-{{ section.id }} .hh-nav__item:hover .hh-nav__link {
+    color: var(--hh-gold);
+  }
+
+  #shopify-section-{{ section.id }} .hh-nav__item--mega:hover > .hh-nav__link::after,
+  #shopify-section-{{ section.id }} .hh-nav__item--mega:focus-within > .hh-nav__link::after {
+    transform: rotate(225deg) translate(-1px, -1px);
+    border-color: #fff;
+  }
+
+  #shopify-section-{{ section.id }} .hh-icons {
+    flex: 0 0 auto;
+  }
+
+  #shopify-section-{{ section.id }} .hh-icons .site-nav,
+  #shopify-section-{{ section.id }} .hh-mobile-header__icons .site-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  #shopify-section-{{ section.id }} .hh-icons .site-nav__link,
+  #shopify-section-{{ section.id }} .hh-icons a,
+  #shopify-section-{{ section.id }} .hh-icons button,
+  #shopify-section-{{ section.id }} .hh-icons .icon,
+  #shopify-section-{{ section.id }} .hh-icons svg {
+    color: #fff !important;
+    stroke: #fff !important;
+  }
+
+  #shopify-section-{{ section.id }} .hh-mobile-header__icons .site-nav__link,
+  #shopify-section-{{ section.id }} .hh-mobile-header__icons a,
+  #shopify-section-{{ section.id }} .hh-mobile-header__icons button,
+  #shopify-section-{{ section.id }} .hh-mobile-header__icons .icon,
+  #shopify-section-{{ section.id }} .hh-mobile-header__icons svg {
+    color: #fff !important;
+    stroke: #fff !important;
+  }
+
+  #shopify-section-{{ section.id }} .hh-mobile-header__icons svg path {
+    fill: none !important;
+    stroke: currentColor !important;
+  }
+
+  #shopify-section-{{ section.id }} .hh-mobile-header__icons [class*="wishlist"],
+  #shopify-section-{{ section.id }} .hh-mobile-header__icons [class*="wishlist"] svg,
+  #shopify-section-{{ section.id }} .hh-mobile-header__icons [class*="wishlist"] svg path {
+    color: #fff !important;
+    fill: none !important;
+    stroke: #fff !important;
+  }
+
+  #shopify-section-{{ section.id }} .hh-icons [class*="wishlist"],
+  #shopify-section-{{ section.id }} .hh-icons [class*="wishlist"] svg,
+  #shopify-section-{{ section.id }} .hh-icons [class*="wishlist"] svg path {
+    color: #fff !important;
+    fill: #fff !important;
+    stroke: #fff !important;
+  }
+
+  #shopify-section-{{ section.id }} .hh-icons .cart-link__bubble,
+  #shopify-section-{{ section.id }} .hh-mobile-header__icons .cart-link__bubble {
+    background: var(--hh-gold);
+    color: #050505;
+  }
+
+  #shopify-section-{{ section.id }} .hh-mega {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(10px);
+    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+    background: var(--hh-black);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.38);
+  }
+
+  #shopify-section-{{ section.id }} .hh-nav__item:hover .hh-mega,
+  #shopify-section-{{ section.id }} .hh-nav__item:focus-within .hh-mega {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  #shopify-section-{{ section.id }} .hh-mega__inner {
+    display: grid;
+    grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr) minmax(340px, 480px);
+    gap: 46px;
+    padding: 38px 0;
+    color: #fff;
+  }
+
+  .hh-mega__inner--no-secondary {
+  grid-template-columns: minmax(210px, 1fr) minmax(190px, 0.72fr) minmax(360px, 480px);
+}
+
+.hh-mega__inner--no-secondary .hh-mega__banner {
+  grid-column: 3;
+}
+
+  #shopify-section-{{ section.id }} .hh-mega__eyebrow {
+    margin: 0 0 16px;
+    color: var(--hh-gold);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .hh-mega__list {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  #shopify-section-{{ section.id }} .hh-mega__list a {
+    color: rgba(255, 255, 255, 0.84);
+    font-size: 15px;
+    line-height: 1.2;
+    font-weight: 750;
+    text-decoration: none;
+  }
+
+  #shopify-section-{{ section.id }} .hh-mega__list a:hover {
+    color: #fff;
+  }
+
+  #shopify-section-{{ section.id }} .hh-mega__banner {
+    position: relative;
+    display: block;
+    min-height: 255px;
+    overflow: hidden;
+    background: #111;
+    color: #fff;
+    text-decoration: none;
+  }
+
+  #shopify-section-{{ section.id }} .hh-mega__banner img {
+    width: 100%;
+    height: 100%;
+    min-height: 255px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.35s ease;
+  }
+
+  #shopify-section-{{ section.id }} .hh-mega__banner:hover img {
+    transform: scale(1.035);
+  }
+
+  #shopify-section-{{ section.id }} .hh-mega__banner::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.58));
+  }
+
+  #shopify-section-{{ section.id }} .hh-mega__banner-content {
+    position: absolute;
+    left: 22px;
+    right: 22px;
+    bottom: 20px;
+    z-index: 2;
+  }
+
+  #shopify-section-{{ section.id }} .hh-mega__banner-title {
+    display: block;
+    margin-bottom: 12px;
+    color: #fff;
+    font-size: 28px;
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .hh-mega__banner-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0 18px;
+    background: #fff;
+    color: #050505;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .hh-mobile-header {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .hh-drawer {
+    background: var(--hh-black);
+    color: #fff;
+  }
+
+  #shopify-section-{{ section.id }} .hh-drawer .drawer__contents {
+    background: var(--hh-black);
+  }
+
+  #shopify-section-{{ section.id }} .hh-drawer .drawer__fixed-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  #shopify-section-{{ section.id }} .hh-drawer .drawer__header {
+    min-height: 68px;
+    padding: 16px 18px;
+  }
+
+  #shopify-section-{{ section.id }} .hh-drawer__title {
+    display: grid;
+    gap: 3px;
+    margin: 0;
+  }
+
+  #shopify-section-{{ section.id }} .hh-drawer__kicker {
+    color: var(--hh-gold);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .hh-drawer__brand {
+    color: #fff;
+    font-size: 17px;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .hh-drawer .drawer__close-button {
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 0;
+    color: #fff;
+  }
+
+  #shopify-section-{{ section.id }} .hh-drawer .drawer__scrollable {
+    padding: 22px 18px 26px;
+  }
+
+  #shopify-section-{{ section.id }} .hh-mobile-menu {
+    display: grid;
+    gap: 0;
+  }
+
+  #shopify-section-{{ section.id }} .hh-mobile-menu details {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  #shopify-section-{{ section.id }} .hh-mobile-menu summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 0;
+    color: #fff;
+    cursor: pointer;
+    list-style: none;
+    font-size: 18px;
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .hh-mobile-menu summary::-webkit-details-marker {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .hh-mobile-menu summary::after {
+    content: "+";
+    color: var(--hh-gold);
+    font-size: 22px;
+    line-height: 1;
+    transition: transform 0.2s ease;
+  }
+
+  #shopify-section-{{ section.id }} .hh-mobile-menu details[open] summary::after {
+    transform: rotate(45deg);
+  }
+
+  #shopify-section-{{ section.id }} .hh-mobile-menu__links {
+    display: grid;
+    gap: 0;
+    padding: 4px 0 18px;
+  }
+
+  #shopify-section-{{ section.id }} .hh-mobile-menu__links a {
+    color: rgba(255, 255, 255, 0.62);
+    text-decoration: none;
+    font-size: 13px;
+    line-height: 1.25;
+    font-weight: 750;
+    padding: 11px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  #shopify-section-{{ section.id }} .hh-mobile-menu__links a:first-child {
+    border-top-color: rgba(200, 165, 106, 0.22);
+  }
+
+  #shopify-section-{{ section.id }} .hh-mobile-menu__secondary a,
+  #shopify-section-{{ section.id }} .hh-mobile-menu__account {
+    color: rgba(255, 255, 255, 0.78);
+    text-decoration: none;
+    font-size: 14px;
+    line-height: 1.2;
+    font-weight: 800;
+  }
+
+  #shopify-section-{{ section.id }} .hh-mobile-menu__links a:hover,
+  #shopify-section-{{ section.id }} .hh-mobile-menu__links a:focus,
+  #shopify-section-{{ section.id }} .hh-mobile-menu__secondary a:hover,
+  #shopify-section-{{ section.id }} .hh-mobile-menu__account:hover {
+    color: #fff;
+  }
+
+  #shopify-section-{{ section.id }} .hh-mobile-menu__account {
+    display: block;
+    padding: 18px 0 0;
+  }
+
+  #shopify-section-{{ section.id }} .hh-mobile-menu__divider {
+    height: 1px;
+    background: rgba(200, 165, 106, 0.42);
+    margin: 18px 0;
+  }
+
+  #shopify-section-{{ section.id }} .hh-mobile-menu__secondary {
+    display: grid;
+    gap: 18px;
+    padding: 18px 0 2px;
+  }
+
+  #shopify-section-{{ section.id }} .hh-mobile-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 22px;
+    padding-bottom: 26px;
+  }
+
+  #shopify-section-{{ section.id }} .hh-mobile-card {
+    position: relative;
+    display: block;
+    min-height: 132px;
+    overflow: hidden;
+    background: #111;
+    color: #fff;
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  #shopify-section-{{ section.id }} .hh-mobile-card img {
+    width: 100%;
+    height: 132px;
+    object-fit: cover;
+    display: block;
+  }
+
+  #shopify-section-{{ section.id }} .hh-mobile-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.68));
+  }
+
+  #shopify-section-{{ section.id }} .hh-mobile-card span {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    z-index: 2;
+    color: #fff;
+    font-size: 12px;
+    line-height: 1.1;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  @media screen and (max-width: 1380px) {
+    #shopify-section-{{ section.id }} .hh-nav {
+      gap: 13px;
+    }
+
+    #shopify-section-{{ section.id }} .hh-nav__link {
+      font-size: 11.5px;
+      letter-spacing: 0.045em;
+    }
+
+    #shopify-section-{{ section.id }} .hh-header__inner {
+      grid-template-columns: minmax(0, 1fr) clamp(170px, 15vw, 230px) minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    #shopify-section-{{ section.id }} .hh-header .page-width {
+      padding-left: 22px;
+      padding-right: 22px;
+    }
+  }
+
+  @media screen and (max-width: 1180px) {
+    #shopify-section-{{ section.id }} .hh-desktop-header {
+      display: none;
+    }
+
+    #shopify-section-{{ section.id }} .hh-mobile-header {
+      display: block;
+      background: rgba(5, 5, 5, 0.96);
+    }
+
+    #shopify-section-{{ section.id }} .hh-mobile-header__inner {
+      min-height: 66px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 14px;
+    }
+
+    #shopify-section-{{ section.id }} .hh-mobile-header__menu {
+      justify-self: start;
+    }
+
+    #shopify-section-{{ section.id }} .hh-mobile-header__logo {
+      justify-self: center;
+    }
+
+      #shopify-section-{{ section.id }} .hh-mobile-header__icons {
+      justify-self: end;
+      position: relative;
+      z-index: 8;
+      pointer-events: auto;
+    }
+
+    #shopify-section-{{ section.id }} .hh-mobile-header__icons .site-nav__link--icon,
+    #shopify-section-{{ section.id }} .hh-mobile-header__icons a,
+    #shopify-section-{{ section.id }} .hh-mobile-header__icons button {
+      position: relative;
+      z-index: 9;
+      pointer-events: auto;
+    }
+
+    #shopify-section-{{ section.id }} .hh-mobile-header .site-nav__link--icon {
+      color: #fff;
+      padding: 8px;
+    }
+
+    #shopify-section-{{ section.id }} .hh-mobile-header__icons .site-nav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #shopify-section-{{ section.id }} * {
+      transition: none !important;
+    }
   }
 </style>
 
+<div id="NavDrawer" class="drawer drawer--left hh-drawer" dir="rtl">
+  <div class="drawer__contents">
+    <div class="drawer__fixed-header">
+      <div class="drawer__header">
+        <div class="h2 drawer__title hh-drawer__title">
+          <span class="hh-drawer__kicker">HOOPERS</span>
+          <span class="hh-drawer__brand">MENU</span>
+        </div>
+        <div class="drawer__close">
+          <button type="button" class="drawer__close-button js-drawer-close">
+            <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-close" viewBox="0 0 64 64"><path d="m19 17.61 27.12 27.13m0-27.12L19 44.74"/></svg>
+            <span class="icon__fallback-text">{{ 'general.drawers.close_menu' | t }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="drawer__scrollable">
+      <nav class="hh-mobile-menu" aria-label="Mobile navigation">
+        <details>
+          <summary>{{ nba_label }}</summary>
+          <div class="hh-mobile-menu__links">
+            <a href="{{ section.settings.nba_main_1_url | default: '/collections/jerseys' }}">{{ section.settings.nba_main_1_label | default: 'גופיות' }}</a>
+            <a href="{{ section.settings.nba_main_2_url | default: '/collections/shorts' }}">{{ section.settings.nba_main_2_label | default: 'מכנסים' }}</a>
+            <a href="{{ section.settings.nba_main_3_url | default: '/collections/t-shirts' }}">{{ section.settings.nba_main_3_label | default: 'טישרטים' }}</a>
+            <a href="{{ nba_retro_link }}">{{ nba_retro_label }}</a>
+            <a href="{{ nba_winter_link }}">{{ nba_winter_label }}</a>
+            {%- if section.settings.nba_team_1_label != blank -%}<a href="{{ section.settings.nba_team_1_url }}">{{ section.settings.nba_team_1_label }}</a>{%- endif -%}
+            {%- if section.settings.nba_team_2_label != blank -%}<a href="{{ section.settings.nba_team_2_url }}">{{ section.settings.nba_team_2_label }}</a>{%- endif -%}
+            {%- if section.settings.nba_team_3_label != blank -%}<a href="{{ section.settings.nba_team_3_url }}">{{ section.settings.nba_team_3_label }}</a>{%- endif -%}
+            {%- if section.settings.nba_team_4_label != blank -%}<a href="{{ section.settings.nba_team_4_url }}">{{ section.settings.nba_team_4_label }}</a>{%- endif -%}
+            {%- if section.settings.nba_team_5_label != blank -%}<a href="{{ section.settings.nba_team_5_url }}">{{ section.settings.nba_team_5_label }}</a>{%- endif -%}
+            {%- if section.settings.nba_team_6_label != blank -%}<a href="{{ section.settings.nba_team_6_url }}">{{ section.settings.nba_team_6_label }}</a>{%- endif -%}
+            {%- if section.settings.nba_team_7_label != blank -%}<a href="{{ section.settings.nba_team_7_url }}">{{ section.settings.nba_team_7_label }}</a>{%- endif -%}
+          </div>
+        </details>
+
+        <details>
+          <summary>{{ world_label }}</summary>
+          <div class="hh-mobile-menu__links">
+            <a href="{{ section.settings.world_main_1_url | default: '/collections/world-cup' }}">{{ section.settings.world_main_1_label | default: 'גופיות מונדיאל' }}</a>
+            {%- if section.settings.world_secondary_1_label != blank -%}<a href="{{ section.settings.world_secondary_1_url }}">{{ section.settings.world_secondary_1_label }}</a>{%- endif -%}
+          </div>
+        </details>
+
+        <details>
+          <summary>{{ streetwear_label }}</summary>
+          <div class="hh-mobile-menu__links">
+            <a href="{{ section.settings.streetwear_main_1_url | default: '/collections/fear-of-god' }}">{{ section.settings.streetwear_main_1_label | default: 'Fear Of God' }}</a>
+            <a href="{{ section.settings.streetwear_main_2_url | default: '/collections/jordan' }}">{{ section.settings.streetwear_main_2_label | default: 'Jordan' }}</a>
+            <a href="{{ section.settings.streetwear_main_3_url | default: '/collections/just-don' }}">{{ section.settings.streetwear_main_3_label | default: 'JUST DON' }}</a>
+            {%- if section.settings.streetwear_secondary_1_label != blank -%}<a href="{{ section.settings.streetwear_secondary_1_url }}">{{ section.settings.streetwear_secondary_1_label }}</a>{%- endif -%}
+          </div>
+        </details>
+
+        <details>
+          <summary>{{ pro_label }}</summary>
+          <div class="hh-mobile-menu__links">
+            <a href="{{ section.settings.pro_main_1_url | default: '/collections/basketballs' }}">{{ section.settings.pro_main_1_label | default: 'כדורים' }}</a>
+            <a href="{{ section.settings.pro_main_2_url | default: '/collections/compression' }}">{{ section.settings.pro_main_2_label | default: 'Compression' }}</a>
+            <a href="{{ section.settings.pro_main_3_url | default: '/collections/socks' }}">{{ section.settings.pro_main_3_label | default: 'גרביים' }}</a>
+            {%- if section.settings.pro_secondary_1_label != blank -%}<a href="{{ section.settings.pro_secondary_1_url }}">{{ section.settings.pro_secondary_1_label }}</a>{%- endif -%}
+          </div>
+        </details>
+
+        <details>
+          <summary>{{ sale_label }}</summary>
+          <div class="hh-mobile-menu__links">
+            <a href="{{ section.settings.sale_main_1_url | default: '/collections/sale' }}">{{ section.settings.sale_main_1_label | default: 'כל המבצעים' }}</a>
+            {%- if section.settings.sale_secondary_1_label != blank -%}<a href="{{ section.settings.sale_secondary_1_url }}">{{ section.settings.sale_secondary_1_label }}</a>{%- endif -%}
+          </div>
+        </details>
+
+        <details>
+          <summary>{{ kids_label }}</summary>
+          <div class="hh-mobile-menu__links">
+            <a href="{{ section.settings.kids_main_1_url | default: '/collections/jersey-kids' }}">{{ section.settings.kids_main_1_label | default: 'גופיות ילדים' }}</a>
+            <a href="{{ section.settings.kids_main_2_url | default: '/collections/shorts-kids' }}">{{ section.settings.kids_main_2_label | default: 'מכנסי ילדים' }}</a>
+            {%- if section.settings.kids_secondary_1_label != blank -%}<a href="{{ section.settings.kids_secondary_1_url }}">{{ section.settings.kids_secondary_1_label }}</a>{%- endif -%}
+          </div>
+        </details>
+
+        <details>
+          <summary>{{ care_label }}</summary>
+          <div class="hh-mobile-menu__links">
+            <a href="{{ section.settings.care_main_1_url | default: '/pages/shipping' }}">{{ section.settings.care_main_1_label | default: 'משלוחים' }}</a>
+            <a href="{{ section.settings.care_main_2_url | default: '/pages/faq' }}">{{ section.settings.care_main_2_label | default: 'שאלות נפוצות' }}</a>
+            <a href="{{ section.settings.care_main_3_url | default: '/pages/contact' }}">{{ section.settings.care_main_3_label | default: 'צור קשר' }}</a>
+            {%- if section.settings.care_secondary_1_label != blank -%}<a href="{{ section.settings.care_secondary_1_url | default: routes.account_url }}">{{ section.settings.care_secondary_1_label }}</a>{%- endif -%}
+          </div>
+        </details>
+
+        <a class="hh-mobile-menu__account" href="{{ routes.account_url }}">MY ACCOUNT</a>
+
+        <div class="hh-mobile-menu__divider"></div>
+
+        <div class="hh-mobile-menu__secondary">
+          <a href="{{ new_arrivals_link }}">{{ new_arrivals_label }}</a>
+          <a href="{{ best_sellers_link }}">{{ best_sellers_label }}</a>
+        </div>
+
+        <div class="hh-mobile-cards">
+          <a class="hh-mobile-card" href="{{ section.settings.mobile_card_1_link | default: best_sellers_link }}">
+            {%- if section.settings.mobile_card_1_image != blank -%}
+              {{ section.settings.mobile_card_1_image | image_url: width: 500 | image_tag: loading: 'lazy', widths: '240, 360, 500', alt: section.settings.mobile_card_1_title }}
+            {%- endif -%}
+            <span>{{ section.settings.mobile_card_1_title | default: best_sellers_label }}</span>
+          </a>
+
+          <a class="hh-mobile-card" href="{{ section.settings.mobile_card_2_link | default: new_arrivals_link }}">
+            {%- if section.settings.mobile_card_2_image != blank -%}
+              {{ section.settings.mobile_card_2_image | image_url: width: 500 | image_tag: loading: 'lazy', widths: '240, 360, 500', alt: section.settings.mobile_card_2_title }}
+            {%- endif -%}
+            <span>{{ section.settings.mobile_card_2_title | default: new_arrivals_label }}</span>
+          </a>
+        </div>
+      </nav>
+    </div>
+  </div>
+</div>
+
+{%- capture nba_mega -%}
+  <div class="hh-mega">
+    <div class="page-width">
+      <div class="hh-mega__inner{% unless nba_secondary_visible %} hh-mega__inner--no-secondary{% endunless %}">
+        <div>
+          <p class="hh-mega__eyebrow">{{ section.settings.nba_main_heading | default: nba_label }}</p>
+          <ul class="hh-mega__list">
+            <li><a href="{{ section.settings.nba_main_1_url | default: '/collections/jerseys' }}">{{ section.settings.nba_main_1_label | default: 'גופיות' }}</a></li>
+            <li><a href="{{ section.settings.nba_main_2_url | default: '/collections/shorts' }}">{{ section.settings.nba_main_2_label | default: 'מכנסים' }}</a></li>
+            <li><a href="{{ section.settings.nba_main_3_url | default: '/collections/t-shirts' }}">{{ section.settings.nba_main_3_label | default: 'טישרטים' }}</a></li>
+            <li><a href="{{ nba_retro_link }}">{{ nba_retro_label }}</a></li>
+            <li><a href="{{ nba_winter_link }}">{{ nba_winter_label }}</a></li>
+          </ul>
+        </div>
+
+        {%- if nba_secondary_visible -%}
+          <div>
+            {%- if section.settings.nba_secondary_heading != blank -%}<p class="hh-mega__eyebrow">{{ section.settings.nba_secondary_heading }}</p>{%- endif -%}
+            <ul class="hh-mega__list">
+              {%- if section.settings.nba_team_1_label != blank -%}<li><a href="{{ section.settings.nba_team_1_url }}">{{ section.settings.nba_team_1_label }}</a></li>{%- endif -%}
+              {%- if section.settings.nba_team_2_label != blank -%}<li><a href="{{ section.settings.nba_team_2_url }}">{{ section.settings.nba_team_2_label }}</a></li>{%- endif -%}
+              {%- if section.settings.nba_team_3_label != blank -%}<li><a href="{{ section.settings.nba_team_3_url }}">{{ section.settings.nba_team_3_label }}</a></li>{%- endif -%}
+              {%- if section.settings.nba_team_4_label != blank -%}<li><a href="{{ section.settings.nba_team_4_url }}">{{ section.settings.nba_team_4_label }}</a></li>{%- endif -%}
+              {%- if section.settings.nba_team_5_label != blank -%}<li><a href="{{ section.settings.nba_team_5_url }}">{{ section.settings.nba_team_5_label }}</a></li>{%- endif -%}
+              {%- if section.settings.nba_team_6_label != blank -%}<li><a href="{{ section.settings.nba_team_6_url }}">{{ section.settings.nba_team_6_label }}</a></li>{%- endif -%}
+              {%- if section.settings.nba_team_7_label != blank -%}<li><a href="{{ section.settings.nba_team_7_url }}">{{ section.settings.nba_team_7_label }}</a></li>{%- endif -%}
+            </ul>
+          </div>
+        {%- endif -%}
+
+        <a class="hh-mega__banner" href="{{ section.settings.nba_banner_link | default: nba_link }}">
+          {%- if section.settings.nba_banner_image != blank -%}
+            {{ section.settings.nba_banner_image | image_url: width: 1000 | image_tag: loading: 'lazy', widths: '400, 700, 1000', alt: section.settings.nba_banner_title }}
+          {%- endif -%}
+          <span class="hh-mega__banner-content">
+            <span class="hh-mega__banner-title">{{ section.settings.nba_banner_title | default: nba_label }}</span>
+            <span class="hh-mega__banner-button">{{ section.settings.nba_banner_button_text | default: 'SHOP NBA' }}</span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+{%- endcapture -%}
+
+{%- capture world_mega -%}
+  <div class="hh-mega">
+    <div class="page-width">
+      <div class="hh-mega__inner{% unless world_secondary_visible %} hh-mega__inner--no-secondary{% endunless %}">
+        <div>
+          <p class="hh-mega__eyebrow">{{ section.settings.world_main_heading | default: world_label }}</p>
+          <ul class="hh-mega__list">
+            <li><a href="{{ section.settings.world_main_1_url | default: '/collections/world-cup' }}">{{ section.settings.world_main_1_label | default: 'גופיות מונדיאל' }}</a></li>
+          </ul>
+        </div>
+
+        {%- if world_secondary_visible -%}
+          <div>
+            {%- if section.settings.world_secondary_heading != blank -%}<p class="hh-mega__eyebrow">{{ section.settings.world_secondary_heading }}</p>{%- endif -%}
+            <ul class="hh-mega__list">
+              <li><a href="{{ section.settings.world_secondary_1_url }}">{{ section.settings.world_secondary_1_label }}</a></li>
+            </ul>
+          </div>
+        {%- endif -%}
+
+        <a class="hh-mega__banner" href="{{ section.settings.world_banner_link | default: world_link }}">
+          {%- if section.settings.world_banner_image != blank -%}
+            {{ section.settings.world_banner_image | image_url: width: 1000 | image_tag: loading: 'lazy', widths: '400, 700, 1000', alt: section.settings.world_banner_title }}
+          {%- endif -%}
+          <span class="hh-mega__banner-content">
+            <span class="hh-mega__banner-title">{{ section.settings.world_banner_title | default: world_label }}</span>
+            <span class="hh-mega__banner-button">{{ section.settings.world_banner_button_text | default: 'SHOP WORLD CUP' }}</span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+{%- endcapture -%}
+
+{%- capture streetwear_mega -%}
+  <div class="hh-mega">
+    <div class="page-width">
+      <div class="hh-mega__inner{% unless streetwear_secondary_visible %} hh-mega__inner--no-secondary{% endunless %}">
+        <div>
+          <p class="hh-mega__eyebrow">{{ section.settings.streetwear_main_heading | default: streetwear_label }}</p>
+          <ul class="hh-mega__list">
+            <li><a href="{{ section.settings.streetwear_main_1_url | default: '/collections/fear-of-god' }}">{{ section.settings.streetwear_main_1_label | default: 'Fear Of God' }}</a></li>
+            <li><a href="{{ section.settings.streetwear_main_2_url | default: '/collections/jordan' }}">{{ section.settings.streetwear_main_2_label | default: 'Jordan' }}</a></li>
+            <li><a href="{{ section.settings.streetwear_main_3_url | default: '/collections/just-don' }}">{{ section.settings.streetwear_main_3_label | default: 'JUST DON' }}</a></li>
+          </ul>
+        </div>
+
+        {%- if streetwear_secondary_visible -%}
+          <div>
+            {%- if section.settings.streetwear_secondary_heading != blank -%}<p class="hh-mega__eyebrow">{{ section.settings.streetwear_secondary_heading }}</p>{%- endif -%}
+            <ul class="hh-mega__list">
+              <li><a href="{{ section.settings.streetwear_secondary_1_url }}">{{ section.settings.streetwear_secondary_1_label }}</a></li>
+            </ul>
+          </div>
+        {%- endif -%}
+
+        <a class="hh-mega__banner" href="{{ section.settings.streetwear_banner_link | default: streetwear_link }}">
+          {%- if section.settings.streetwear_banner_image != blank -%}
+            {{ section.settings.streetwear_banner_image | image_url: width: 1000 | image_tag: loading: 'lazy', widths: '400, 700, 1000', alt: section.settings.streetwear_banner_title }}
+          {%- endif -%}
+          <span class="hh-mega__banner-content">
+            <span class="hh-mega__banner-title">{{ section.settings.streetwear_banner_title | default: streetwear_label }}</span>
+            <span class="hh-mega__banner-button">{{ section.settings.streetwear_banner_button_text | default: 'SHOP STREETWEAR' }}</span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+{%- endcapture -%}
+
+{%- capture pro_mega -%}
+  <div class="hh-mega">
+    <div class="page-width">
+      <div class="hh-mega__inner{% unless pro_secondary_visible %} hh-mega__inner--no-secondary{% endunless %}">
+        <div>
+          <p class="hh-mega__eyebrow">{{ section.settings.pro_main_heading | default: pro_label }}</p>
+          <ul class="hh-mega__list">
+            <li><a href="{{ section.settings.pro_main_1_url | default: '/collections/basketballs' }}">{{ section.settings.pro_main_1_label | default: 'כדורים' }}</a></li>
+            <li><a href="{{ section.settings.pro_main_2_url | default: '/collections/compression' }}">{{ section.settings.pro_main_2_label | default: 'Compression' }}</a></li>
+            <li><a href="{{ section.settings.pro_main_3_url | default: '/collections/socks' }}">{{ section.settings.pro_main_3_label | default: 'גרביים' }}</a></li>
+          </ul>
+        </div>
+
+        {%- if pro_secondary_visible -%}
+          <div>
+            {%- if section.settings.pro_secondary_heading != blank -%}<p class="hh-mega__eyebrow">{{ section.settings.pro_secondary_heading }}</p>{%- endif -%}
+            <ul class="hh-mega__list">
+              <li><a href="{{ section.settings.pro_secondary_1_url }}">{{ section.settings.pro_secondary_1_label }}</a></li>
+            </ul>
+          </div>
+        {%- endif -%}
+
+        <a class="hh-mega__banner" href="{{ section.settings.pro_banner_link | default: pro_link }}">
+          {%- if section.settings.pro_banner_image != blank -%}
+            {{ section.settings.pro_banner_image | image_url: width: 1000 | image_tag: loading: 'lazy', widths: '400, 700, 1000', alt: section.settings.pro_banner_title }}
+          {%- endif -%}
+          <span class="hh-mega__banner-content">
+            <span class="hh-mega__banner-title">{{ section.settings.pro_banner_title | default: pro_label }}</span>
+            <span class="hh-mega__banner-button">{{ section.settings.pro_banner_button_text | default: 'SHOP PRO GEAR' }}</span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+{%- endcapture -%}
+
+{%- capture sale_mega -%}
+  <div class="hh-mega">
+    <div class="page-width">
+      <div class="hh-mega__inner{% unless sale_secondary_visible %} hh-mega__inner--no-secondary{% endunless %}">
+        <div>
+          <p class="hh-mega__eyebrow">{{ section.settings.sale_main_heading | default: sale_label }}</p>
+          <ul class="hh-mega__list">
+            <li><a href="{{ section.settings.sale_main_1_url | default: '/collections/sale' }}">{{ section.settings.sale_main_1_label | default: 'כל המבצעים' }}</a></li>
+          </ul>
+        </div>
+
+        {%- if sale_secondary_visible -%}
+          <div>
+            {%- if section.settings.sale_secondary_heading != blank -%}<p class="hh-mega__eyebrow">{{ section.settings.sale_secondary_heading }}</p>{%- endif -%}
+            <ul class="hh-mega__list">
+              <li><a href="{{ section.settings.sale_secondary_1_url }}">{{ section.settings.sale_secondary_1_label }}</a></li>
+            </ul>
+          </div>
+        {%- endif -%}
+
+        <a class="hh-mega__banner" href="{{ section.settings.sale_banner_link | default: sale_link }}">
+          {%- if section.settings.sale_banner_image != blank -%}
+            {{ section.settings.sale_banner_image | image_url: width: 1000 | image_tag: loading: 'lazy', widths: '400, 700, 1000', alt: section.settings.sale_banner_title }}
+          {%- endif -%}
+          <span class="hh-mega__banner-content">
+            <span class="hh-mega__banner-title">{{ section.settings.sale_banner_title | default: sale_label }}</span>
+            <span class="hh-mega__banner-button">{{ section.settings.sale_banner_button_text | default: 'SHOP SALE' }}</span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+{%- endcapture -%}
+
+{%- capture kids_mega -%}
+  <div class="hh-mega">
+    <div class="page-width">
+      <div class="hh-mega__inner{% unless kids_secondary_visible %} hh-mega__inner--no-secondary{% endunless %}">
+        <div>
+          <p class="hh-mega__eyebrow">{{ section.settings.kids_main_heading | default: kids_label }}</p>
+          <ul class="hh-mega__list">
+            <li><a href="{{ section.settings.kids_main_1_url | default: '/collections/jersey-kids' }}">{{ section.settings.kids_main_1_label | default: 'גופיות ילדים' }}</a></li>
+            <li><a href="{{ section.settings.kids_main_2_url | default: '/collections/shorts-kids' }}">{{ section.settings.kids_main_2_label | default: 'מכנסי ילדים' }}</a></li>
+          </ul>
+        </div>
+
+        {%- if kids_secondary_visible -%}
+          <div>
+            {%- if section.settings.kids_secondary_heading != blank -%}<p class="hh-mega__eyebrow">{{ section.settings.kids_secondary_heading }}</p>{%- endif -%}
+            <ul class="hh-mega__list">
+              <li><a href="{{ section.settings.kids_secondary_1_url }}">{{ section.settings.kids_secondary_1_label }}</a></li>
+            </ul>
+          </div>
+        {%- endif -%}
+
+        <a class="hh-mega__banner" href="{{ section.settings.kids_banner_link | default: kids_link }}">
+          {%- if section.settings.kids_banner_image != blank -%}
+            {{ section.settings.kids_banner_image | image_url: width: 1000 | image_tag: loading: 'lazy', widths: '400, 700, 1000', alt: section.settings.kids_banner_title }}
+          {%- endif -%}
+          <span class="hh-mega__banner-content">
+            <span class="hh-mega__banner-title">{{ section.settings.kids_banner_title | default: kids_label }}</span>
+            <span class="hh-mega__banner-button">{{ section.settings.kids_banner_button_text | default: 'SHOP KIDS' }}</span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+{%- endcapture -%}
+
+{%- capture care_mega -%}
+  <div class="hh-mega">
+    <div class="page-width">
+      <div class="hh-mega__inner{% unless care_secondary_visible %} hh-mega__inner--no-secondary{% endunless %}">
+        <div>
+          <p class="hh-mega__eyebrow">{{ section.settings.care_main_heading | default: care_label }}</p>
+          <ul class="hh-mega__list">
+            <li><a href="{{ section.settings.care_main_1_url | default: '/pages/shipping' }}">{{ section.settings.care_main_1_label | default: 'משלוחים' }}</a></li>
+            <li><a href="{{ section.settings.care_main_2_url | default: '/pages/faq' }}">{{ section.settings.care_main_2_label | default: 'שאלות נפוצות' }}</a></li>
+            <li><a href="{{ section.settings.care_main_3_url | default: '/pages/contact' }}">{{ section.settings.care_main_3_label | default: 'צור קשר' }}</a></li>
+          </ul>
+        </div>
+
+        {%- if care_secondary_visible -%}
+          <div>
+            {%- if section.settings.care_secondary_heading != blank -%}<p class="hh-mega__eyebrow">{{ section.settings.care_secondary_heading }}</p>{%- endif -%}
+            <ul class="hh-mega__list">
+              <li><a href="{{ section.settings.care_secondary_1_url | default: routes.account_url }}">{{ section.settings.care_secondary_1_label }}</a></li>
+            </ul>
+          </div>
+        {%- endif -%}
+
+        <a class="hh-mega__banner" href="{{ section.settings.care_banner_link | default: care_link }}">
+          {%- if section.settings.care_banner_image != blank -%}
+            {{ section.settings.care_banner_image | image_url: width: 1000 | image_tag: loading: 'lazy', widths: '400, 700, 1000', alt: section.settings.care_banner_title }}
+          {%- endif -%}
+          <span class="hh-mega__banner-content">
+            <span class="hh-mega__banner-title">{{ section.settings.care_banner_title | default: 'CARE' }}</span>
+            <span class="hh-mega__banner-button">{{ section.settings.care_banner_button_text | default: 'GET HELP' }}</span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+{%- endcapture -%}
+
 <div data-section-id="{{ section.id }}" data-section-type="header">
-
-  {%- unless overlay_header -%}
-    {%- if section.settings.show_locale_selector or section.settings.show_currency_selector or section.settings.toolbar_social or section.settings.toolbar_menu != blank -%}
-      {%- render 'toolbar',
-        section: section,
-        toolbar_menu: toolbar_menu,
-        overlay_header: overlay_header
-      -%}
-    {%- endif -%}
-  {%- endunless -%}
-
   <div class="header-sticky-wrapper">
     <div id="HeaderWrapper" class="header-wrapper{% if overlay_header %} header-wrapper--sticky is-light{% endif %}">
-
-      {%- if overlay_header -%}
-        {%- if section.settings.show_locale_selector or section.settings.show_currency_selector or section.settings.toolbar_social or section.settings.toolbar_menu != blank -%}
-          {%- render 'toolbar',
-            section: section,
-            toolbar_menu: toolbar_menu,
-            overlay_header: overlay_header
-          -%}
-        {%- endif -%}
-      {%- endif -%}
       <header
         id="SiteHeader"
-        class="site-header{% if settings.type_navigation_style == 'heading' %} site-header--heading-style{% endif %}"
+        class="site-header hh-header hh-desktop-header{% if settings.type_navigation_style == 'heading' %} site-header--heading-style{% endif %}"
+        data-sticky="{{ sticky_header }}"
+        data-overlay="{{ overlay_header }}">
+
+        <div class="page-width">
+          <div class="hh-header__inner">
+            <div class="hh-header__left">
+              <nav aria-label="Primary left navigation">
+                <ul class="hh-nav">
+                  <li class="hh-nav__item hh-nav__item--mega"><a class="hh-nav__link" href="{{ nba_link }}">{{ nba_label }}</a>{{ nba_mega }}</li>
+                  <li class="hh-nav__item hh-nav__item--mega"><a class="hh-nav__link" href="{{ world_link }}">{{ world_label }}</a>{{ world_mega }}</li>
+                  <li class="hh-nav__item hh-nav__item--mega"><a class="hh-nav__link" href="{{ streetwear_link }}">{{ streetwear_label }}</a>{{ streetwear_mega }}</li>
+                  <li class="hh-nav__item hh-nav__item--mega"><a class="hh-nav__link" href="{{ pro_link }}">{{ pro_label }}</a>{{ pro_mega }}</li>
+                  <li class="hh-nav__item hh-nav__item--mega"><a class="hh-nav__link" href="{{ sale_link }}">{{ sale_label }}</a>{{ sale_mega }}</li>
+                </ul>
+              </nav>
+            </div>
+
+            <div class="hh-header__logo">
+              {%- render 'header-logo-block', section: section -%}
+            </div>
+
+            <div class="hh-header__right">
+              <nav aria-label="Primary right navigation">
+                <ul class="hh-nav">
+                  <li><a class="hh-nav__link" href="{{ new_arrivals_link }}">{{ new_arrivals_label }}</a></li>
+                  <li><a class="hh-nav__link" href="{{ best_sellers_link }}">{{ best_sellers_label }}</a></li>
+                  <li class="hh-nav__item hh-nav__item--mega"><a class="hh-nav__link" href="{{ kids_link }}">{{ kids_label }}</a>{{ kids_mega }}</li>
+                  <li class="hh-nav__item hh-nav__item--mega"><a class="hh-nav__link" href="{{ care_link }}">{{ care_label }}</a>{{ care_mega }}</li>
+                </ul>
+              </nav>
+
+              <div class="hh-icons">
+                {%- render 'header-icons', section: section -%}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="site-header__search-container">
+          <div class="site-header__search">
+            <div class="page-width">
+              {% render 'predictive-search', context: 'header' %}
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <header
+        class="site-header hh-header hh-mobile-header{% if settings.type_navigation_style == 'heading' %} site-header--heading-style{% endif %}"
         data-sticky="{{ sticky_header }}"
         data-overlay="{{ overlay_header }}">
         <div class="page-width">
-          <div
-            class="header-layout header-layout--{{ section.settings.main_menu_alignment }}"
-            data-logo-align="{{ logo_alignment }}">
+          <div class="hh-mobile-header__inner">
+            <div class="hh-mobile-header__menu">
+              <button type="button" class="site-nav__link site-nav__link--icon js-drawer-open-nav" aria-controls="NavDrawer">
+                <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-hamburger" viewBox="0 0 64 64"><path d="M7 15h51M7 32h43M7 49h51"/></svg>
+                <span class="icon__fallback-text">{{ 'general.drawers.navigation' | t }}</span>
+              </button>
+            </div>
 
-            {%- if logo_alignment == 'left' -%}
-              <div class="header-item header-item--logo">
-                {%- render 'header-logo-block', section: section -%}
-              </div>
-            {%- endif -%}
+            <div class="hh-mobile-header__logo">
+              {%- render 'header-logo-block', section: section -%}
+            </div>
 
-            {%- if logo_alignment == 'left' and section.settings.main_menu_alignment != 'left-drawer' -%}
-              <div class="header-item header-item--navigation{% if section.settings.main_menu_alignment == 'left-center' %} text-center{% endif %}" {% unless disable_aria %}role="navigation" aria-label="Primary"{% endunless %}>
-                {%- render 'header-desktop-nav', main_menu: main_menu, dropdown_alignment: dropdown_alignment, hover_menu: section.settings.hover_menu -%}
-              </div>
-            {%- endif -%}
-
-            {%- if logo_alignment == 'center' -%}
-              <div class="header-item header-item--left header-item--navigation">
-                {%- if section.settings.main_menu_alignment == 'center' or section.settings.main_menu_alignment == 'center-split' -%}
-                  {%- if settings.search_enable -%}
-                    <div class="site-nav small--hide">
-                      <a href="{{ routes.search_url }}" class="site-nav__link site-nav__link--icon js-search-header">
-                        <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-search" viewBox="0 0 64 64"><title>icon-search</title><path d="M47.16 28.58A18.58 18.58 0 1 1 28.58 10a18.58 18.58 0 0 1 18.58 18.58ZM54 54 41.94 42"/></svg>
-                        <span class="icon__fallback-text">{{ 'general.search.title' | t }}</span>
-                      </a>
-                    </div>
-                  {%- endif -%}
-                {%- endif -%}
-
-                {%- if section.settings.main_menu_alignment == 'center-left' -%}
-                  {%- render 'header-desktop-nav', main_menu: main_menu, dropdown_alignment: dropdown_alignment, hover_menu: section.settings.hover_menu -%}
-                {%- endif -%}
-
-                <div class="site-nav{% unless section.settings.main_menu_alignment == 'center-drawer' %} medium-up--hide{% endunless %}">
-                  <button
-                    type="button"
-                    class="site-nav__link site-nav__link--icon js-drawer-open-nav"
-                    aria-controls="NavDrawer">
-                    <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-hamburger" viewBox="0 0 64 64"><title>icon-hamburger</title><path d="M7 15h51M7 32h43M7 49h51"/></svg>
-                    <span class="icon__fallback-text">{{ 'general.drawers.navigation' | t }}</span>
-                  </button>
-                </div>
-              </div>
-
-              {%- if section.settings.main_menu_alignment == 'center-split' -%}
-                {%- render 'header-split-nav', main_menu: main_menu, section: section, dropdown_alignment: dropdown_alignment, hover_menu: section.settings.hover_menu -%}
-              {%- endif -%}
-
-              {%- if section.settings.main_menu_alignment != 'center-split' -%}
-                <div class="header-item header-item--logo">
-                  {%- render 'header-logo-block', section: section -%}
-                </div>
-              {%- endif -%}
-            {%- endif -%}
-
-            <div class="header-item header-item--icons">
+            <div class="hh-mobile-header__icons">
               {%- render 'header-icons', section: section -%}
             </div>
           </div>
-
-          {%- if section.settings.main_menu_alignment == 'center' -%}
-            <div class="text-center">
-              {%- render 'header-desktop-nav', main_menu: main_menu, dropdown_alignment: dropdown_alignment, hover_menu: section.settings.hover_menu -%}
-            </div>
-          {%- endif -%}
         </div>
+
         <div class="site-header__search-container">
           <div class="site-header__search">
             <div class="page-width">
@@ -207,234 +1137,230 @@
     </div>
   </div>
 </div>
-<style>
-  @media screen and ( max-width: 749px ){
-    #shopify-section-{{ section.id }} .mobile-nav .mobile-nav__item--secondary .grid__item {
-      padding-right: 22px !important; 
-    }
-    .hulk-wishlist-icon{
-      padding-left: 0;
-    }
-  }
-  #shopify-section-{{ section.id }} .timer_promo_main{
-    padding: 22px;
-    background: {{ section.settings.background_color }};
-  }
-  #shopify-section-{{ section.id }} .text_promo_main{
-    margin-bottom: 10px;
-  }
-  #shopify-section-{{ section.id }} .top_promotion_text *{
-    /* direction: ltr; */
-    direction: rtl;
-  }
-.timer_promo_main .timer{
-  direction: ltr;
-}
-  /* countdown timer style  */
-    .timer {
-      background-color: #f0f8ff;
-      padding: 8px;
-      border-radius: 10px;
-      text-align: center;
-      margin: 0px 0 20px 0;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-    .timer-display {
-      font-size: 24px;
-      font-weight: bold;
-      color: #333;
-      display: inline-flex;
-      gap: 10px;
-      align-items: center;
-    }
-    .timer-block {
-      padding: 4px 10px;
-      background-color: #ffffff;
-      border-radius: 5px;
-      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-      font-size: 20px;
+
+<script>
+  (function() {
+    var section = document.getElementById('shopify-section-{{ section.id }}');
+    if (!section || section.dataset.hhMobileSearchFix === 'true') return;
+    section.dataset.hhMobileSearchFix = 'true';
+
+    function isSearchTrigger(element) {
+      if (!element) return false;
+
+      var triggerText = [
+        element.getAttribute('aria-label'),
+        element.getAttribute('title'),
+        element.getAttribute('data-search-trigger'),
+        element.getAttribute('data-predictive-search-open'),
+        element.className,
+        element.getAttribute('href')
+      ].join(' ').toLowerCase();
+
+      return triggerText.indexOf('search') !== -1 || triggerText.indexOf('חיפוש') !== -1;
     }
 
-</style>
+    function openSearchFallback() {
+      var mobileHeader = section.querySelector('.hh-mobile-header');
+      var container = mobileHeader && mobileHeader.querySelector('.site-header__search-container');
 
-  <script type="text/javascript">
-    var today = new Date();
-    var endDate = new Date(today.getFullYear(), today.getMonth(), {{ section.settings.end_date }}).getTime();
-
-    var second = 1000,
-        minute = second * 60,
-        hour = minute * 60,
-        day = hour * 24;
-
-    var x = setInterval(function() {
-      var now = new Date().getTime(),
-          distance = endDate - now;
-
-      document.querySelector('.js-timer-days').innerText = Math.floor(distance / day);
-      document.querySelector('.js-timer-hours').innerText = Math.floor((distance % day) / hour);
-      document.querySelector('.js-timer-minutes').innerText = Math.floor((distance % hour) / minute);
-      document.querySelector('.js-timer-seconds').innerText = Math.floor((distance % minute) / second);
-
-      if (distance < 0) {
-        clearInterval(x);
-        document.querySelector('.timer').style.display = 'none';
+      if (!container) {
+        container = section.querySelector('.site-header__search-container');
       }
-    }, second);
-  </script>
+
+      if (!container) return;
+
+      container.classList.add('is-active', 'is-open', 'site-header__search-container--open');
+      container.removeAttribute('hidden');
+      container.setAttribute('aria-hidden', 'false');
+
+      var header = container.closest('.site-header');
+      if (header) {
+        header.classList.add('site-header--search-open', 'site-header--is-searching');
+      }
+
+      var input = container.querySelector('input[type="search"], input[name="q"], .site-header__search-input');
+      if (input) {
+        window.setTimeout(function() {
+          input.focus();
+        }, 80);
+      }
+    }
+
+    section.addEventListener('click', function(event) {
+      var mobileIcons = event.target.closest('.hh-mobile-header__icons');
+      if (!mobileIcons) return;
+
+      var trigger = event.target.closest('a, button');
+      if (!isSearchTrigger(trigger)) return;
+
+      var desktopTrigger = section.querySelector('.hh-desktop-header .hh-icons a[class*="search"], .hh-desktop-header .hh-icons button[class*="search"], .hh-desktop-header .hh-icons a[href*="search"], .hh-desktop-header .hh-icons button[aria-label*="Search"], .hh-desktop-header .hh-icons button[aria-label*="חיפוש"]');
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (desktopTrigger && desktopTrigger !== trigger) {
+        desktopTrigger.click();
+        window.setTimeout(openSearchFallback, 80);
+      } else {
+        openSearchFallback();
+      }
+    }, true);
+  })();
+</script>
+
 {% schema %}
 {
-  "name": "t:sections.header.name",
+  "name": "HOOPERS Header",
   "settings": [
-    {
-      "type": "inline_richtext",
-      "id": "text_promo_main",
-      "label": "Mobile menu top heading"
-    },
-    {
-      "type": "inline_richtext",
-      "id": "text_promo_body",
-      "label": "Text promo body"
-    },
-    {
-      "type": "text",
-      "id": "end_date",
-      "label": "End Date (Day of Month)",
-      "default": "28",
-      "info": "Please enter the date until which you want the sale to run in this field, such as 25, 26, 27, 28, etc. This date represents the last day the sale will be active. This will just show to you, on front end there will be just countdown timer"
-    },
-    {
-      "type": "color",
-      "id": "background_color",
-      "label": "Promo background color",
-      "default": "#fff"
-    },
-    {
-      "type": "link_list",
-      "id": "main_menu_link_list",
-      "label": "t:sections.header.settings.main_menu_link_list.label",
-      "default": "main-menu"
-    },
-    {
-      "type": "checkbox",
-      "id": "hover_menu",
-      "label": "t:sections.header.settings.hover_menu.label",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "mega_menu_images",
-      "label": "t:sections.header.settings.mega_menu_images.label",
-      "default": true,
-      "info": "t:sections.header.settings.mega_menu_images.info"
-    },
-    {
-      "type": "select",
-      "id": "main_menu_alignment",
-      "label": "t:sections.header.settings.main_menu_alignment.label",
-      "default": "left",
-      "options": [
-        {
-          "value": "left",
-          "label": "t:sections.header.settings.main_menu_alignment.options.left.label"
-        },
-        {
-          "value": "left-center",
-          "label": "t:sections.header.settings.main_menu_alignment.options.left-center.label"
-        },
-        {
-          "value": "left-drawer",
-          "label": "t:sections.header.settings.main_menu_alignment.options.left-drawer.label"
-        },
-        {
-          "value": "center-left",
-          "label": "t:sections.header.settings.main_menu_alignment.options.center-left.label"
-        },
-        {
-          "value": "center-split",
-          "label": "t:sections.header.settings.main_menu_alignment.options.center-split.label"
-        },
-        {
-          "value": "center",
-          "label": "t:sections.header.settings.main_menu_alignment.options.center.label"
-        },
-        {
-          "value": "center-drawer",
-          "label": "t:sections.header.settings.main_menu_alignment.options.center-drawer.label"
-        }
-      ]
-    },
-    {
-      "type": "select",
-      "id": "header_style",
-      "label": "t:sections.header.settings.header_style.label",
-      "default": "normal",
-      "options": [
-        {
-          "value": "normal",
-          "label": "t:sections.header.settings.header_style.options.normal.label"
-        },
-        {
-          "value": "sticky",
-          "label": "t:sections.header.settings.header_style.options.sticky.label"
-        }
-      ]
-    },
-    {
-      "type": "checkbox",
-      "id": "sticky_index",
-      "label": "t:sections.header.settings.sticky_index.label",
-      "default": false
-    },
-    {
-      "type": "checkbox",
-      "id": "sticky_collection",
-      "label": "t:sections.header.settings.sticky_collection.label",
-      "info": "t:sections.header.settings.sticky_collection.info",
-      "default": false
-    },
-    {
-      "type": "header",
-      "content": "t:sections.header.settings.header_toolbar"
-    },
-    {
-      "type": "link_list",
-      "id": "toolbar_menu",
-      "label": "t:sections.header.settings.toolbar_menu.label",
-      "info": "t:sections.header.settings.toolbar_menu.info"
-    },
-    {
-      "type": "checkbox",
-      "id": "toolbar_social",
-      "label": "t:sections.header.settings.toolbar_social.label"
-    },
-    {
-      "type": "header",
-      "content": "t:sections.header.settings.header_language_selector",
-      "info": "t:sections.header.settings.header_language_selector"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_locale_selector",
-      "label": "t:sections.header.settings.show_locale_selector.label",
-      "default": true
-    },
-    {
-      "type": "header",
-      "content": "t:sections.header.settings.header_currency_selector",
-      "info": "t:sections.header.settings.header_currency_selector"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_currency_selector",
-      "label": "t:sections.header.settings.show_currency_selector.label",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "show_currency_flags",
-      "label": "t:sections.header.settings.show_currency_flags.label",
-      "default": true
-    }
+    { "type": "select", "id": "header_style", "label": "Header style", "default": "sticky", "options": [{ "value": "normal", "label": "Normal" }, { "value": "sticky", "label": "Sticky" }] },
+    { "type": "checkbox", "id": "sticky_index", "label": "Overlay header on homepage", "default": true },
+    { "type": "checkbox", "id": "sticky_collection", "label": "Overlay header on collections", "default": false },
+
+    { "type": "header", "content": "Top-level labels and links" },
+    { "type": "text", "id": "nba_label", "label": "NBA label", "default": "NBA" },
+    { "type": "url", "id": "nba_link", "label": "NBA link" },
+    { "type": "text", "id": "world_label", "label": "World Cup label", "default": "WORLD CUP" },
+    { "type": "url", "id": "world_link", "label": "World Cup link" },
+    { "type": "text", "id": "streetwear_label", "label": "Streetwear label", "default": "STREETWEAR" },
+    { "type": "url", "id": "streetwear_link", "label": "Streetwear link" },
+    { "type": "text", "id": "pro_label", "label": "Pro Gear label", "default": "PRO GEAR" },
+    { "type": "url", "id": "pro_link", "label": "Pro Gear link" },
+    { "type": "text", "id": "sale_label", "label": "Sale label", "default": "SALE" },
+    { "type": "url", "id": "sale_link", "label": "Sale link" },
+    { "type": "text", "id": "new_arrivals_label", "label": "New Arrivals label", "default": "NEW ARRIVALS" },
+    { "type": "url", "id": "new_arrivals_link", "label": "New Arrivals link" },
+    { "type": "text", "id": "best_sellers_label", "label": "Best Sellers label", "default": "BEST SELLERS" },
+    { "type": "url", "id": "best_sellers_link", "label": "Best Sellers link" },
+    { "type": "text", "id": "kids_label", "label": "Kids label", "default": "KIDS" },
+    { "type": "url", "id": "kids_link", "label": "Kids link" },
+    { "type": "text", "id": "care_label", "label": "Customer Care label", "default": "CUSTOMER CARE" },
+    { "type": "url", "id": "care_link", "label": "Customer Care link" },
+
+    { "type": "header", "content": "NBA mega menu" },
+    { "type": "text", "id": "nba_main_heading", "label": "NBA column 1 heading", "default": "NBA" },
+    { "type": "text", "id": "nba_main_1_label", "label": "NBA link 1 label", "default": "גופיות" },
+    { "type": "url", "id": "nba_main_1_url", "label": "NBA link 1 URL" },
+    { "type": "text", "id": "nba_main_2_label", "label": "NBA link 2 label", "default": "מכנסים" },
+    { "type": "url", "id": "nba_main_2_url", "label": "NBA link 2 URL" },
+    { "type": "text", "id": "nba_main_3_label", "label": "NBA link 3 label", "default": "טישרטים" },
+    { "type": "url", "id": "nba_main_3_url", "label": "NBA link 3 URL" },
+    { "type": "text", "id": "nba_retro_label", "label": "Retro label", "default": "Retro" },
+    { "type": "url", "id": "nba_retro_link", "label": "Retro link" },
+    { "type": "text", "id": "nba_winter_label", "label": "Winter label", "default": "Winter" },
+    { "type": "url", "id": "nba_winter_link", "label": "Winter link" },
+    { "type": "text", "id": "nba_secondary_heading", "label": "NBA column 2 heading", "default": "Shop By Team" },
+    { "type": "text", "id": "nba_team_1_label", "label": "NBA team 1 label", "default": "Lakers" },
+    { "type": "url", "id": "nba_team_1_url", "label": "NBA team 1 URL" },
+    { "type": "text", "id": "nba_team_2_label", "label": "NBA team 2 label", "default": "Celtics" },
+    { "type": "url", "id": "nba_team_2_url", "label": "NBA team 2 URL" },
+    { "type": "text", "id": "nba_team_3_label", "label": "NBA team 3 label", "default": "Bulls" },
+    { "type": "url", "id": "nba_team_3_url", "label": "NBA team 3 URL" },
+    { "type": "text", "id": "nba_team_4_label", "label": "NBA team 4 label", "default": "Warriors" },
+    { "type": "url", "id": "nba_team_4_url", "label": "NBA team 4 URL" },
+    { "type": "text", "id": "nba_team_5_label", "label": "NBA team 5 label", "default": "Knicks" },
+    { "type": "url", "id": "nba_team_5_url", "label": "NBA team 5 URL" },
+    { "type": "text", "id": "nba_team_6_label", "label": "NBA team 6 label", "default": "Heat" },
+    { "type": "url", "id": "nba_team_6_url", "label": "NBA team 6 URL" },
+    { "type": "text", "id": "nba_team_7_label", "label": "NBA team 7 label", "default": "All Teams" },
+    { "type": "url", "id": "nba_team_7_url", "label": "NBA team 7 URL" },
+    { "type": "image_picker", "id": "nba_banner_image", "label": "NBA banner image" },
+    { "type": "text", "id": "nba_banner_title", "label": "NBA banner title", "default": "NBA" },
+    { "type": "text", "id": "nba_banner_button_text", "label": "NBA banner button text", "default": "SHOP NBA" },
+    { "type": "url", "id": "nba_banner_link", "label": "NBA banner link" },
+
+    { "type": "header", "content": "World Cup mega menu" },
+    { "type": "text", "id": "world_main_heading", "label": "World Cup column 1 heading", "default": "WORLD CUP" },
+    { "type": "text", "id": "world_main_1_label", "label": "World Cup link 1 label", "default": "גופיות מונדיאל" },
+    { "type": "url", "id": "world_main_1_url", "label": "World Cup link 1 URL" },
+    { "type": "text", "id": "world_secondary_heading", "label": "World Cup column 2 heading", "default": "Featured" },
+    { "type": "text", "id": "world_secondary_1_label", "label": "World Cup secondary link label", "default": "All Teams" },
+    { "type": "url", "id": "world_secondary_1_url", "label": "World Cup secondary link URL" },
+    { "type": "image_picker", "id": "world_banner_image", "label": "World Cup banner image" },
+    { "type": "text", "id": "world_banner_title", "label": "World Cup banner title", "default": "WORLD CUP" },
+    { "type": "text", "id": "world_banner_button_text", "label": "World Cup banner button text", "default": "SHOP WORLD CUP" },
+    { "type": "url", "id": "world_banner_link", "label": "World Cup banner link" },
+
+    { "type": "header", "content": "Streetwear mega menu" },
+    { "type": "text", "id": "streetwear_main_heading", "label": "Streetwear column 1 heading", "default": "STREETWEAR" },
+    { "type": "text", "id": "streetwear_main_1_label", "label": "Streetwear link 1 label", "default": "Fear Of God" },
+    { "type": "url", "id": "streetwear_main_1_url", "label": "Streetwear link 1 URL" },
+    { "type": "text", "id": "streetwear_main_2_label", "label": "Streetwear link 2 label", "default": "Jordan" },
+    { "type": "url", "id": "streetwear_main_2_url", "label": "Streetwear link 2 URL" },
+    { "type": "text", "id": "streetwear_main_3_label", "label": "Streetwear link 3 label", "default": "JUST DON" },
+    { "type": "url", "id": "streetwear_main_3_url", "label": "Streetwear link 3 URL" },
+    { "type": "text", "id": "streetwear_secondary_heading", "label": "Streetwear column 2 heading", "default": "Featured" },
+    { "type": "text", "id": "streetwear_secondary_1_label", "label": "Streetwear secondary link label", "default": "Winter Collection" },
+    { "type": "url", "id": "streetwear_secondary_1_url", "label": "Streetwear secondary link URL" },
+    { "type": "image_picker", "id": "streetwear_banner_image", "label": "Streetwear banner image" },
+    { "type": "text", "id": "streetwear_banner_title", "label": "Streetwear banner title", "default": "STREETWEAR" },
+    { "type": "text", "id": "streetwear_banner_button_text", "label": "Streetwear banner button text", "default": "SHOP STREETWEAR" },
+    { "type": "url", "id": "streetwear_banner_link", "label": "Streetwear banner link" },
+
+    { "type": "header", "content": "Pro Gear mega menu" },
+    { "type": "text", "id": "pro_main_heading", "label": "Pro Gear column 1 heading", "default": "PRO GEAR" },
+    { "type": "text", "id": "pro_main_1_label", "label": "Pro Gear link 1 label", "default": "כדורים" },
+    { "type": "url", "id": "pro_main_1_url", "label": "Pro Gear link 1 URL" },
+    { "type": "text", "id": "pro_main_2_label", "label": "Pro Gear link 2 label", "default": "Compression" },
+    { "type": "url", "id": "pro_main_2_url", "label": "Pro Gear link 2 URL" },
+    { "type": "text", "id": "pro_main_3_label", "label": "Pro Gear link 3 label", "default": "גרביים" },
+    { "type": "url", "id": "pro_main_3_url", "label": "Pro Gear link 3 URL" },
+    { "type": "text", "id": "pro_secondary_heading", "label": "Pro Gear column 2 heading", "default": "Featured" },
+    { "type": "text", "id": "pro_secondary_1_label", "label": "Pro Gear secondary link label", "default": "All Pro Gear" },
+    { "type": "url", "id": "pro_secondary_1_url", "label": "Pro Gear secondary link URL" },
+    { "type": "image_picker", "id": "pro_banner_image", "label": "Pro Gear banner image" },
+    { "type": "text", "id": "pro_banner_title", "label": "Pro Gear banner title", "default": "PRO GEAR" },
+    { "type": "text", "id": "pro_banner_button_text", "label": "Pro Gear banner button text", "default": "SHOP PRO GEAR" },
+    { "type": "url", "id": "pro_banner_link", "label": "Pro Gear banner link" },
+
+    { "type": "header", "content": "Sale mega menu" },
+    { "type": "text", "id": "sale_main_heading", "label": "Sale column 1 heading", "default": "SALE" },
+    { "type": "text", "id": "sale_main_1_label", "label": "Sale link 1 label", "default": "כל המבצעים" },
+    { "type": "url", "id": "sale_main_1_url", "label": "Sale link 1 URL" },
+    { "type": "text", "id": "sale_secondary_heading", "label": "Sale column 2 heading", "default": "Featured" },
+    { "type": "text", "id": "sale_secondary_1_label", "label": "Sale secondary link label", "default": "Best Sellers" },
+    { "type": "url", "id": "sale_secondary_1_url", "label": "Sale secondary link URL" },
+    { "type": "image_picker", "id": "sale_banner_image", "label": "Sale banner image" },
+    { "type": "text", "id": "sale_banner_title", "label": "Sale banner title", "default": "SALE" },
+    { "type": "text", "id": "sale_banner_button_text", "label": "Sale banner button text", "default": "SHOP SALE" },
+    { "type": "url", "id": "sale_banner_link", "label": "Sale banner link" },
+
+    { "type": "header", "content": "Kids mega menu" },
+    { "type": "text", "id": "kids_main_heading", "label": "Kids column 1 heading", "default": "KIDS" },
+    { "type": "text", "id": "kids_main_1_label", "label": "Kids link 1 label", "default": "גופיות ילדים" },
+    { "type": "url", "id": "kids_main_1_url", "label": "Kids link 1 URL" },
+    { "type": "text", "id": "kids_main_2_label", "label": "Kids link 2 label", "default": "מכנסי ילדים" },
+    { "type": "url", "id": "kids_main_2_url", "label": "Kids link 2 URL" },
+    { "type": "text", "id": "kids_secondary_heading", "label": "Kids column 2 heading", "default": "Featured" },
+    { "type": "text", "id": "kids_secondary_1_label", "label": "Kids secondary link label", "default": "All Kids" },
+    { "type": "url", "id": "kids_secondary_1_url", "label": "Kids secondary link URL" },
+    { "type": "image_picker", "id": "kids_banner_image", "label": "Kids banner image" },
+    { "type": "text", "id": "kids_banner_title", "label": "Kids banner title", "default": "KIDS" },
+    { "type": "text", "id": "kids_banner_button_text", "label": "Kids banner button text", "default": "SHOP KIDS" },
+    { "type": "url", "id": "kids_banner_link", "label": "Kids banner link" },
+
+    { "type": "header", "content": "Customer Care mega menu" },
+    { "type": "text", "id": "care_main_heading", "label": "Customer Care column 1 heading", "default": "CUSTOMER CARE" },
+    { "type": "text", "id": "care_main_1_label", "label": "Customer Care link 1 label", "default": "משלוחים" },
+    { "type": "url", "id": "care_main_1_url", "label": "Customer Care link 1 URL" },
+    { "type": "text", "id": "care_main_2_label", "label": "Customer Care link 2 label", "default": "שאלות נפוצות" },
+    { "type": "url", "id": "care_main_2_url", "label": "Customer Care link 2 URL" },
+    { "type": "text", "id": "care_main_3_label", "label": "Customer Care link 3 label", "default": "צור קשר" },
+    { "type": "url", "id": "care_main_3_url", "label": "Customer Care link 3 URL" },
+    { "type": "text", "id": "care_secondary_heading", "label": "Customer Care column 2 heading", "default": "Account" },
+    { "type": "text", "id": "care_secondary_1_label", "label": "Customer Care secondary link label", "default": "MY ACCOUNT" },
+    { "type": "url", "id": "care_secondary_1_url", "label": "Customer Care secondary link URL" },
+    { "type": "image_picker", "id": "care_banner_image", "label": "Customer Care banner image" },
+    { "type": "text", "id": "care_banner_title", "label": "Customer Care banner title", "default": "CARE" },
+    { "type": "text", "id": "care_banner_button_text", "label": "Customer Care banner button text", "default": "GET HELP" },
+    { "type": "url", "id": "care_banner_link", "label": "Customer Care banner link" },
+
+    { "type": "header", "content": "Mobile drawer cards" },
+    { "type": "image_picker", "id": "mobile_card_1_image", "label": "Mobile card 1 image" },
+    { "type": "text", "id": "mobile_card_1_title", "label": "Mobile card 1 title", "default": "BEST SELLERS" },
+    { "type": "url", "id": "mobile_card_1_link", "label": "Mobile card 1 link" },
+    { "type": "image_picker", "id": "mobile_card_2_image", "label": "Mobile card 2 image" },
+    { "type": "text", "id": "mobile_card_2_title", "label": "Mobile card 2 title", "default": "NEW ARRIVALS" },
+    { "type": "url", "id": "mobile_card_2_link", "label": "Mobile card 2 link" }
   ],
   "blocks": [
     {
@@ -442,38 +1368,10 @@
       "name": "t:sections.header.blocks.logo.name",
       "limit": 1,
       "settings": [
-        {
-          "type": "image_picker",
-          "id": "logo",
-          "label": "t:sections.header.blocks.logo.settings.logo.label"
-        },
-        {
-          "type": "image_picker",
-          "id": "logo-inverted",
-          "label": "t:sections.header.blocks.logo.settings.logo-inverted.label",
-          "info": "t:sections.header.blocks.logo.settings.logo-inverted.info"
-        },
-        {
-          "type": "range",
-          "id": "desktop_logo_width",
-          "label": "t:sections.header.blocks.logo.settings.desktop_logo_width.label",
-          "default": 200,
-          "min": 100,
-          "max": 400,
-          "step": 10,
-          "unit": "px"
-        },
-        {
-          "type": "range",
-          "id": "mobile_logo_width",
-          "label": "t:sections.header.blocks.logo.settings.mobile_logo_width.label",
-          "default": 140,
-          "min": 60,
-          "max": 200,
-          "step": 10,
-          "unit": "px",
-          "info": "t:sections.header.blocks.logo.settings.mobile_logo_width.info"
-        }
+        { "type": "image_picker", "id": "logo", "label": "t:sections.header.blocks.logo.settings.logo.label" },
+        { "type": "image_picker", "id": "logo-inverted", "label": "t:sections.header.blocks.logo.settings.logo-inverted.label", "info": "t:sections.header.blocks.logo.settings.logo-inverted.info" },
+        { "type": "range", "id": "desktop_logo_width", "label": "t:sections.header.blocks.logo.settings.desktop_logo_width.label", "default": 190, "min": 100, "max": 400, "step": 10, "unit": "px" },
+        { "type": "range", "id": "mobile_logo_width", "label": "t:sections.header.blocks.logo.settings.mobile_logo_width.label", "default": 130, "min": 60, "max": 200, "step": 10, "unit": "px", "info": "t:sections.header.blocks.logo.settings.mobile_logo_width.info" }
       ]
     }
   ],

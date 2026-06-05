@@ -1,0 +1,261 @@
+<section class="hpt-community" dir="rtl">
+  <div class="hpt-wrap">
+    {%- if section.settings.community_kicker != blank -%}
+      <p class="hpt-community__kicker">{{ section.settings.community_kicker }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.community_title != blank -%}
+      <h2 class="hpt-community__title">{{ section.settings.community_title }}</h2>
+    {%- endif -%}
+
+    <div class="hpt-community__grid">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign media_type = block.settings.media_type | default: 'image'
+          assign alt_text = block.settings.alt_text | default: section.settings.community_title
+        -%}
+
+        {%- if media_type == 'video' and block.settings.video != blank -%}
+          <div class="hpt-community-card" {{ block.shopify_attributes }}>
+            {{ block.settings.video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true, poster: block.settings.video_poster_image, class: 'hpt-community-card__media' }}
+            <span class="hpt-community-card__play" aria-hidden="true">▶</span>
+          </div>
+        {%- elsif block.settings.image != blank -%}
+          <div class="hpt-community-card" {{ block.shopify_attributes }}>
+            {{ block.settings.image | image_url: width: 900 | image_tag: loading: 'lazy', class: 'hpt-community-card__media', alt: alt_text }}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    <div class="hpt-community__dots" aria-hidden="true">
+      {%- for block in section.blocks -%}
+        <span></span>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  .hpt-wrap {
+    width: min(1320px, calc(100% - 32px));
+    margin: 0 auto;
+  }
+
+  .hpt-community {
+    padding: 66px 0 74px;
+    background: #0d0d0d;
+    color: #ffffff;
+    overflow: hidden;
+  }
+
+  .hpt-community__kicker {
+    margin: 0;
+    color: #c8a56a;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 950;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+  }
+
+  .hpt-community__title {
+    margin: 8px 0 30px;
+    color: #ffffff;
+    text-align: center;
+    font-size: clamp(28px, 3.6vw, 50px);
+    line-height: 1.08;
+    font-weight: 950;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .hpt-community__grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .hpt-community-card {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: #151515;
+  }
+
+  .hpt-community-card__media,
+  .hpt-community-card img,
+  .hpt-community-card video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hpt-community-card__play {
+    position: absolute;
+    left: 12px;
+    bottom: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.88);
+    color: #050505;
+    font-size: 12px;
+  }
+
+  .hpt-community__dots {
+    display: none;
+  }
+
+  @media (max-width: 989px) {
+    .hpt-community__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 749px) {
+    .hpt-community {
+      padding: 48px 0 54px;
+    }
+
+    .hpt-community__title {
+      font-size: 30px;
+      letter-spacing: 0.08em;
+    }
+
+    .hpt-community__grid {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 46vw;
+      grid-template-columns: none;
+      gap: 8px;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .hpt-community__grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hpt-community-card {
+      scroll-snap-align: start;
+    }
+
+    .hpt-community__dots {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      margin-top: 18px;
+    }
+
+    .hpt-community__dots span {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #c8a56a;
+      opacity: 0.42;
+    }
+
+    .hpt-community__dots span:first-child {
+      width: 18px;
+      opacity: 1;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "HOOPERS Community Product",
+  "settings": [
+    {
+      "type": "text",
+      "id": "community_kicker",
+      "label": "Community kicker",
+      "default": "HOOPERS COMMUNITY"
+    },
+    {
+      "type": "text",
+      "id": "community_title",
+      "label": "Community title",
+      "default": "LIVE THE CULTURE"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "community_media",
+      "name": "Community media",
+      "settings": [
+        {
+          "type": "select",
+          "id": "media_type",
+          "label": "Media type",
+          "default": "image",
+          "options": [
+            {
+              "value": "image",
+              "label": "Image"
+            },
+            {
+              "value": "video",
+              "label": "Video"
+            }
+          ]
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "video",
+          "id": "video",
+          "label": "Video"
+        },
+        {
+          "type": "image_picker",
+          "id": "video_poster_image",
+          "label": "Video poster image"
+        },
+        {
+          "type": "text",
+          "id": "alt_text",
+          "label": "Alt text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "HOOPERS Community Product",
+      "blocks": [
+        {
+          "type": "community_media"
+        },
+        {
+          "type": "community_media"
+        },
+        {
+          "type": "community_media"
+        },
+        {
+          "type": "community_media"
+        },
+        {
+          "type": "community_media"
+        },
+        {
+          "type": "community_media"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

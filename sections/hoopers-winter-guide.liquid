@@ -1,0 +1,245 @@
+<section class="hpsg" dir="rtl">
+  <div class="hpsg__wrap">
+    <div class="hpsg__header">
+      <p class="hpsg__kicker">HOOPERS SIZE GUIDE</p>
+      <h2 class="hpsg__title">{{ section.settings.title }}</h2>
+      <div class="hpsg__intro">{{ section.settings.intro }}</div>
+    </div>
+
+    <div class="hpsg__table-wrap">
+      <table class="hpsg__table">
+        <thead>
+          <tr>
+            <th>מידה</th>
+            <th>אורך בגד</th>
+            <th>חזה</th>
+            <th>רוחב כתפיים</th>
+            <th>גובה מומלץ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>S</td>
+            <td>69</td>
+            <td>98</td>
+            <td>48</td>
+            <td>160-165</td>
+          </tr>
+          <tr>
+            <td>M</td>
+            <td>71</td>
+            <td>106</td>
+            <td>49.5</td>
+            <td>165-170</td>
+          </tr>
+          <tr>
+            <td>L</td>
+            <td>73</td>
+            <td>112</td>
+            <td>51</td>
+            <td>170-175</td>
+          </tr>
+          <tr>
+            <td>XL</td>
+            <td>75</td>
+            <td>120</td>
+            <td>52.5</td>
+            <td>175-180</td>
+          </tr>
+          <tr>
+            <td>XXL</td>
+            <td>77</td>
+            <td>130</td>
+            <td>54</td>
+            <td>180-190</td>
+          </tr>
+          <tr>
+            <td>XXXL</td>
+            <td>79</td>
+            <td>132</td>
+            <td>55.5</td>
+            <td>190-195</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="hpsg__note">
+      <strong>{{ section.settings.recommendation_title }}</strong>
+      <span>{{ section.settings.recommendation_text }}</span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hpsg {
+    background: #ece7df;
+    color: #111;
+    padding: 56px 18px;
+  }
+
+  .hpsg__wrap {
+    max-width: 1120px;
+    margin: 0 auto;
+  }
+
+  .hpsg__header {
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto 28px;
+  }
+
+  .hpsg__kicker {
+    margin: 0 0 10px;
+    color: #c8a56a;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .hpsg__title {
+    margin: 0 0 14px;
+    font-size: clamp(30px, 4vw, 48px);
+    line-height: 1.05;
+    font-weight: 900;
+    color: #000;
+  }
+
+  .hpsg__intro {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #2b2b2b;
+  }
+
+  .hpsg__table-wrap {
+    overflow-x: auto;
+    background: #f5f3ee;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  .hpsg__table {
+    width: 100%;
+    min-width: 680px;
+    border-collapse: collapse;
+    text-align: center;
+  }
+
+  .hpsg__table th {
+    background: #050505;
+    color: #fff;
+    padding: 16px 12px;
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  .hpsg__table td {
+    color: #111111;
+    padding: 16px 12px;
+    font-size: 15px;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .hpsg__table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .hpsg__note {
+    margin-top: 18px;
+    padding: 18px 20px;
+    background: #050505;
+    color: #fff;
+    border-right: 4px solid #c8a56a;
+    line-height: 1.8;
+  }
+
+  .hpsg__note strong {
+    display: block;
+    color: #c8a56a;
+    margin-bottom: 4px;
+  }
+
+  .hpt-trust-badges {
+    display: grid;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .hpt-trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f5f3ee;
+    color: #111;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .hpt-trust-badge strong {
+    color: #111;
+    font-weight: 700;
+  }
+
+  @media screen and (max-width: 749px) {
+    .hpsg {
+      padding: 42px 14px;
+    }
+
+    .hpsg__header {
+      text-align: right;
+      margin-bottom: 22px;
+    }
+
+    .hpsg__title {
+      font-size: 34px;
+    }
+
+    .hpsg__intro {
+      font-size: 15px;
+    }
+
+    .hpsg__note {
+      padding: 16px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "HOOPERS Winter Guide",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "📏 מדריך מידות"
+    },
+    {
+      "type": "textarea",
+      "id": "intro",
+      "label": "Intro",
+      "default": "מומלץ לבדוק את הטבלה לפני בחירת מידה. אם אתם בין מידות או אוהבים התאמה משוחררת, לרוב כדאי לבחור מידה אחת מעל."
+    },
+    {
+      "type": "text",
+      "id": "recommendation_title",
+      "label": "Recommendation title",
+      "default": "🔥 המלצת HOOPERS:"
+    },
+    {
+      "type": "textarea",
+      "id": "recommendation_text",
+      "label": "Recommendation text",
+      "default": "לבגדי חורף וקפוצ'ונים אנחנו ממליצים לבחור לפי גובה, חזה והעדפת התאמה. אם אתם אוהבים התאמה משוחררת או שכבות מתחת, לרוב כדאי לבחור מידה אחת מעל."
+    }
+  ],
+  "presets": [
+    {
+      "name": "HOOPERS Winter Guide"
+    }
+  ]
+}
+{% endschema %}

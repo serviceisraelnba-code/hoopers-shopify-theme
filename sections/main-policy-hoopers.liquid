@@ -1,0 +1,622 @@
+{%- liquid
+  assign section_id = 'hoopers-policy-' | append: section.id
+-%}
+
+<style>
+  #{{ section_id }} {
+    --hp-black: #050505;
+    --hp-cream: #f7f2e8;
+    --hp-ink: #111111;
+    --hp-muted: rgba(17, 17, 17, 0.64);
+    --hp-gold: #c8a56a;
+    --hp-border: rgba(5, 5, 5, 0.1);
+    background: var(--hp-cream);
+    color: var(--hp-ink);
+    direction: rtl;
+  }
+
+  #{{ section_id }} * {
+    box-sizing: border-box;
+  }
+
+  #{{ section_id }} .hp-page-width {
+    width: min(100%, 1240px);
+    margin: 0 auto;
+    padding: 0 18px;
+  }
+
+  #{{ section_id }} .hp-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--hp-black);
+    color: #fff;
+    padding: 92px 0 58px;
+  }
+
+  #{{ section_id }} .hp-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(5, 5, 5, 0), rgba(5, 5, 5, 0.55)),
+      radial-gradient(circle at 16% 16%, rgba(200, 165, 106, 0.18), transparent 34%);
+    pointer-events: none;
+  }
+
+  #{{ section_id }} .hp-hero__content {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+  }
+
+  #{{ section_id }} .hp-kicker {
+    margin: 0 0 16px;
+    color: var(--hp-gold);
+    font-size: 11px;
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  #{{ section_id }} .hp-title {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(38px, 6vw, 76px);
+    line-height: 0.98;
+    font-weight: 950;
+    letter-spacing: 0.01em;
+  }
+
+  #{{ section_id }} .hp-subtitle {
+    max-width: 760px;
+    margin: 20px 0 0;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: clamp(16px, 2vw, 22px);
+    line-height: 1.55;
+    font-weight: 650;
+  }
+
+  #{{ section_id }} .hp-top-cards {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: -28px;
+    position: relative;
+    z-index: 3;
+  }
+
+  #{{ section_id }} .hp-card {
+    min-height: 185px;
+    background: #fff;
+    border: 1px solid var(--hp-border);
+    padding: 22px;
+    transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+  }
+
+  #{{ section_id }} .hp-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(200, 165, 106, 0.58);
+    box-shadow: 0 18px 44px rgba(5, 5, 5, 0.08);
+  }
+
+  #{{ section_id }} .hp-card__icon {
+    display: block;
+    margin-bottom: 14px;
+    font-size: 25px;
+    line-height: 1;
+  }
+
+  #{{ section_id }} .hp-card__title {
+    margin: 0;
+    color: var(--hp-ink);
+    font-size: 22px;
+    line-height: 1.08;
+    font-weight: 950;
+  }
+
+  #{{ section_id }} .hp-card__text {
+    margin: 14px 0 0;
+    color: var(--hp-ink);
+    font-size: 17px;
+    line-height: 1.3;
+    font-weight: 850;
+  }
+
+  #{{ section_id }} .hp-card__small {
+    margin: 8px 0 0;
+    color: var(--hp-muted);
+    font-size: 14px;
+    line-height: 1.45;
+    font-weight: 650;
+  }
+
+  #{{ section_id }} .hp-section {
+    padding: 44px 0;
+  }
+
+  #{{ section_id }} .hp-section__title {
+    margin: 0 0 24px;
+    color: var(--hp-ink);
+    font-size: clamp(30px, 4vw, 48px);
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: 0.015em;
+  }
+
+  #{{ section_id }} .hp-timeline {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  #{{ section_id }} .hp-step {
+    position: relative;
+    min-height: 210px;
+    background: var(--hp-black);
+    color: #fff;
+    padding: 24px;
+    border: 1px solid rgba(200, 165, 106, 0.22);
+  }
+
+  #{{ section_id }} .hp-step__number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    margin-bottom: 18px;
+    background: var(--hp-gold);
+    color: var(--hp-black);
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 950;
+  }
+
+  #{{ section_id }} .hp-step__title {
+    margin: 0;
+    color: #fff;
+    font-size: 22px;
+    line-height: 1.1;
+    font-weight: 950;
+  }
+
+  #{{ section_id }} .hp-step__text {
+    margin: 12px 0 0;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 15px;
+    line-height: 1.5;
+    font-weight: 650;
+  }
+
+  #{{ section_id }} .hp-faq {
+    display: grid;
+    gap: 10px;
+  }
+
+  #{{ section_id }} .hp-faq details {
+    background: #fff;
+    border: 1px solid var(--hp-border);
+  }
+
+  #{{ section_id }} .hp-faq summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 20px 22px;
+    color: var(--hp-ink);
+    cursor: pointer;
+    list-style: none;
+    font-size: 18px;
+    line-height: 1.25;
+    font-weight: 900;
+  }
+
+  #{{ section_id }} .hp-faq summary::-webkit-details-marker {
+    display: none;
+  }
+
+  #{{ section_id }} .hp-faq summary::after {
+    content: "+";
+    flex: 0 0 auto;
+    color: var(--hp-gold);
+    font-size: 28px;
+    line-height: 1;
+    font-weight: 500;
+    transition: transform 0.2s ease;
+  }
+
+  #{{ section_id }} .hp-faq details[open] summary::after {
+    transform: rotate(45deg);
+  }
+
+  #{{ section_id }} .hp-faq__answer {
+    padding: 0 22px 20px;
+    color: var(--hp-muted);
+    font-size: 16px;
+    line-height: 1.65;
+    font-weight: 650;
+  }
+
+  #{{ section_id }} .hp-promise {
+    background: var(--hp-black);
+    color: #fff;
+    padding: 42px 0;
+  }
+
+  #{{ section_id }} .hp-promise__inner {
+    display: grid;
+    grid-template-columns: minmax(180px, 0.4fr) minmax(0, 1fr);
+    gap: 24px;
+    align-items: center;
+  }
+
+  #{{ section_id }} .hp-promise__title {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(28px, 4vw, 48px);
+    line-height: 1;
+    font-weight: 950;
+  }
+
+  #{{ section_id }} .hp-promise__items {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  #{{ section_id }} .hp-promise__item {
+    min-height: 76px;
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 14px;
+    line-height: 1.35;
+    font-weight: 850;
+  }
+
+  #{{ section_id }} .hp-cta {
+    padding: 46px 0 54px;
+  }
+
+  #{{ section_id }} .hp-cta__box {
+    background: #fff;
+    border: 1px solid var(--hp-border);
+    padding: 30px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 22px;
+    align-items: center;
+  }
+
+  #{{ section_id }} .hp-cta__title {
+    margin: 0;
+    color: var(--hp-ink);
+    font-size: clamp(28px, 4vw, 46px);
+    line-height: 1;
+    font-weight: 950;
+  }
+
+  #{{ section_id }} .hp-cta__text {
+    max-width: 720px;
+    margin: 12px 0 0;
+    color: var(--hp-muted);
+    font-size: 16px;
+    line-height: 1.55;
+    font-weight: 650;
+  }
+
+  #{{ section_id }} .hp-cta__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  #{{ section_id }} .hp-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 20px;
+    background: var(--hp-black);
+    color: #fff;
+    text-decoration: none;
+    font-size: 12px;
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: background 0.22s ease, color 0.22s ease;
+  }
+
+  #{{ section_id }} .hp-button--light {
+    background: transparent;
+    color: var(--hp-black);
+    border: 1px solid rgba(5, 5, 5, 0.2);
+  }
+
+  #{{ section_id }} .hp-button:hover,
+  #{{ section_id }} .hp-button:focus-visible {
+    background: var(--hp-gold);
+    color: var(--hp-black);
+  }
+
+  @media screen and (max-width: 990px) {
+    #{{ section_id }} .hp-top-cards,
+    #{{ section_id }} .hp-timeline,
+    #{{ section_id }} .hp-promise__items {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    #{{ section_id }} .hp-promise__inner,
+    #{{ section_id }} .hp-cta__box {
+      grid-template-columns: 1fr;
+    }
+
+    #{{ section_id }} .hp-cta__buttons {
+      justify-content: flex-start;
+    }
+  }
+
+  @media screen and (max-width: 640px) {
+    #{{ section_id }} .hp-page-width {
+      padding: 0 14px;
+    }
+
+    #{{ section_id }} .hp-hero {
+      padding: 74px 0 48px;
+    }
+
+    #{{ section_id }} .hp-top-cards {
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: -18px;
+    }
+
+    #{{ section_id }} .hp-section {
+      padding: 34px 0;
+    }
+
+    #{{ section_id }} .hp-timeline,
+    #{{ section_id }} .hp-promise__items {
+      grid-template-columns: 1fr;
+    }
+
+    #{{ section_id }} .hp-card,
+    #{{ section_id }} .hp-step,
+    #{{ section_id }} .hp-cta__box {
+      padding: 22px;
+    }
+
+    #{{ section_id }} .hp-button {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #{{ section_id }} * {
+      transition: none !important;
+    }
+  }
+</style>
+
+<section id="{{ section_id }}">
+  <div class="hp-hero">
+    <div class="hp-page-width">
+      <div class="hp-hero__content">
+        <p class="hp-kicker">{{ section.settings.hero_kicker }}</p>
+        <h1 class="hp-title">{{ section.settings.hero_title }}</h1>
+        <div class="hp-subtitle">{{ section.settings.hero_subtitle }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hp-page-width">
+    <div class="hp-top-cards">
+      <div class="hp-card">
+        <span class="hp-card__icon">{{ section.settings.card_1_icon }}</span>
+        <h2 class="hp-card__title">{{ section.settings.card_1_title }}</h2>
+        <p class="hp-card__text">{{ section.settings.card_1_text }}</p>
+        <p class="hp-card__small">{{ section.settings.card_1_small }}</p>
+      </div>
+
+      <div class="hp-card">
+        <span class="hp-card__icon">{{ section.settings.card_2_icon }}</span>
+        <h2 class="hp-card__title">{{ section.settings.card_2_title }}</h2>
+        <p class="hp-card__text">{{ section.settings.card_2_text }}</p>
+        <p class="hp-card__small">{{ section.settings.card_2_small }}</p>
+      </div>
+
+      <div class="hp-card">
+        <span class="hp-card__icon">{{ section.settings.card_3_icon }}</span>
+        <h2 class="hp-card__title">{{ section.settings.card_3_title }}</h2>
+        <p class="hp-card__text">{{ section.settings.card_3_text }}</p>
+        <p class="hp-card__small">{{ section.settings.card_3_small }}</p>
+      </div>
+
+      <div class="hp-card">
+        <span class="hp-card__icon">{{ section.settings.card_4_icon }}</span>
+        <h2 class="hp-card__title">{{ section.settings.card_4_title }}</h2>
+        <p class="hp-card__text">{{ section.settings.card_4_text }}</p>
+        <p class="hp-card__small">{{ section.settings.card_4_small }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="hp-section">
+    <div class="hp-page-width">
+      <h2 class="hp-section__title">{{ section.settings.timeline_title }}</h2>
+      <div class="hp-timeline">
+        <div class="hp-step">
+          <span class="hp-step__number">1</span>
+          <h3 class="hp-step__title">{{ section.settings.step_1_title }}</h3>
+          <p class="hp-step__text">{{ section.settings.step_1_text }}</p>
+        </div>
+
+        <div class="hp-step">
+          <span class="hp-step__number">2</span>
+          <h3 class="hp-step__title">{{ section.settings.step_2_title }}</h3>
+          <p class="hp-step__text">{{ section.settings.step_2_text }}</p>
+        </div>
+
+        <div class="hp-step">
+          <span class="hp-step__number">3</span>
+          <h3 class="hp-step__title">{{ section.settings.step_3_title }}</h3>
+          <p class="hp-step__text">{{ section.settings.step_3_text }}</p>
+        </div>
+
+        <div class="hp-step">
+          <span class="hp-step__number">4</span>
+          <h3 class="hp-step__title">{{ section.settings.step_4_title }}</h3>
+          <p class="hp-step__text">{{ section.settings.step_4_text }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hp-section">
+    <div class="hp-page-width">
+      <h2 class="hp-section__title">{{ section.settings.faq_title }}</h2>
+      <div class="hp-faq">
+        <details>
+          <summary>{{ section.settings.faq_1_question }}</summary>
+          <div class="hp-faq__answer">{{ section.settings.faq_1_answer }}</div>
+        </details>
+
+        <details>
+          <summary>{{ section.settings.faq_2_question }}</summary>
+          <div class="hp-faq__answer">{{ section.settings.faq_2_answer }}</div>
+        </details>
+
+        <details>
+          <summary>{{ section.settings.faq_3_question }}</summary>
+          <div class="hp-faq__answer">{{ section.settings.faq_3_answer }}</div>
+        </details>
+
+        <details>
+          <summary>{{ section.settings.faq_4_question }}</summary>
+          <div class="hp-faq__answer">{{ section.settings.faq_4_answer }}</div>
+        </details>
+
+        <details>
+          <summary>{{ section.settings.faq_5_question }}</summary>
+          <div class="hp-faq__answer">{{ section.settings.faq_5_answer }}</div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <div class="hp-promise">
+    <div class="hp-page-width">
+      <div class="hp-promise__inner">
+        <h2 class="hp-promise__title">{{ section.settings.promise_title }}</h2>
+        <div class="hp-promise__items">
+          <div class="hp-promise__item">{{ section.settings.promise_item_1 }}</div>
+          <div class="hp-promise__item">{{ section.settings.promise_item_2 }}</div>
+          <div class="hp-promise__item">{{ section.settings.promise_item_3 }}</div>
+          <div class="hp-promise__item">{{ section.settings.promise_item_4 }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hp-cta">
+    <div class="hp-page-width">
+      <div class="hp-cta__box">
+        <div>
+          <h2 class="hp-cta__title">{{ section.settings.cta_title }}</h2>
+          <p class="hp-cta__text">{{ section.settings.cta_text }}</p>
+        </div>
+
+        <div class="hp-cta__buttons">
+          {%- if section.settings.cta_button_1_link != blank -%}
+            <a class="hp-button" href="{{ section.settings.cta_button_1_link }}">{{ section.settings.cta_button_1_text }}</a>
+          {%- endif -%}
+          {%- if section.settings.cta_button_2_link != blank -%}
+            <a class="hp-button hp-button--light" href="{{ section.settings.cta_button_2_link }}">{{ section.settings.cta_button_2_text }}</a>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "HOOPERS Policy",
+  "settings": [
+    { "type": "header", "content": "Hero" },
+    { "type": "text", "id": "hero_kicker", "label": "Hero kicker", "default": "POLICY" },
+    { "type": "text", "id": "hero_title", "label": "Hero title", "default": "מדיניות משלוחים והחזרות | HOOPERS" },
+    { "type": "textarea", "id": "hero_subtitle", "label": "Hero subtitle", "default": "כל מה שצריך לדעת על משלוחים, זמני אספקה, החלפות והחזרות." },
+
+    { "type": "header", "content": "Top cards" },
+    { "type": "text", "id": "card_1_icon", "label": "Card 1 icon", "default": "🚚" },
+    { "type": "text", "id": "card_1_title", "label": "Card 1 title", "default": "משלוח עד הבית" },
+    { "type": "text", "id": "card_1_text", "label": "Card 1 text", "default": "25₪" },
+    { "type": "text", "id": "card_1_small", "label": "Card 1 small text", "default": "חינם בקנייה מעל 300₪" },
+
+    { "type": "text", "id": "card_2_icon", "label": "Card 2 icon", "default": "⏱️" },
+    { "type": "text", "id": "card_2_title", "label": "Card 2 title", "default": "זמן אספקה" },
+    { "type": "text", "id": "card_2_text", "label": "Card 2 text", "default": "עד 14 ימי עסקים" },
+    { "type": "text", "id": "card_2_small", "label": "Card 2 small text" },
+
+    { "type": "text", "id": "card_3_icon", "label": "Card 3 icon", "default": "🔄" },
+    { "type": "text", "id": "card_3_title", "label": "Card 3 title", "default": "החלפת מידה" },
+    { "type": "text", "id": "card_3_text", "label": "Card 3 text", "default": "אפשרית בהתאם למדיניות ההחלפות באתר" },
+    { "type": "text", "id": "card_3_small", "label": "Card 3 small text" },
+
+    { "type": "text", "id": "card_4_icon", "label": "Card 4 icon", "default": "📦" },
+    { "type": "text", "id": "card_4_title", "label": "Card 4 title", "default": "מעקב משלוח" },
+    { "type": "text", "id": "card_4_text", "label": "Card 4 text", "default": "קישור מעקב נשלח למייל לאחר יציאת ההזמנה" },
+    { "type": "text", "id": "card_4_small", "label": "Card 4 small text" },
+
+    { "type": "header", "content": "Order process timeline" },
+    { "type": "text", "id": "timeline_title", "label": "Timeline title", "default": "איך זה עובד?" },
+    { "type": "text", "id": "step_1_title", "label": "Step 1 title", "default": "ביצוע הזמנה" },
+    { "type": "textarea", "id": "step_1_text", "label": "Step 1 text", "default": "בחרו מוצרים והשלימו רכישה באתר." },
+    { "type": "text", "id": "step_2_title", "label": "Step 2 title", "default": "הכנת ההזמנה" },
+    { "type": "textarea", "id": "step_2_text", "label": "Step 2 text", "default": "ההזמנה נכנסת לטיפול והכנה." },
+    { "type": "text", "id": "step_3_title", "label": "Step 3 title", "default": "משלוח" },
+    { "type": "textarea", "id": "step_3_text", "label": "Step 3 text", "default": "החבילה יוצאת לדרך ונשלח עדכון למייל." },
+    { "type": "text", "id": "step_4_title", "label": "Step 4 title", "default": "קבלת המוצר" },
+    { "type": "textarea", "id": "step_4_text", "label": "Step 4 text", "default": "נהנים מהמוצר של HOOPERS." },
+
+    { "type": "header", "content": "FAQ accordion" },
+    { "type": "text", "id": "faq_title", "label": "FAQ title", "default": "שאלות נפוצות" },
+    { "type": "text", "id": "faq_1_question", "label": "FAQ 1 question", "default": "תוך כמה זמן מגיע המשלוח?" },
+    { "type": "textarea", "id": "faq_1_answer", "label": "FAQ 1 answer", "default": "זמני השילוח הם עד 14 ימי עסקים." },
+    { "type": "text", "id": "faq_2_question", "label": "FAQ 2 question", "default": "איך מקבלים מספר מעקב?" },
+    { "type": "textarea", "id": "faq_2_answer", "label": "FAQ 2 answer", "default": "מספר מעקב נשלח למייל לאחר יציאת ההזמנה." },
+    { "type": "text", "id": "faq_3_question", "label": "FAQ 3 question", "default": "האם יש משלוח חינם?" },
+    { "type": "textarea", "id": "faq_3_answer", "label": "FAQ 3 answer", "default": "כן, משלוח חינם בקנייה מעל 300₪." },
+    { "type": "text", "id": "faq_4_question", "label": "FAQ 4 question", "default": "האם אפשר להחליף מידה?" },
+    { "type": "textarea", "id": "faq_4_answer", "label": "FAQ 4 answer", "default": "כן, ניתן לבצע החלפת מידה בהתאם למדיניות ההחלפות באתר." },
+    { "type": "text", "id": "faq_5_question", "label": "FAQ 5 question", "default": "מה קורה אם מוצר הגיע פגום?" },
+    { "type": "textarea", "id": "faq_5_answer", "label": "FAQ 5 answer", "default": "יש ליצור איתנו קשר ונבדוק את המקרה בהקדם." },
+
+    { "type": "header", "content": "HOOPERS Promise" },
+    { "type": "text", "id": "promise_title", "label": "Promise title", "default": "למה לקוחות בוחרים HOOPERS?" },
+    { "type": "text", "id": "promise_item_1", "label": "Promise item 1", "default": "משלוח חינם מעל 300₪" },
+    { "type": "text", "id": "promise_item_2", "label": "Promise item 2", "default": "שירות לקוחות אישי" },
+    { "type": "text", "id": "promise_item_3", "label": "Promise item 3", "default": "החלפת מידה" },
+    { "type": "text", "id": "promise_item_4", "label": "Promise item 4", "default": "תשלום מאובטח" },
+
+    { "type": "header", "content": "Bottom CTA" },
+    { "type": "text", "id": "cta_title", "label": "CTA title", "default": "יש לכם שאלה נוספת?" },
+    { "type": "textarea", "id": "cta_text", "label": "CTA text", "default": "צוות HOOPERS זמין לעזור בכל שאלה לגבי הזמנה, משלוח או החלפה." },
+    { "type": "text", "id": "cta_button_1_text", "label": "Button 1 text", "default": "שלחו לנו מייל" },
+    { "type": "url", "id": "cta_button_1_link", "label": "Button 1 link" },
+    { "type": "text", "id": "cta_button_2_text", "label": "Button 2 text", "default": "מרכז המדריכים" },
+    { "type": "url", "id": "cta_button_2_link", "label": "Button 2 link" }
+  ],
+  "presets": [
+    {
+      "name": "HOOPERS Policy"
+    }
+  ]
+}
+{% endschema %}

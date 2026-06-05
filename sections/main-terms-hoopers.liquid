@@ -1,0 +1,654 @@
+{%- liquid
+  assign section_id = 'hoopers-terms-' | append: section.id
+-%}
+
+<style>
+  #{{ section_id }} {
+    --ht-black: #050505;
+    --ht-cream: #f7f2e8;
+    --ht-ink: #111111;
+    --ht-muted: rgba(17, 17, 17, 0.64);
+    --ht-gold: #c8a56a;
+    --ht-border: rgba(5, 5, 5, 0.1);
+    background: var(--ht-cream);
+    color: var(--ht-ink);
+    direction: rtl;
+  }
+
+  #{{ section_id }} * {
+    box-sizing: border-box;
+  }
+
+  #{{ section_id }} .ht-page-width {
+    width: min(100%, 1240px);
+    margin: 0 auto;
+    padding: 0 18px;
+  }
+
+  #{{ section_id }} .ht-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--ht-black);
+    color: #fff;
+    padding: 92px 0 58px;
+  }
+
+  #{{ section_id }} .ht-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(5, 5, 5, 0), rgba(5, 5, 5, 0.55)),
+      radial-gradient(circle at 16% 16%, rgba(200, 165, 106, 0.18), transparent 34%);
+    pointer-events: none;
+  }
+
+  #{{ section_id }} .ht-hero__content {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+  }
+
+  #{{ section_id }} .ht-kicker {
+    margin: 0 0 16px;
+    color: var(--ht-gold);
+    font-size: 11px;
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  #{{ section_id }} .ht-title {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(38px, 6vw, 76px);
+    line-height: 0.98;
+    font-weight: 950;
+    letter-spacing: 0.01em;
+  }
+
+  #{{ section_id }} .ht-subtitle {
+    max-width: 760px;
+    margin: 20px 0 0;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: clamp(16px, 2vw, 22px);
+    line-height: 1.55;
+    font-weight: 650;
+  }
+
+  #{{ section_id }} .ht-top-cards {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: -28px;
+    position: relative;
+    z-index: 3;
+  }
+
+  #{{ section_id }} .ht-card {
+    min-height: 185px;
+    background: #fff;
+    border: 1px solid var(--ht-border);
+    padding: 22px;
+    transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+  }
+
+  #{{ section_id }} .ht-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(200, 165, 106, 0.58);
+    box-shadow: 0 18px 44px rgba(5, 5, 5, 0.08);
+  }
+
+  #{{ section_id }} .ht-card__icon {
+    display: block;
+    margin-bottom: 14px;
+    font-size: 25px;
+    line-height: 1;
+  }
+
+  #{{ section_id }} .ht-card__title {
+    margin: 0;
+    color: var(--ht-ink);
+    font-size: 22px;
+    line-height: 1.08;
+    font-weight: 950;
+  }
+
+  #{{ section_id }} .ht-card__text {
+    margin: 14px 0 0;
+    color: var(--ht-ink);
+    font-size: 16px;
+    line-height: 1.45;
+    font-weight: 750;
+  }
+
+  #{{ section_id }} .ht-section {
+    padding: 44px 0;
+  }
+
+  #{{ section_id }} .ht-section__title {
+    margin: 0 0 24px;
+    color: var(--ht-ink);
+    font-size: clamp(30px, 4vw, 48px);
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: 0.015em;
+  }
+
+  #{{ section_id }} .ht-timeline {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  #{{ section_id }} .ht-step {
+    position: relative;
+    min-height: 210px;
+    background: var(--ht-black);
+    color: #fff;
+    padding: 24px;
+    border: 1px solid rgba(200, 165, 106, 0.22);
+  }
+
+  #{{ section_id }} .ht-step__number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    margin-bottom: 18px;
+    background: var(--ht-gold);
+    color: var(--ht-black);
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 950;
+  }
+
+  #{{ section_id }} .ht-step__title {
+    margin: 0;
+    color: #fff;
+    font-size: 22px;
+    line-height: 1.1;
+    font-weight: 950;
+  }
+
+  #{{ section_id }} .ht-step__text {
+    margin: 12px 0 0;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 15px;
+    line-height: 1.5;
+    font-weight: 650;
+  }
+
+  #{{ section_id }} .ht-faq {
+    display: grid;
+    gap: 10px;
+  }
+
+  #{{ section_id }} .ht-faq details,
+  #{{ section_id }} .ht-legal details {
+    background: #fff;
+    border: 1px solid var(--ht-border);
+  }
+
+  #{{ section_id }} .ht-faq summary,
+  #{{ section_id }} .ht-legal summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 20px 22px;
+    color: var(--ht-ink);
+    cursor: pointer;
+    list-style: none;
+    font-size: 18px;
+    line-height: 1.25;
+    font-weight: 900;
+  }
+
+  #{{ section_id }} .ht-faq summary::-webkit-details-marker,
+  #{{ section_id }} .ht-legal summary::-webkit-details-marker {
+    display: none;
+  }
+
+  #{{ section_id }} .ht-faq summary::after,
+  #{{ section_id }} .ht-legal summary::after {
+    content: "+";
+    flex: 0 0 auto;
+    color: var(--ht-gold);
+    font-size: 28px;
+    line-height: 1;
+    font-weight: 500;
+    transition: transform 0.2s ease;
+  }
+
+  #{{ section_id }} .ht-faq details[open] summary::after,
+  #{{ section_id }} .ht-legal details[open] summary::after {
+    transform: rotate(45deg);
+  }
+
+  #{{ section_id }} .ht-faq__answer {
+    padding: 0 22px 20px;
+    color: var(--ht-muted);
+    font-size: 16px;
+    line-height: 1.65;
+    font-weight: 650;
+  }
+
+  #{{ section_id }} .ht-promise {
+    background: var(--ht-black);
+    color: #fff;
+    padding: 42px 0;
+  }
+
+  #{{ section_id }} .ht-promise__inner {
+    display: grid;
+    grid-template-columns: minmax(180px, 0.4fr) minmax(0, 1fr);
+    gap: 24px;
+    align-items: center;
+  }
+
+  #{{ section_id }} .ht-promise__title {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(28px, 4vw, 48px);
+    line-height: 1;
+    font-weight: 950;
+  }
+
+  #{{ section_id }} .ht-promise__items {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  #{{ section_id }} .ht-promise__item {
+    min-height: 76px;
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 14px;
+    line-height: 1.35;
+    font-weight: 850;
+  }
+
+  #{{ section_id }} .ht-legal__content {
+    max-width: 920px;
+    padding: 0 22px 24px;
+    color: var(--ht-muted);
+    font-size: 16px;
+    line-height: 1.75;
+    font-weight: 650;
+  }
+
+  #{{ section_id }} .ht-legal__content p {
+    margin: 0 0 18px;
+  }
+
+  #{{ section_id }} .ht-legal__content p:last-child {
+    margin-bottom: 0;
+  }
+
+  @media screen and (max-width: 990px) {
+    #{{ section_id }} .ht-top-cards,
+    #{{ section_id }} .ht-timeline,
+    #{{ section_id }} .ht-promise__items {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    #{{ section_id }} .ht-promise__inner {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media screen and (max-width: 640px) {
+    #{{ section_id }} .ht-page-width {
+      padding: 0 14px;
+    }
+
+    #{{ section_id }} .ht-hero {
+      padding: 74px 0 48px;
+    }
+
+    #{{ section_id }} .ht-top-cards {
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: -18px;
+    }
+
+    #{{ section_id }} .ht-section {
+      padding: 34px 0;
+    }
+
+    #{{ section_id }} .ht-timeline,
+    #{{ section_id }} .ht-promise__items {
+      grid-template-columns: 1fr;
+    }
+
+    #{{ section_id }} .ht-card,
+    #{{ section_id }} .ht-step {
+      padding: 22px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #{{ section_id }} * {
+      transition: none !important;
+    }
+  }
+</style>
+
+<section id="{{ section_id }}">
+  <div class="ht-hero">
+    <div class="ht-page-width">
+      <div class="ht-hero__content">
+        <p class="ht-kicker">{{ section.settings.hero_kicker }}</p>
+        <h1 class="ht-title">{{ section.settings.hero_title }}</h1>
+        <div class="ht-subtitle">{{ section.settings.hero_subtitle }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ht-page-width">
+    <div class="ht-top-cards">
+      <div class="ht-card">
+        <span class="ht-card__icon">{{ section.settings.card_1_icon }}</span>
+        <h2 class="ht-card__title">{{ section.settings.card_1_title }}</h2>
+        <p class="ht-card__text">{{ section.settings.card_1_text }}</p>
+      </div>
+
+      <div class="ht-card">
+        <span class="ht-card__icon">{{ section.settings.card_2_icon }}</span>
+        <h2 class="ht-card__title">{{ section.settings.card_2_title }}</h2>
+        <p class="ht-card__text">{{ section.settings.card_2_text }}</p>
+      </div>
+
+      <div class="ht-card">
+        <span class="ht-card__icon">{{ section.settings.card_3_icon }}</span>
+        <h2 class="ht-card__title">{{ section.settings.card_3_title }}</h2>
+        <p class="ht-card__text">{{ section.settings.card_3_text }}</p>
+      </div>
+
+      <div class="ht-card">
+        <span class="ht-card__icon">{{ section.settings.card_4_icon }}</span>
+        <h2 class="ht-card__title">{{ section.settings.card_4_title }}</h2>
+        <p class="ht-card__text">{{ section.settings.card_4_text }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ht-section">
+    <div class="ht-page-width">
+      <h2 class="ht-section__title">{{ section.settings.timeline_title }}</h2>
+      <div class="ht-timeline">
+        <div class="ht-step">
+          <span class="ht-step__number">1</span>
+          <h3 class="ht-step__title">{{ section.settings.step_1_title }}</h3>
+          <p class="ht-step__text">{{ section.settings.step_1_text }}</p>
+        </div>
+
+        <div class="ht-step">
+          <span class="ht-step__number">2</span>
+          <h3 class="ht-step__title">{{ section.settings.step_2_title }}</h3>
+          <p class="ht-step__text">{{ section.settings.step_2_text }}</p>
+        </div>
+
+        <div class="ht-step">
+          <span class="ht-step__number">3</span>
+          <h3 class="ht-step__title">{{ section.settings.step_3_title }}</h3>
+          <p class="ht-step__text">{{ section.settings.step_3_text }}</p>
+        </div>
+
+        <div class="ht-step">
+          <span class="ht-step__number">4</span>
+          <h3 class="ht-step__title">{{ section.settings.step_4_title }}</h3>
+          <p class="ht-step__text">{{ section.settings.step_4_text }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ht-section">
+    <div class="ht-page-width">
+      <h2 class="ht-section__title">{{ section.settings.faq_title }}</h2>
+      <div class="ht-faq">
+        <details>
+          <summary>{{ section.settings.faq_1_question }}</summary>
+          <div class="ht-faq__answer">{{ section.settings.faq_1_answer }}</div>
+        </details>
+
+        <details>
+          <summary>{{ section.settings.faq_2_question }}</summary>
+          <div class="ht-faq__answer">{{ section.settings.faq_2_answer }}</div>
+        </details>
+
+        <details>
+          <summary>{{ section.settings.faq_3_question }}</summary>
+          <div class="ht-faq__answer">{{ section.settings.faq_3_answer }}</div>
+        </details>
+
+        <details>
+          <summary>{{ section.settings.faq_4_question }}</summary>
+          <div class="ht-faq__answer">{{ section.settings.faq_4_answer }}</div>
+        </details>
+
+        <details>
+          <summary>{{ section.settings.faq_5_question }}</summary>
+          <div class="ht-faq__answer">{{ section.settings.faq_5_answer }}</div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <div class="ht-promise">
+    <div class="ht-page-width">
+      <div class="ht-promise__inner">
+        <h2 class="ht-promise__title">{{ section.settings.promise_title }}</h2>
+        <div class="ht-promise__items">
+          <div class="ht-promise__item">{{ section.settings.promise_item_1 }}</div>
+          <div class="ht-promise__item">{{ section.settings.promise_item_2 }}</div>
+          <div class="ht-promise__item">{{ section.settings.promise_item_3 }}</div>
+          <div class="ht-promise__item">{{ section.settings.promise_item_4 }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ht-section">
+    <div class="ht-page-width">
+      <div class="ht-legal">
+        <details>
+          <summary>{{ section.settings.legal_title }}</summary>
+          <div class="ht-legal__content">
+            <p>מדיניות האתר</p>
+            <p>מבוא:</p>
+            <p>התקנון נכתב בלשון זכר מטעמי נוחות וחל על שני המינים. אנא קרא בקפידה את תנאי השימוש.</p>
+            <p>האתר מכיל חנות אינטרנטית מקוונת לרכישת מוצרים, ותנאי השימוש חלים בעת שימוש או רכישת מוצרים באתר.</p>
+            <p>האתר, וכל שירות המסופק באמצעותו, לרבות עיצוב, תוכן, סימני מסחר, תוכן, מערכות ואלגוריתמים, מוגנים תחת דיני זכויות יוצרים ובאמצעות זכויות קניין רוחני.</p>
+            <p>אין להעתיק לשכפל, להפיץ, לפרסם או להשתמש בכל דרך אחרת את התכנים המופיעים באתר.</p>
+            <p>שימוש ורכישת מוצרים באתר מהווה את הסכמתך לתנאי השימוש, בה אתה מתחייב כי לא תהא לך או למי מטעמך כל טענה או דרישה נגד האתר</p>
+            <p>תנאי השימוש הכתובים בתקנון זה, הם הכללים היחידים אשר יחייבו את בעלי העסק ומפעילי האתר, כלפי המשתמשים בשירותי האתר.</p>
+            <p>שים לב כי תנאי השימוש עלולים להשתנות מעת לעת ע"פ שיקול הדעת הבלעדי של מפעילי האתר וללא צורך בהודעה.</p>
+            <p>הערה: השינויים יחולו על מוצרים/שירותים שנרכשו לאחר השינוי בלבד.</p>
+            <p>אם אינך מסכים לתנאי התקנון, הנך מתבקש לא להירשם לאתר או לבצע הזמנות.</p>
+            <p>מקום השיפוט הייחודי והבלעדי בגין כל עניין הנובע מהשימוש באתר, הוא אך ורק בבתי המשפט המוסמכים בתל אביב ועל השימוש באתר יחולו אך ורק דיני מדינת ישראל.</p>
+            <p>שימוש באתר</p>
+            <p>על המשתמש באתר להיות בגיל 18 ומעלה, ובתנאי כי הינו בעל כשרות משפטית.</p>
+            <p>על המשתמש להתגורר בישראל ולהחזיק בת.ז ישראלית, כמו כן עליו להחזיק כרטיס אשראי בתוקף שהונפק בישראל.</p>
+            <p>על אחריות המשתמש בלבד לשמור על סודיות הסיסמא ושם המשתמש לאתר.</p>
+            <p>אסור למשתמש לפתוח חשבון לכל גורם צד שלישי ללא הסכמתו המפורשת.</p>
+            <p>המשתמש לא ישתמש בפרטים וססמאות של משתמשים אחרים בניגוד לחוק.</p>
+            <p>המשתמש מסיר אחריות מהאתר, בכל נושא של תקלה טכנית/הפרעה/נפילת האתר, לרבות תקלות העלולות להיגרם ע"י צד שלישי המספק שירותי אחסון, תוכנה, קווי תקשורת ו/או כל שירות נוסף.</p>
+            <p>המשתמש מסיר אחריות מהחברה, בכל נושא של התקפות וניסיונות פריצה מצד גורמים שונים אל האתר, רשתות התקשורת, מחשבים ושרתים.</p>
+            <p>החברה נוקטת במספר אמצעי אבטחה על מנת לשמור על פרטיות המידע שיוזן על ידי המשתמשים באתר, אולם חשוב לדעת כי לא ניתן להבטיח זאת לחלוטין וייתכנו פריצות אבטחה וחדירות למידע.</p>
+            <p>החברה אינה מתחייבת שהשירותים והמידע באתר או בשרתי צד שלישי המאחסן אותם, יהיו חסינים באופן מוחלט מפני גישה בלתי מורשית למידע המאוחסן בהם.</p>
+            <p>בגלישה באתר, בהרשמה ובהעלאת תוכן ו/או מידע , המשתמש פוטר את החברה ו/או מי מטעמם מאחריות לכל נזק שייגרם לו ו/או למי מטעמו עקב התקפות, ניסיונות פריצה וחדירות למידע כאמור ומוותרים על כל טענה כנגד החברה ו/או מי מטעמו בקשר לכך.</p>
+            <p>החברה תוכל בכל רגע נתון וע"פ שיקול דעתה בלבד וללא צורך בהודעה, להסיר כל תוכן/תגובה שפורסמה ע"י משתמש באתר, לרבות מחיקת/השהיית המשתמש.</p>
+            <p>חלק מההודעות והפרסומים שנשלחים אליך, עשויים להכיל "עוגיות" כדוגמת "עוגיות זיהוי" על הדפדפן שלך.</p>
+            <p>החברה אינה שומרת את פרטי כרטיסי האשראי של המשתמשים בשרתי העסק או בכל מקום אחר.</p>
+            <p>האתר משמש כמתווך בין ספקי צד ג'- יצרנים, מוכרים בסיטונאות, ומפעלים שונים מרחבי העולם, לבין לקוחות המשתמשים בשירותי האתר ו/או מבצעים הזמנת מוצר/ים באמצעות האתר (להלן:"המשתמש") של מוצרים לצורך יבוא אישי ולא מסחרי.</p>
+            <p>משתמשים אשר רוכשים מוצרים/שירותים דרך אתר החברה, כפופים גם לתנאי השימוש של השותפים.</p>
+            <p>כל הזמנה באתר כפופה לחוקי מדינת ישראל. כל משתמש באתר נדרש לבדוק את עלויות המיסוי, המכס, המע”מ ועלויות אחרות בטרם ביצוע הזמנה. למידע נוסף, מצ"ב לנוחיותכם קישור לאתר רשות המיסים, על ידי לחיצה על הקישור</p>
+            <p>הזמנה באתר:</p>
+            <p>לצד כל מוצר מופיע מחירו, כאשר המחיר כולל מס ערך מוסף (מע"מ) אלא אם צוין אחרת. עם זאת המפעילה רשאית לשנות את מחירו של כל מוצר בכל עת ועל פי שיקול דעתה הבלעדי מבלי שלמשתמש יהיו טענות נגדה בשל כך. יובהר כי המועד הקובע לעניין מחיר המוצר הוא מועד אישור ההזמנה על ידי המזמין ולא מועד הוספתו לסל הקניות.</p>
+            <p>החברה היא לא היצרנית של המוצרים שנמכרים באתר.</p>
+            <p>למרות שאנו עובדים בכדי לוודא שהמידע על המוצר באתר שלנו הוא מדויק, יצרנים עשויים לא לדייק או לשנות את המידע שהם מחליטים לרשום בדף המוצר.</p>
+            <p>אריזות המוצר והחומרים עשויים לכלול מידע נוסף או שונה מהמידע שמוצג בדפי המוצר באתר.</p>
+            <p>בעת רכישתך באתר הינך מודע לכך שהמוצרים אותם תבחר להזמין אינם מאוחסנים באתר אלא אצל ספקים אשר משלחים את המוצרים ממדינה שונה ישירות אל הלקוח. למוצרים רפואיים או עם השלכות רפואיות- התוכן באתר שלנו אינו משמש לאבחנה, טיפול, ריפוי או מניעה של שום בעיה רפואית או אחרת.</p>
+            <p>המידע אינו מחליף ייעוץ רפואי ואנו ממליצים להתייעץ עם רופא או איש מקצוע מוסמך לפני שימוש בכל מוצר שבא שמגע עם הגוף.</p>
+            <p>עליכם תמיד לקרוא את המידע, אזהרות והנחיות שמצורפים למוצר לפני השימוש בו ולא להסתמך רק על המידע שנמצא באתר שלנו.</p>
+            <p>אם אתם מרגישים שאחד או יותר מהמוצרים שנחשפתם אליהם באתר, הינו פוגעני, מטעה או לא חוקי, אנו מזמינים אתכם ליצור איתנו קשר בכדי שנוכל לטפל בנושא בהקדם האפשרי.</p>
+            <p>כל המידע המוצג באתר לגבי מוצרים לרבות טיבם ואיכותם, התקבל ישירות מהשותפים.</p>
+            <p>משתמש באתר, מסיר מהחברה אחריות לגבי אי-דיוקים/אי-התאמות בפרטים שמוצגים באתר ביחס למוצרים, לרבות תמונות ומפרטי מוצרים שהוצגו בדפי המכירה וכיו"ב.</p>
+            <p>בעת הזמנה באתר על המשתמש להזין את פרטיו(כגון: שם מלא, כתובת מגורים עדכנית, מספר טלפון, כתובת דוא"ל פעילה וכל מידע נוסף שידרש לטובת ביצוע ההזמנה).</p>
+            <p>לאחר מכן חלק מהפרטים שהוזנו יועברו אל השותפים, לטובת ביצוע המשלוח. לכן חשוב מאוד למלא פרטים מדויקים ונכונים.</p>
+            <p>הערה: ניתן לבצע הזמנות לכתובות מגורים בתוך מדינת ישראל בלבד.</p>
+            <p>עד 48 שעות ממועד ביצוע ההזמנה, המשתמש יקבל בדואר האלקטרוני שמסר את אישור ההזמנה, אישור הזמנה זה מהווה אישור סופי ומוחלט.</p>
+            <p>במידה ומוצר שהזמנת אינו נמצא במלאי, או שמסיבה כזאת או אחרת אין ביכולת הספק לספק את המוצר, תוצע לך אופציה לקבלת מוצר חלופי או ביטול העסקה.</p>
+            <p>במידה ותחליט על ביטול – יבוצע זיכוי מלא בכרטיס האשראי שלך.</p>
+            <p>הערה: למעט קבלת מוצר חלופי או ביטול עסקה כאמור, לא תהיה לך כל טענה, תביעה ו/או דרישה, כלפי החברה.</p>
+            <p>הזמן עד קבלת הכסף באמצעי התשלום, לפעמים יכול להתעכב בשל גורמים חיצוניים ועלול להתעכב עד משך של 60 ימי עסקים.</p>
+            <p>לאחר ביצוע הזמנה, יתבצע רישום אוטומטי למערכת הדיוור האלקטרוני של האתר.</p>
+            <p>הרישום הכרחי על מנת לעדכן את הנרשם או הרוכש על שלבי הטיפול בהזמנה כולל משלוח חשבוניות, אישור הזמנה, מעקב משלוחים וכו’.</p>
+            <p>כמו כן, הרישום לדיוור האלקטרוני יאפשר לאתר ולצוות של החברה לשלוח מידע פרסומי ושיווקי. אנו מתחייבים לא להעביר את פרטי הרישום לאף חברה אחרת.</p>
+            <p>אפשר להתנתק מהדיוור האלקטרוני השיווקי על ידי לחיצה על קישור שנמצא בכל הודעה שיווקית שתשלח אליך. אין אפשרות להתנתק ממערכת ההודעות על מצב ההזמנה והמשלוחים.</p>
+            <p>אין האתר אחראי על טיב המוצרים, זמני המשלוח (לרבות עיכובים הנובעים מגורמים שונים) או איחור באספקה וכל נזק שייגרם ללקוח בשל כך.</p>
+            <p>הגבלת אחריות</p>
+            <p>התמונות המופיעות באתר הינן לשם המחשה בלבד. ייתכנו הבדלי צבעים ושינויים אחרים בין מראה המוצר בתמונה לבין המוצר במציאות.</p>
+            <p>העסק לא יהיה אחראי לטעויות קולמוס במפרטים והפרטים הטכניים של כל מוצר ומוצר. מוסכם כי הלקוח או צד שלישי מוותר בזאת על טענה ו/או תביעה בגין טעות קולמוס כאמור.</p>
+            <p>האחריות לכל המוצרים המוצעים באתר חלה על היצרנים והספקים בלבד.</p>
+            <p>מוסכם בזאת כי כל עיכוב או אי ביצוע של אספקת מוצר שנרכש באתר שנבעו מכוח עליון לרבות מזג אויר חריג, שביתות אצל נותני השירותים השונים או שיבושים בלתי צפויים במחשב האתר לא יחייבו את העסק, והלקוח או מי מטעמו או צד שלישי מוותרים בזאת על כל טענה ו/או תביעה בשל כך.</p>
+            <p>ב. תנאים נוספים</p>
+            <p>העסק ומנהלי האתר לא יישאו באחריות עקיפה או ישירה כלפי המזמין או כלפי צד שלישי בכל מקרה של כשל בהזמנה או באספקה בשל כוח עליון לרבות תקלות במערכת המחשבים, הטלפון, בשל חברות האשראי או בשל כל גורם אחר הקשור בהשלמת פעולת הרכישה והאספקה.</p>
+            <p>מוסכם בזאת כי הזמנה ורכישה דרך האתר אינה ולא תהווה חוזה לטובת צד שלישי` אחר.</p>
+            <p>העסק שומר לעצמו את הזכות לשנות את התקנון מפעם לפעם עפ"י שיקול דעתו.</p>
+            <p>כל מידע ו/או תוכן ואו תמונות המופיעים באתר, לרבות גרפיקה, עיצוב, סימני מסחר, סימני לוגו לרבות עריכתם ואופן הצגתם באתר,הנם בבעלותם הבלעדית של האתר או העסק.</p>
+            <p>משלוחים</p>
+            <p>זמן המשלוח אורך בממוצע כ 7-15 ימי עסקים ממועד שליחת המוצר, כל המשלוחים מבוטחים ומקבלים מספר מעקב.</p>
+            <p>אספקה עד בית הלקוח פועלת במספר מצומצם של יישובים, ולכן המשלוחים יגיעו אל נקודת איסוף (לרבות סניפי דואר).</p>
+            <p>מרגע ההזמנה, זמן השילוח העומד לחברה הינו 1-5 ימי עסקים בממוצע.</p>
+            <p>בחלק מהמקרים עלולים להיות עיכובים או שינויים בלתי צפויים, כמו למשל עיכובים מצד דואר ישראל, חברות השילוח או הגורמים השונים בתהליך.</p>
+            <p>במידה והזמן המצויין עבר, וחוששים כי יש עיכוב קל בהזמנתכם אנא צרו עימנו קשר דרך הווטסאפ או בדף היצירת קשר לבירור מעמיק על החבילה.</p>
+            <p>יתכן שמשלוחים מסוימים יתעכבו כתוצאה מנגיף הקורונה. אנחנו עובדים מאוד קשה כדי לוודא שכל ההזמנות תגענה מהר ככל שאפשר.</p>
+            <p>המועד המאוחר ביותר לאספקת המוצר/ים הוא לכל היותר 60 ימי עסקים ממועד שליחת המוצר.</p>
+            <p>במקרה כזה יש ליצור קשר עם שירות הלקוחות, ונעניק לך לבחירתך החזר כספי מלא או שליחה מחודשת.</p>
+            <p>ההזמנות נשלחות ישירות מהספק בחו"ל.</p>
+            <p>בהזמנה של יותר ממוצר אחד, ייתכן והמוצרים יישלחו בחבילות נפרדות.</p>
+            <p>הזמנת המוצרים</p>
+            <p>על מנת לרכוש מוצרים באתר יש לבחור מוצרים מבין אלה המוצגים באתר ולהוסיפם לעגלת הקניות. לאחר מכן, יש לפנות לעמוד קופת התשלום שבאתר, בו יש למלא מספר פרטים לרבות כתובת דואר אלקטרוני עדכנית, כתובת, כתובת למשלוח, מס' טלפון ופרטי כרטיס אשראי. אם המשלוח ממוען לאחר שאינו הרוכש, יש לציין כתובת מלאה של הנמען וכן את מספר הטלפון שלו. פרטים אלה נדרשים לצורך תיאום משלוח. כל הפרטים הנמסרים באתר בתהליך הרכישה מאובטחים בטכנולוגיה העדכנית ביותר.</p>
+            <p>לאחר סיום ביצוע ההזמנה יישלח לתיבת הדואר האלקטרוני שמסר הרוכש אישור על קליטת ההזמנה. הזמנה ופעולת רכישה תחשבנה כמושלמות רק אם התקבל אישור רכישה מחברת האשראי. היה ולא היה באפשרות העסק לספק את המוצר, לא תחול חובה על העסק לספק את המוצר. במקרה זה תישלח אל המזמין הודעה מתאימה לתיבת הדואר האלקטרוני שמסר.</p>
+            <p>היה ומוצר אזל במלאי ללא ציון כי המוצר אינו קיים במלאי, והמוצר מופיע באתר במועד ביצוע ההזמנה, לא תהיה למזמינה כל טענה ו/או תביעה בעניין זה בגין כל נזק ישיר או עקיף אשר נגרם למזמין או לצד שלישי.</p>
+            <p>יש לשים לב כי בחלק מהמוצרים תשלח אליכם אוטומטית מידה מעל המידה שרשומה, וזאת מכיוון שזה מוצר בגזרה קטנה כך שהמידה שתזמינו תתאים למידה המתאימה בארץ. דבר זה לא יקרה בדף מוצר אשר רשום עליו שמדובר בגזרה קטנה ושמומלץ להזמין מידה מעל, שם תקבלו את המידה שביקשתם.</p>
+            <p>מסירת פרטים אישיים כוזבים הקשורים בתהליך הרכישה הינה עבירה פלילית ועוולה אזרחית, במקרה של טעות בשוגג על הלקוח להודיע על כך לבית העסק וכל עלות נוספת שתיגרם בעקבות כך, תחויב על הלקוח.</p>
+            <p>מסירת מידע באתר מאובטח בטכנולוגית PCI המתקדמת ביותר, בטכנולוגיה זו המידע בדבר פרטי החיוב של הרוכש מוצפן ונמחק מייד לאחר הרכישה. בנוסף, העסק מתחייב לנקוט באמצעי זהירות מקובלים על מנת לשמור בסודיות ככל האפשר מידע אישי אודות הלקוח.</p>
+            <p>ב. אספקה ומשלוח</p>
+            <p>לאחר סיום ביצוע ההזמנה ובהתקיים התנאים המצוינים בפרק ב', יוזמנו המוצרים באופן אישי ומיוחד עבור הרוכש/ת מהיצרן בחו"ל, אשר יספק את המוצרים עד לפתח ביתה ו/או נקודת החלוקה הקרובה ביותר, וזאת תוך עד מקסימום 60 ימי עסקים (בפועל הרבה פחות).</p>
+            <p>צוות האתר יפעל לשם אספקה מהירה ככל שניתן של המוצר שנרכש, בהתאם לתנאים המפורטים בעמוד משלוחים באתר ולאפשרות אותה בחר המזמין. מובהר ומוסכם בזאת כי לעסק אין שליטה על מועדי האספקה המדויקים של שירות המשלוחים ואין לו כל אחריות על כך.</p>
+            <p>בכל מקרה של עיכוב באספקת המוצר מחויב הרוכש להודיע באופן מיידי על העיכוב על-מנת לתת אפשרות לעסק לנסות לפתור את הבעיה מוקדם וביעילות ככל שניתן.</p>
+            <p>ימי עסקים - ימים רגילים, לא כולל ימי שישי, שבת, יום עם ערב חג, וימי חגים</p>
+            <p>מדיניות החזרות מוצרים</p>
+            <p>אם קיבלת מוצר פגום(מוצר שהגיע פגום ולא מוצר שנפגע עקב השימוש בו) – ניתן להחליף אותו למוצר תקין או להחזיר אותו ולבטל את הקנייה בכמה צעדים פשוטים. בחלק מהמקרים נפתור לך את הבעיה, גם ללא הצורך בהחזרת המוצר. על מנת שנוכל לטפל בנושא ולספק פתרון, נבקש ממך לצרף צילומים שממחישים את הפגמים במוצר עם תיאור של התקלה.</p>
+            <p>אם סיבת הביטול היא חרטה בלבד – יגבו דמי ביטול בשיעור 5% משווי העסקה או 100 ש”ח לפי הנמוך מביניהם. כמו כן בעסקאות בכרטיס האשראי חלה עמלת ביטול נוספת מצד חברת האשראי.</p>
+            <p>-אין אפשרות להחזיר מוצרים בעיצוב אישי וחגורות</p>
+            <p>החזרת המוצר מתאפשרת בטווח של 14 יום מיום קבלת המוצר בכפוף להוראות החוק להגנת הצרכן.</p>
+            <p>כפי שמצוין בחוק המלא בקישור המצורף</p>
+            <p>בכדי למנוע אי נעימות, נבקש לוודא כי המוצר לא נפגע כתוצאה משימוש וכי לא בוצע בו שימוש מסוג כלשהו(מובהר כי חיבור לחשמל, גז ומים ייחשב לשימוש)</p>
+            <p>החזרת המוצר באריזתו המקורית, מצביעה על אי עשיית שימוש במוצר (בכפוף לבדיקתנו)</p>
+            <p>בעת החזרת המוצר אנא וודאו שהמוצר מוחזר בשלמותו עם כל האביזרים אשר הגיעו עם המוצר.</p>
+            <p>הזיכוי יתבצע לאחר בדיקת המוצר, בטווח שלא יעלה על 7 ימי עסקים.</p>
+            <p>ההחזרה מתאפשרת בדואר רשום בלבד עם מספר מעקב, דרך סניף של דואר ישראל.</p>
+            <p>ניתן לבטל עסקה מכל סיבה בתוך 14 יום ממועד קבלת המוצר, במידה שתרצו לבטל מוצר לאחר שליחתו, עליכם להמתין לקבלתו ולשלוח אותו בחזרה למחסני הספק בסין , בתיאום עם שירות הלקוחות שלנו בוואטספ או במייל(חובה ליצור עמנו קשר בכדי לתאם את ההחזרה).</p>
+            <p>עלויות משלוח המוצרים למרכז המשלוחים של האתר יחולו על הרוכש.</p>
+            <p>עבור מוצרים אלה שיוחזרו כאמור, יינתן זיכוי כספי מלא, בניכוי עלויות המשלוח. אם תהיינה לעסק עלויות נוספות, כדוגמת דמי ביטול לחברת האשראי, ינוכו עלויות אלה מסכום הזיכוי אשר יעמוד לרשות הלקוח. הזיכוי יינתן לכרטיס האשראי בו בוצע התשלום על הרכישה.</p>
+            <p>למרות האמור לעיל, מוצרים לגביהם יצוין באתר שאינם ניתנים להחזרה, לא תתאפשר החזרה כאמור. מוצרים אלה כוללים, למשל, מוצרים בהתאמה אישית ומוצרים במשלוחים מיוחדים.</p>
+            <p>החזר מלא ישלח לאחר שהלקוח ישלח את המוצר חזרה למפעל בחול והמוצר יגיע לספק.</p>
+            <p>בכל מקרה בו יש אי התאמה בין מדיניות האתר לחוק הגנת הצרכן, יגברו הוראות החוק על מדיניות האתר.</p>
+            <p>מדיניות החזרת מוצרים משתנה ממוצר למוצר, בהתאם למגוון השותפים והספקים השונים.</p>
+            <p>על אחריות מבצע ההזמנה להודיע מיידית, לכל היותר עד 5 ימי עסקים, על קבלת מוצר פגום/מוצר שאינו תואם להזמנה.</p>
+            <p>החברה תנהל עבור המשתמש את ההתקשרות מול השותפים, ותפעל בהתאם למדיניותם, אך היא אינה האחראית בדבר זיכוי כספי או פיצוי הרוכש.</p>
+            <p>במקרה של החזרת מוצר, על אחריות מזמין המוצר לשלוח את המוצר בחזרה אל כתובת היעד ממנה הוא נשלח, ולשאת בעלויות השילוח או כל עלות נוספת הנדרשת להחזרת המוצר.</p>
+            <p>בעסקה בכרטיס אשראי(להבדיל מעסקת "פייפאל") – בנוסף לדמי הביטול הקבועים בחוק, תגבה 'עמלת ביטול עסקה' נוספת אשר נגבת מחברת האשראי 'ישראכארט'.</p>
+            <p>מדיניות ביטול הזמנת מוצר</p>
+            <p>חוק הגנת הצרכן מאפשר ללקוח של עסקת מכר מרחוק לבטל את העסקה בתוך 14 ימים מיום קבלת המוצר, או ממועד קבלת פרטי העסקה – לפי המאוחר מביניהם, ובעלות דמי ביטול בגובה 5% מהעסקה או 100 ש"ח – לפי הנמוך מביניהם.</p>
+            <p>הגנה על קנייתכם ממועד ההזמנה ועד שליחת המוצר:</p>
+            <p>במידה ונשלחה בקשה לביטול הזמנה, והמוצר טרם נשלח, החברה תבצע זיכוי כספי הכולל דמי ביטול עסקה.</p>
+            <p>במידה והמוצר כבר נשלח, יצטרך לחכות הלקוח עד להגעת המוצר, ולהחזירו בהתהם למדיניות החזרת מוצרים.</p>
+            <p>פעמים רבות המוצר נשלח, אך מספר מעקבו טרם עודכן במערכת.</p>
+            <p>על כן, אין לקחת את העובדה שטרם עודכן מספר מעקב כראייה שהמוצר טרם נשלח</p>
+            <p>מידע מהותי על המוצרים ואופן המשלוח</p>
+            <p>הלקוח מאשר ומצהיר כי ידוע לו שכלל המוצרים הנמכרים באתר אינם מוצרים מקוריים של המותגים, אלא רפליקות (העתקים) בלבד, אשר אינם מיוצרים או משווקים על ידי היצרנים הרשמיים של המותגים המופיעים על גבי המוצרים. החברה אינה מייצגת או טוענת לייצוג של אף אחד מהמותגים, ואינה מקושרת אליהם בשום דרך.</p>
+            <p>בנוסף, הלקוח מודע לכך ששיטת השילוח באתר פועלת במתכונת של דרופשיפינג – כלומר, המוצרים נשלחים ישירות מהספקים בחו"ל אל הלקוח, ללא אחסון מקדים של הסחורה במחסן בישראל. זמן האספקה, בקרת האיכות, ואריזת המוצר הם באחריות הספקים בלבד, והחברה משמשת כמתווכת בלבד בין הספקים לבין הלקוח.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "HOOPERS Terms",
+  "settings": [
+    { "type": "header", "content": "Hero" },
+    { "type": "text", "id": "hero_kicker", "label": "Hero small label", "default": "POLICY" },
+    { "type": "text", "id": "hero_title", "label": "Hero title", "default": "תנאי שימוש | HOOPERS" },
+    { "type": "textarea", "id": "hero_subtitle", "label": "Hero subtitle", "default": "כל מה שצריך לדעת על השימוש באתר, רכישות, הזמנות ומדיניות HOOPERS." },
+
+    { "type": "header", "content": "Top cards" },
+    { "type": "text", "id": "card_1_icon", "label": "Card 1 icon", "default": "🛒" },
+    { "type": "text", "id": "card_1_title", "label": "Card 1 title", "default": "רכישה באתר" },
+    { "type": "textarea", "id": "card_1_text", "label": "Card 1 text", "default": "כל הזמנה כפופה לתנאי השימוש ולמדיניות האתר." },
+    { "type": "text", "id": "card_2_icon", "label": "Card 2 icon", "default": "🔐" },
+    { "type": "text", "id": "card_2_title", "label": "Card 2 title", "default": "אבטחת מידע" },
+    { "type": "textarea", "id": "card_2_text", "label": "Card 2 text", "default": "פרטי התשלום אינם נשמרים בשרתי האתר." },
+    { "type": "text", "id": "card_3_icon", "label": "Card 3 icon", "default": "📦" },
+    { "type": "text", "id": "card_3_title", "label": "Card 3 title", "default": "הזמנות ומשלוחים" },
+    { "type": "textarea", "id": "card_3_text", "label": "Card 3 text", "default": "הזמנות מטופלות בהתאם למדיניות המשלוחים." },
+    { "type": "text", "id": "card_4_icon", "label": "Card 4 icon", "default": "⚖️" },
+    { "type": "text", "id": "card_4_title", "label": "Card 4 title", "default": "תנאים משפטיים" },
+    { "type": "textarea", "id": "card_4_text", "label": "Card 4 text", "default": "השימוש באתר כפוף לדין הישראלי." },
+
+    { "type": "header", "content": "Important notes" },
+    { "type": "text", "id": "timeline_title", "label": "Timeline title", "default": "מה חשוב לדעת?" },
+    { "type": "text", "id": "step_1_title", "label": "Step 1 title", "default": "שימוש באתר" },
+    { "type": "textarea", "id": "step_1_text", "label": "Step 1 text", "default": "השימוש באתר מהווה הסכמה לתנאי השימוש." },
+    { "type": "text", "id": "step_2_title", "label": "Step 2 title", "default": "ביצוע הזמנה" },
+    { "type": "textarea", "id": "step_2_text", "label": "Step 2 text", "default": "יש להזין פרטים מדויקים ונכונים בעת ההזמנה." },
+    { "type": "text", "id": "step_3_title", "label": "Step 3 title", "default": "אישור הזמנה" },
+    { "type": "textarea", "id": "step_3_text", "label": "Step 3 text", "default": "אישור הזמנה נשלח למייל לאחר ביצוע הרכישה." },
+    { "type": "text", "id": "step_4_title", "label": "Step 4 title", "default": "מדיניות ועדכונים" },
+    { "type": "textarea", "id": "step_4_text", "label": "Step 4 text", "default": "HOOPERS רשאית לעדכן את תנאי השימוש מעת לעת." },
+
+    { "type": "header", "content": "FAQ" },
+    { "type": "text", "id": "faq_title", "label": "FAQ title", "default": "שאלות נפוצות" },
+    { "type": "text", "id": "faq_1_question", "label": "FAQ 1 question", "default": "האם השימוש באתר מהווה הסכמה לתנאים?" },
+    { "type": "textarea", "id": "faq_1_answer", "label": "FAQ 1 answer", "default": "כן. שימוש באתר או ביצוע רכישה מהווים הסכמה לתנאי השימוש." },
+    { "type": "text", "id": "faq_2_question", "label": "FAQ 2 question", "default": "האם פרטי האשראי נשמרים באתר?" },
+    { "type": "textarea", "id": "faq_2_answer", "label": "FAQ 2 answer", "default": "לא. פרטי כרטיסי אשראי אינם נשמרים בשרתי HOOPERS." },
+    { "type": "text", "id": "faq_3_question", "label": "FAQ 3 question", "default": "האם ניתן לשנות תנאים ומחירים באתר?" },
+    { "type": "textarea", "id": "faq_3_answer", "label": "FAQ 3 answer", "default": "כן. HOOPERS רשאית לעדכן מחירים, מלאי ותנאים בהתאם לשיקול דעתה." },
+    { "type": "text", "id": "faq_4_question", "label": "FAQ 4 question", "default": "מה קורה אם מוצר לא זמין במלאי?" },
+    { "type": "textarea", "id": "faq_4_answer", "label": "FAQ 4 answer", "default": "במקרה כזה תוצע אפשרות למוצר חלופי או ביטול עסקה בהתאם למדיניות האתר." },
+    { "type": "text", "id": "faq_5_question", "label": "FAQ 5 question", "default": "איפה אפשר לקרוא על משלוחים והחזרות?" },
+    { "type": "textarea", "id": "faq_5_answer", "label": "FAQ 5 answer", "default": "בעמודי מדיניות המשלוחים ומדיניות ההחזרות באתר." },
+
+    { "type": "header", "content": "HOOPERS Promise" },
+    { "type": "text", "id": "promise_title", "label": "Promise title", "default": "HOOPERS" },
+    { "type": "text", "id": "promise_item_1", "label": "Promise item 1", "default": "קנייה מאובטחת" },
+    { "type": "text", "id": "promise_item_2", "label": "Promise item 2", "default": "שירות לקוחות אישי" },
+    { "type": "text", "id": "promise_item_3", "label": "Promise item 3", "default": "מדיניות ברורה" },
+    { "type": "text", "id": "promise_item_4", "label": "Promise item 4", "default": "חוויית קנייה נוחה" },
+
+    { "type": "header", "content": "Legal text" },
+    { "type": "text", "id": "legal_title", "label": "Legal accordion title", "default": "תנאים משפטיים מלאים" }
+  ],
+  "presets": [
+    {
+      "name": "HOOPERS Terms"
+    }
+  ]
+}
+{% endschema %}

@@ -5,7 +5,98 @@
     {{ product.description }}
   {%- endif -%}
 {% endcapture %}
-{%- if is_tab -%}
+
+{% assign template_name = template | downcase %}
+{% assign hoopers_product_description = false %}
+
+{% if template_name == 'product'
+  or template_name contains 'tank-top'
+  or template_name contains 'pants'
+  or template_name contains 'world'
+  or template_name contains 'jersey-kids'
+  or template_name contains 'shorts-kids'
+  or template_name contains 'jordan'
+  or template_name contains 'winter'
+%}
+  {% assign hoopers_product_description = true %}
+{% endif %}
+
+{%- if hoopers_product_description -%}
+  <div class="hpd" dir="rtl">
+    <details class="hpd__item" open>
+      <summary class="hpd__summary">
+        <span>📖 תיאור כללי</span>
+        <span class="hpd__icon" aria-hidden="true">+</span>
+      </summary>
+      <div class="hpd__content rte">
+        {{ description }}
+      </div>
+    </details>
+  </div>
+
+  <style>
+    .hpd {
+      margin: 20px 0;
+      color: #111;
+    }
+
+    .hpd__item {
+      background: #f5f3ee;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+    }
+
+    .hpd__summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 20px;
+      cursor: pointer;
+      color: #111;
+      font-size: 18px;
+      line-height: 1.35;
+      font-weight: 900;
+      list-style: none;
+    }
+
+    .hpd__summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .hpd__icon {
+      color: #c8a56a;
+      font-size: 22px;
+      line-height: 1;
+      transition: transform 0.2s ease;
+    }
+
+    .hpd__item[open] .hpd__icon {
+      transform: rotate(45deg);
+    }
+
+    .hpd__content {
+      padding: 0 20px 22px;
+      color: #202020;
+      font-size: 15px;
+      line-height: 1.85;
+    }
+
+    .hpd__content * {
+      color: inherit;
+    }
+
+    @media screen and (max-width: 749px) {
+      .hpd__summary {
+        padding: 16px;
+        font-size: 17px;
+      }
+
+      .hpd__content {
+        padding: 0 16px 18px;
+      }
+    }
+  </style>
+{%- elsif is_tab -%}
   {% assign title = 'products.product.description' | t %}
   {%- render 'tab', id: id, title: title, content: description -%}
 {%- else -%}

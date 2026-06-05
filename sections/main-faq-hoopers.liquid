@@ -1,0 +1,590 @@
+{%- liquid
+  assign section_id = 'hoopers-faq-' | append: section.id
+-%}
+
+<style>
+  #{{ section_id }} {
+    --hfq-black: #050505;
+    --hfq-cream: #f7f2e8;
+    --hfq-ink: #111111;
+    --hfq-muted: rgba(17, 17, 17, 0.64);
+    --hfq-gold: #c8a56a;
+    --hfq-border: rgba(5, 5, 5, 0.1);
+    background: var(--hfq-cream);
+    color: var(--hfq-ink);
+    direction: rtl;
+  }
+
+  #{{ section_id }} * {
+    box-sizing: border-box;
+  }
+
+  #{{ section_id }} .hfq-page-width {
+    width: min(100%, 1240px);
+    margin: 0 auto;
+    padding: 0 18px;
+  }
+
+  #{{ section_id }} .hfq-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--hfq-black);
+    color: #fff;
+    padding: 92px 0 58px;
+  }
+
+  #{{ section_id }} .hfq-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(5, 5, 5, 0), rgba(5, 5, 5, 0.55)),
+      radial-gradient(circle at 16% 16%, rgba(200, 165, 106, 0.18), transparent 34%);
+    pointer-events: none;
+  }
+
+  #{{ section_id }} .hfq-hero__content {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+  }
+
+  #{{ section_id }} .hfq-kicker {
+    margin: 0 0 16px;
+    color: var(--hfq-gold);
+    font-size: 11px;
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  #{{ section_id }} .hfq-title {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(38px, 6vw, 76px);
+    line-height: 0.98;
+    font-weight: 950;
+    letter-spacing: 0.01em;
+  }
+
+  #{{ section_id }} .hfq-subtitle {
+    max-width: 760px;
+    margin: 20px 0 0;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: clamp(16px, 2vw, 22px);
+    line-height: 1.55;
+    font-weight: 650;
+  }
+
+  #{{ section_id }} .hfq-top-cards {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: -28px;
+    position: relative;
+    z-index: 3;
+  }
+
+  #{{ section_id }} .hfq-card {
+    min-height: 185px;
+    background: #fff;
+    border: 1px solid var(--hfq-border);
+    padding: 22px;
+    transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+  }
+
+  #{{ section_id }} .hfq-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(200, 165, 106, 0.58);
+    box-shadow: 0 18px 44px rgba(5, 5, 5, 0.08);
+  }
+
+  #{{ section_id }} .hfq-card__icon {
+    display: block;
+    margin-bottom: 14px;
+    font-size: 25px;
+    line-height: 1;
+  }
+
+  #{{ section_id }} .hfq-card__title {
+    margin: 0;
+    color: var(--hfq-ink);
+    font-size: 22px;
+    line-height: 1.08;
+    font-weight: 950;
+  }
+
+  #{{ section_id }} .hfq-card__text {
+    margin: 14px 0 0;
+    color: var(--hfq-ink);
+    font-size: 16px;
+    line-height: 1.45;
+    font-weight: 750;
+  }
+
+  #{{ section_id }} .hfq-section {
+    padding: 44px 0;
+  }
+
+  #{{ section_id }} .hfq-category {
+    padding: 34px 0;
+    border-top: 1px solid rgba(5, 5, 5, 0.1);
+  }
+
+  #{{ section_id }} .hfq-category:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  #{{ section_id }} .hfq-section__title,
+  #{{ section_id }} .hfq-category__title {
+    margin: 0 0 24px;
+    color: var(--hfq-ink);
+    font-size: clamp(30px, 4vw, 48px);
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: 0.015em;
+  }
+
+  #{{ section_id }} .hfq-accordion {
+    display: grid;
+    gap: 10px;
+  }
+
+  #{{ section_id }} details.hfq-item {
+    background: #fff;
+    border: 1px solid var(--hfq-border);
+  }
+
+  #{{ section_id }} .hfq-item summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 20px 22px;
+    color: var(--hfq-ink);
+    cursor: pointer;
+    list-style: none;
+    font-size: 18px;
+    line-height: 1.25;
+    font-weight: 900;
+  }
+
+  #{{ section_id }} .hfq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  #{{ section_id }} .hfq-item summary::after {
+    content: "+";
+    flex: 0 0 auto;
+    color: var(--hfq-gold);
+    font-size: 28px;
+    line-height: 1;
+    font-weight: 500;
+    transition: transform 0.2s ease;
+  }
+
+  #{{ section_id }} .hfq-item[open] summary::after {
+    transform: rotate(45deg);
+  }
+
+  #{{ section_id }} .hfq-answer {
+    padding: 0 22px 20px;
+    color: var(--hfq-muted);
+    font-size: 16px;
+    line-height: 1.65;
+    font-weight: 650;
+  }
+
+  #{{ section_id }} .hfq-seo {
+    background: #fff;
+    border: 1px solid var(--hfq-border);
+    padding: 28px;
+  }
+
+  #{{ section_id }} .hfq-seo__title {
+    margin: 0;
+    color: var(--hfq-ink);
+    font-size: clamp(26px, 3vw, 42px);
+    line-height: 1.08;
+    font-weight: 950;
+  }
+
+  #{{ section_id }} .hfq-seo__text {
+    max-width: 980px;
+    margin: 16px 0 0;
+    color: var(--hfq-muted);
+    font-size: 16px;
+    line-height: 1.75;
+    font-weight: 650;
+  }
+
+  #{{ section_id }} .hfq-cta {
+    background: var(--hfq-black);
+    color: #fff;
+    padding: 42px 0;
+  }
+
+  #{{ section_id }} .hfq-cta__box {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 24px;
+    align-items: center;
+  }
+
+  #{{ section_id }} .hfq-cta__title {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(30px, 4vw, 54px);
+    line-height: 1;
+    font-weight: 950;
+  }
+
+  #{{ section_id }} .hfq-cta__text {
+    max-width: 720px;
+    margin: 12px 0 0;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 16px;
+    line-height: 1.6;
+    font-weight: 650;
+  }
+
+  #{{ section_id }} .hfq-cta__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  #{{ section_id }} .hfq-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 20px;
+    background: #fff;
+    color: var(--hfq-black);
+    text-decoration: none;
+    font-size: 12px;
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: background 0.22s ease, color 0.22s ease;
+  }
+
+  #{{ section_id }} .hfq-button--outline {
+    background: transparent;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+  }
+
+  #{{ section_id }} .hfq-button:hover,
+  #{{ section_id }} .hfq-button:focus-visible {
+    background: var(--hfq-gold);
+    color: var(--hfq-black);
+  }
+
+  @media screen and (max-width: 990px) {
+    #{{ section_id }} .hfq-top-cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    #{{ section_id }} .hfq-cta__box {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media screen and (max-width: 640px) {
+    #{{ section_id }} .hfq-page-width {
+      padding: 0 14px;
+    }
+
+    #{{ section_id }} .hfq-hero {
+      padding: 74px 0 48px;
+    }
+
+    #{{ section_id }} .hfq-top-cards {
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: -18px;
+    }
+
+    #{{ section_id }} .hfq-section {
+      padding: 34px 0;
+    }
+
+    #{{ section_id }} .hfq-category {
+      padding: 28px 0;
+    }
+
+    #{{ section_id }} .hfq-card,
+    #{{ section_id }} .hfq-seo {
+      padding: 22px;
+    }
+
+    #{{ section_id }} .hfq-button {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #{{ section_id }} * {
+      transition: none !important;
+    }
+  }
+</style>
+
+<section id="{{ section_id }}">
+  <div class="hfq-hero">
+    <div class="hfq-page-width">
+      <div class="hfq-hero__content">
+        <p class="hfq-kicker">{{ section.settings.hero_kicker }}</p>
+        <h1 class="hfq-title">{{ section.settings.hero_title }}</h1>
+        <div class="hfq-subtitle">{{ section.settings.hero_subtitle }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hfq-page-width">
+    <div class="hfq-top-cards">
+      <div class="hfq-card">
+        <span class="hfq-card__icon">{{ section.settings.card_1_icon }}</span>
+        <h2 class="hfq-card__title">{{ section.settings.card_1_title }}</h2>
+        <p class="hfq-card__text">{{ section.settings.card_1_text }}</p>
+      </div>
+
+      <div class="hfq-card">
+        <span class="hfq-card__icon">{{ section.settings.card_2_icon }}</span>
+        <h2 class="hfq-card__title">{{ section.settings.card_2_title }}</h2>
+        <p class="hfq-card__text">{{ section.settings.card_2_text }}</p>
+      </div>
+
+      <div class="hfq-card">
+        <span class="hfq-card__icon">{{ section.settings.card_3_icon }}</span>
+        <h2 class="hfq-card__title">{{ section.settings.card_3_title }}</h2>
+        <p class="hfq-card__text">{{ section.settings.card_3_text }}</p>
+      </div>
+
+      <div class="hfq-card">
+        <span class="hfq-card__icon">{{ section.settings.card_4_icon }}</span>
+        <h2 class="hfq-card__title">{{ section.settings.card_4_title }}</h2>
+        <p class="hfq-card__text">{{ section.settings.card_4_text }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="hfq-section">
+    <div class="hfq-page-width">
+      <div class="hfq-category">
+        <h2 class="hfq-category__title">{{ section.settings.category_1_title }}</h2>
+        <div class="hfq-accordion">
+          <details class="hfq-item"><summary>{{ section.settings.faq_1_question }}</summary><div class="hfq-answer">{{ section.settings.faq_1_answer }}</div></details>
+          <details class="hfq-item"><summary>{{ section.settings.faq_2_question }}</summary><div class="hfq-answer">{{ section.settings.faq_2_answer }}</div></details>
+          <details class="hfq-item"><summary>{{ section.settings.faq_3_question }}</summary><div class="hfq-answer">{{ section.settings.faq_3_answer }}</div></details>
+          <details class="hfq-item"><summary>{{ section.settings.faq_4_question }}</summary><div class="hfq-answer">{{ section.settings.faq_4_answer }}</div></details>
+        </div>
+      </div>
+
+      <div class="hfq-category">
+        <h2 class="hfq-category__title">{{ section.settings.category_2_title }}</h2>
+        <div class="hfq-accordion">
+          <details class="hfq-item"><summary>{{ section.settings.faq_5_question }}</summary><div class="hfq-answer">{{ section.settings.faq_5_answer }}</div></details>
+          <details class="hfq-item"><summary>{{ section.settings.faq_6_question }}</summary><div class="hfq-answer">{{ section.settings.faq_6_answer }}</div></details>
+          <details class="hfq-item"><summary>{{ section.settings.faq_7_question }}</summary><div class="hfq-answer">{{ section.settings.faq_7_answer }}</div></details>
+          <details class="hfq-item"><summary>{{ section.settings.faq_8_question }}</summary><div class="hfq-answer">{{ section.settings.faq_8_answer }}</div></details>
+        </div>
+      </div>
+
+      <div class="hfq-category">
+        <h2 class="hfq-category__title">{{ section.settings.category_3_title }}</h2>
+        <div class="hfq-accordion">
+          <details class="hfq-item"><summary>{{ section.settings.faq_9_question }}</summary><div class="hfq-answer">{{ section.settings.faq_9_answer }}</div></details>
+          <details class="hfq-item"><summary>{{ section.settings.faq_10_question }}</summary><div class="hfq-answer">{{ section.settings.faq_10_answer }}</div></details>
+          <details class="hfq-item"><summary>{{ section.settings.faq_11_question }}</summary><div class="hfq-answer">{{ section.settings.faq_11_answer }}</div></details>
+          <details class="hfq-item"><summary>{{ section.settings.faq_12_question }}</summary><div class="hfq-answer">{{ section.settings.faq_12_answer }}</div></details>
+        </div>
+      </div>
+
+      <div class="hfq-category">
+        <h2 class="hfq-category__title">{{ section.settings.category_4_title }}</h2>
+        <div class="hfq-accordion">
+          <details class="hfq-item"><summary>{{ section.settings.faq_13_question }}</summary><div class="hfq-answer">{{ section.settings.faq_13_answer }}</div></details>
+          <details class="hfq-item"><summary>{{ section.settings.faq_14_question }}</summary><div class="hfq-answer">{{ section.settings.faq_14_answer }}</div></details>
+          <details class="hfq-item"><summary>{{ section.settings.faq_15_question }}</summary><div class="hfq-answer">{{ section.settings.faq_15_answer }}</div></details>
+          <details class="hfq-item"><summary>{{ section.settings.faq_16_question }}</summary><div class="hfq-answer">{{ section.settings.faq_16_answer }}</div></details>
+        </div>
+      </div>
+
+      <div class="hfq-category">
+        <h2 class="hfq-category__title">{{ section.settings.category_5_title }}</h2>
+        <div class="hfq-accordion">
+          <details class="hfq-item"><summary>{{ section.settings.faq_17_question }}</summary><div class="hfq-answer">{{ section.settings.faq_17_answer }}</div></details>
+          <details class="hfq-item"><summary>{{ section.settings.faq_18_question }}</summary><div class="hfq-answer">{{ section.settings.faq_18_answer }}</div></details>
+          <details class="hfq-item"><summary>{{ section.settings.faq_19_question }}</summary><div class="hfq-answer">{{ section.settings.faq_19_answer }}</div></details>
+          <details class="hfq-item"><summary>{{ section.settings.faq_20_question }}</summary><div class="hfq-answer">{{ section.settings.faq_20_answer }}</div></details>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hfq-section">
+    <div class="hfq-page-width">
+      <div class="hfq-seo">
+        <h2 class="hfq-seo__title">{{ section.settings.seo_title }}</h2>
+        <div class="hfq-seo__text">{{ section.settings.seo_text }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hfq-cta">
+    <div class="hfq-page-width">
+      <div class="hfq-cta__box">
+        <div>
+          <h2 class="hfq-cta__title">{{ section.settings.cta_title }}</h2>
+          <p class="hfq-cta__text">{{ section.settings.cta_text }}</p>
+        </div>
+        <div class="hfq-cta__buttons">
+          {%- if section.settings.cta_button_1_link != blank -%}
+            <a class="hfq-button" href="{{ section.settings.cta_button_1_link }}">{{ section.settings.cta_button_1_text }}</a>
+          {%- endif -%}
+          {%- if section.settings.cta_button_2_link != blank -%}
+            <a class="hfq-button hfq-button--outline" href="{{ section.settings.cta_button_2_link }}">{{ section.settings.cta_button_2_text }}</a>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": {{ section.settings.faq_1_question | strip_html | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ section.settings.faq_1_answer | strip_html | json }} } },
+    { "@type": "Question", "name": {{ section.settings.faq_2_question | strip_html | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ section.settings.faq_2_answer | strip_html | json }} } },
+    { "@type": "Question", "name": {{ section.settings.faq_3_question | strip_html | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ section.settings.faq_3_answer | strip_html | json }} } },
+    { "@type": "Question", "name": {{ section.settings.faq_4_question | strip_html | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ section.settings.faq_4_answer | strip_html | json }} } },
+    { "@type": "Question", "name": {{ section.settings.faq_5_question | strip_html | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ section.settings.faq_5_answer | strip_html | json }} } },
+    { "@type": "Question", "name": {{ section.settings.faq_6_question | strip_html | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ section.settings.faq_6_answer | strip_html | json }} } },
+    { "@type": "Question", "name": {{ section.settings.faq_7_question | strip_html | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ section.settings.faq_7_answer | strip_html | json }} } },
+    { "@type": "Question", "name": {{ section.settings.faq_8_question | strip_html | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ section.settings.faq_8_answer | strip_html | json }} } },
+    { "@type": "Question", "name": {{ section.settings.faq_9_question | strip_html | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ section.settings.faq_9_answer | strip_html | json }} } },
+    { "@type": "Question", "name": {{ section.settings.faq_10_question | strip_html | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ section.settings.faq_10_answer | strip_html | json }} } },
+    { "@type": "Question", "name": {{ section.settings.faq_11_question | strip_html | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ section.settings.faq_11_answer | strip_html | json }} } },
+    { "@type": "Question", "name": {{ section.settings.faq_12_question | strip_html | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ section.settings.faq_12_answer | strip_html | json }} } },
+    { "@type": "Question", "name": {{ section.settings.faq_13_question | strip_html | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ section.settings.faq_13_answer | strip_html | json }} } },
+    { "@type": "Question", "name": {{ section.settings.faq_14_question | strip_html | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ section.settings.faq_14_answer | strip_html | json }} } },
+    { "@type": "Question", "name": {{ section.settings.faq_15_question | strip_html | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ section.settings.faq_15_answer | strip_html | json }} } },
+    { "@type": "Question", "name": {{ section.settings.faq_16_question | strip_html | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ section.settings.faq_16_answer | strip_html | json }} } },
+    { "@type": "Question", "name": {{ section.settings.faq_17_question | strip_html | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ section.settings.faq_17_answer | strip_html | json }} } },
+    { "@type": "Question", "name": {{ section.settings.faq_18_question | strip_html | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ section.settings.faq_18_answer | strip_html | json }} } },
+    { "@type": "Question", "name": {{ section.settings.faq_19_question | strip_html | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ section.settings.faq_19_answer | strip_html | json }} } },
+    { "@type": "Question", "name": {{ section.settings.faq_20_question | strip_html | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ section.settings.faq_20_answer | strip_html | json }} } }
+  ]
+}
+</script>
+
+{% schema %}
+{
+  "name": "HOOPERS FAQ",
+  "settings": [
+    { "type": "header", "content": "Hero" },
+    { "type": "text", "id": "hero_kicker", "label": "Hero small label", "default": "FAQ" },
+    { "type": "text", "id": "hero_title", "label": "Hero title", "default": "שאלות נפוצות | HOOPERS" },
+    { "type": "textarea", "id": "hero_subtitle", "label": "Hero subtitle", "default": "כל מה שצריך לדעת על משלוחים, מידות, החזרות, תשלומים והזמנות באתר HOOPERS." },
+
+    { "type": "header", "content": "Top category cards" },
+    { "type": "text", "id": "card_1_icon", "label": "Card 1 icon", "default": "📦" },
+    { "type": "text", "id": "card_1_title", "label": "Card 1 title", "default": "משלוחים" },
+    { "type": "textarea", "id": "card_1_text", "label": "Card 1 text", "default": "זמני אספקה, מעקב ומשלוח חינם." },
+
+    { "type": "text", "id": "card_2_icon", "label": "Card 2 icon", "default": "📏" },
+    { "type": "text", "id": "card_2_title", "label": "Card 2 title", "default": "מידות והתאמה" },
+    { "type": "textarea", "id": "card_2_text", "label": "Card 2 text", "default": "איך לבחור מידה ולהימנע מהחלפות." },
+
+    { "type": "text", "id": "card_3_icon", "label": "Card 3 icon", "default": "🔄" },
+    { "type": "text", "id": "card_3_title", "label": "Card 3 title", "default": "החזרות והחלפות" },
+    { "type": "textarea", "id": "card_3_text", "label": "Card 3 text", "default": "כל מה שצריך לדעת על החזרות והחלפת מידה." },
+
+    { "type": "text", "id": "card_4_icon", "label": "Card 4 icon", "default": "💳" },
+    { "type": "text", "id": "card_4_title", "label": "Card 4 title", "default": "תשלום והזמנות" },
+    { "type": "textarea", "id": "card_4_text", "label": "Card 4 text", "default": "תשלום מאובטח, אישורי הזמנה ומעקב." },
+
+    { "type": "header", "content": "FAQ categories" },
+    { "type": "text", "id": "category_1_title", "label": "Category 1 title", "default": "משלוחים" },
+    { "type": "text", "id": "category_2_title", "label": "Category 2 title", "default": "מידות והתאמה" },
+    { "type": "text", "id": "category_3_title", "label": "Category 3 title", "default": "החזרות והחלפות" },
+    { "type": "text", "id": "category_4_title", "label": "Category 4 title", "default": "תשלום והזמנות" },
+    { "type": "text", "id": "category_5_title", "label": "Category 5 title", "default": "מוצרים וקולקציות" },
+
+    { "type": "header", "content": "Shipping FAQs" },
+    { "type": "text", "id": "faq_1_question", "label": "FAQ 1 question", "default": "תוך כמה זמן מגיעה ההזמנה?" },
+    { "type": "textarea", "id": "faq_1_answer", "label": "FAQ 1 answer", "default": "זמני השילוח הם עד 14 ימי עסקים." },
+    { "type": "text", "id": "faq_2_question", "label": "FAQ 2 question", "default": "האם יש משלוח חינם?" },
+    { "type": "textarea", "id": "faq_2_answer", "label": "FAQ 2 answer", "default": "כן, משלוח חינם בקנייה מעל 300₪." },
+    { "type": "text", "id": "faq_3_question", "label": "FAQ 3 question", "default": "איך אפשר לעקוב אחרי ההזמנה?" },
+    { "type": "textarea", "id": "faq_3_answer", "label": "FAQ 3 answer", "default": "לאחר יציאת ההזמנה נשלח מספר מעקב למייל שהוזן בעת הרכישה." },
+    { "type": "text", "id": "faq_4_question", "label": "FAQ 4 question", "default": "האם אתם שולחים לכל הארץ?" },
+    { "type": "textarea", "id": "faq_4_answer", "label": "FAQ 4 answer", "default": "כן, אנחנו שולחים לכל רחבי הארץ." },
+
+    { "type": "header", "content": "Sizing FAQs" },
+    { "type": "text", "id": "faq_5_question", "label": "FAQ 5 question", "default": "איך בוחרים מידה?" },
+    { "type": "textarea", "id": "faq_5_answer", "label": "FAQ 5 answer", "default": "בכל מוצר קיימת טבלת מידות. מומלץ להשוות את המידות לפריט דומה שכבר יש לכם בבית." },
+    { "type": "text", "id": "faq_6_question", "label": "FAQ 6 question", "default": "אני בין שתי מידות, מה כדאי לבחור?" },
+    { "type": "textarea", "id": "faq_6_answer", "label": "FAQ 6 answer", "default": "בדרך כלל מומלץ לבחור את המידה הגדולה יותר, במיוחד אם אתם אוהבים התאמה רחבה ונוחה." },
+    { "type": "text", "id": "faq_7_question", "label": "FAQ 7 question", "default": "האם אפשר להחליף מידה?" },
+    { "type": "textarea", "id": "faq_7_answer", "label": "FAQ 7 answer", "default": "כן, ניתן לבצע החלפת מידה בהתאם למדיניות ההחלפות באתר." },
+    { "type": "text", "id": "faq_8_question", "label": "FAQ 8 question", "default": "האם יש מוצרים שמומלץ לקחת בהם מידה מעל?" },
+    { "type": "textarea", "id": "faq_8_answer", "label": "FAQ 8 answer", "default": "כן, בחלק מהמוצרים מופיעה המלצה לקחת מידה אחת מעל. תמיד מומלץ לקרוא את ההערה בעמוד המוצר." },
+
+    { "type": "header", "content": "Returns FAQs" },
+    { "type": "text", "id": "faq_9_question", "label": "FAQ 9 question", "default": "אפשר להחזיר מוצר?" },
+    { "type": "textarea", "id": "faq_9_answer", "label": "FAQ 9 answer", "default": "כן, ניתן להחזיר מוצר עד 14 יום ממועד קבלת המוצר ובהתאם למדיניות ההחזרות באתר." },
+    { "type": "text", "id": "faq_10_question", "label": "FAQ 10 question", "default": "מי משלם על משלוח ההחזרה?" },
+    { "type": "textarea", "id": "faq_10_answer", "label": "FAQ 10 answer", "default": "עלות משלוח ההחזרה חלה על הלקוח, אלא אם מדובר במקרה שאושר כמוצר פגום או שגוי." },
+    { "type": "text", "id": "faq_11_question", "label": "FAQ 11 question", "default": "תוך כמה זמן מקבלים זיכוי?" },
+    { "type": "textarea", "id": "faq_11_answer", "label": "FAQ 11 answer", "default": "הזיכוי מתבצע עד 7 ימי עסקים לאחר אישור ההחזרה ובדיקת המוצר." },
+    { "type": "text", "id": "faq_12_question", "label": "FAQ 12 question", "default": "מה עושים אם מוצר הגיע פגום?" },
+    { "type": "textarea", "id": "faq_12_answer", "label": "FAQ 12 answer", "default": "יש לפנות אלינו תוך 5 ימי עסקים ממועד קבלת המוצר ולצרף תמונות ברורות, מספר הזמנה ותיאור התקלה." },
+
+    { "type": "header", "content": "Payment FAQs" },
+    { "type": "text", "id": "faq_13_question", "label": "FAQ 13 question", "default": "האם האתר מאובטח?" },
+    { "type": "textarea", "id": "faq_13_answer", "label": "FAQ 13 answer", "default": "כן, האתר מאובטח ופרטי כרטיסי האשראי אינם נשמרים בשרתי HOOPERS." },
+    { "type": "text", "id": "faq_14_question", "label": "FAQ 14 question", "default": "אילו אמצעי תשלום קיימים?" },
+    { "type": "textarea", "id": "faq_14_answer", "label": "FAQ 14 answer", "default": "ניתן לשלם באמצעי התשלום הזמינים בעמוד הקופה, כולל כרטיסי אשראי ופתרונות תשלום נתמכים." },
+    { "type": "text", "id": "faq_15_question", "label": "FAQ 15 question", "default": "איך אדע שההזמנה התקבלה?" },
+    { "type": "textarea", "id": "faq_15_answer", "label": "FAQ 15 answer", "default": "לאחר ביצוע ההזמנה תקבלו אישור הזמנה למייל שהוזן בעת הרכישה." },
+    { "type": "text", "id": "faq_16_question", "label": "FAQ 16 question", "default": "אפשר לשנות פרטים אחרי ביצוע ההזמנה?" },
+    { "type": "textarea", "id": "faq_16_answer", "label": "FAQ 16 answer", "default": "אם ההזמנה עדיין לא יצאה לטיפול, ניתן לפנות אלינו ונבדוק אם ניתן לעדכן את הפרטים." },
+
+    { "type": "header", "content": "Products FAQs" },
+    { "type": "text", "id": "faq_17_question", "label": "FAQ 17 question", "default": "איך יודעים אם מוצר זמין?" },
+    { "type": "textarea", "id": "faq_17_answer", "label": "FAQ 17 answer", "default": "אם ניתן לבחור מידה ולהוסיף את המוצר לעגלה, המוצר זמין להזמנה." },
+    { "type": "text", "id": "faq_18_question", "label": "FAQ 18 question", "default": "האם מתווספים מוצרים חדשים?" },
+    { "type": "textarea", "id": "faq_18_answer", "label": "FAQ 18 answer", "default": "כן, האתר מתעדכן בדגמים חדשים, קולקציות חדשות והשקות לאורך השנה." },
+    { "type": "text", "id": "faq_19_question", "label": "FAQ 19 question", "default": "איפה אפשר למצוא מדריכי מידות וסטייל?" },
+    { "type": "textarea", "id": "faq_19_answer", "label": "FAQ 19 answer", "default": "בעמוד HOOPERS Guides ניתן למצוא מדריכים על מידות, גופיות NBA, מכנסי Jordan, חולצות כדורגל ועוד." },
+    { "type": "text", "id": "faq_20_question", "label": "FAQ 20 question", "default": "האם יש קולקציית World Cup?" },
+    { "type": "textarea", "id": "faq_20_answer", "label": "FAQ 20 answer", "default": "כן, באתר קיימת קולקציית World Cup שמתעדכנת עם חולצות כדורגל ונבחרות." },
+
+    { "type": "header", "content": "SEO bottom text" },
+    { "type": "text", "id": "seo_title", "label": "SEO title", "default": "שאלות נפוצות על משלוחים, מידות וביגוד ספורט בישראל" },
+    { "type": "textarea", "id": "seo_text", "label": "SEO text", "default": "בעמוד השאלות הנפוצות של HOOPERS תוכלו למצוא תשובות לשאלות החשובות ביותר לפני רכישה באתר: זמני משלוח, משלוח חינם, בחירת מידה, החלפת מידה, החזרות, תשלומים, גופיות NBA, מכנסי Jordan, קולקציות World Cup וביגוד Streetwear. המטרה שלנו היא לעזור לכם לבחור נכון, להזמין בביטחון ולקבל חוויית קנייה ברורה ונוחה." },
+
+    { "type": "header", "content": "CTA" },
+    { "type": "text", "id": "cta_title", "label": "CTA title", "default": "עדיין צריכים עזרה?" },
+    { "type": "textarea", "id": "cta_text", "label": "CTA text", "default": "צוות HOOPERS כאן כדי לעזור בכל שאלה על הזמנה, מידה, משלוח או החלפה." },
+    { "type": "text", "id": "cta_button_1_text", "label": "Button 1 text", "default": "צרו קשר" },
+    { "type": "url", "id": "cta_button_1_link", "label": "Button 1 link" },
+    { "type": "text", "id": "cta_button_2_text", "label": "Button 2 text", "default": "מדריכים וטיפים" },
+    { "type": "url", "id": "cta_button_2_link", "label": "Button 2 link" }
+  ],
+  "presets": [
+    {
+      "name": "HOOPERS FAQ"
+    }
+  ]
+}
+{% endschema %}

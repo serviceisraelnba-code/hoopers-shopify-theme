@@ -7,7 +7,7 @@
 -%}
 
 <div
-  class="collection-content"
+  class="collection-content hoopers-collection-catalog"
   data-section-id="{{ section.id }}"
   data-section-type="collection-grid"
 >
@@ -23,6 +23,7 @@
             enable_color_swatches: section.settings.enable_color_swatches
           -%}
         </div>
+
         <div class="grid__item medium-up--four-fifths grid__item--content">
           {%- liquid
             for block in section.blocks
@@ -32,41 +33,44 @@
               endcase
             endfor
           -%}
-          {%- paginate collection.products by paginate_by -%}
-          {%- for block in section.blocks -%}
-            <div {{ block.shopify_attributes }} {%- if block.type == 'product-grid' -%}data-scroll-to{%- endif -%}>
-              {%- case block.type -%}
-              {%- when 'collection_description' -%}
-                {%- if collection.description != blank and current_filter_size == 0 -%}
-                  <div class="rte collection__description">
-                    {{ collection.description }}
-                  </div>
-                {%- endif -%}
-              {%- when 'subcollections' -%}
-                {%- if paginate.current_page == 1 and current_filter_size == 0 -%}
-                  {%- render 'subcollections', per_row: block.settings.subcollections_per_row -%}
-                {%- endif -%}
-              {%- when 'product_grid' -%}
-                <div data-scroll-to>
-                  {% render 'collection-grid',
-                    collection: collection,
-                    items: collection.products,
-                    enable_sidebar: section.settings.enable_sidebar,
-                    filter_style: section.settings.filter_style,
-                    enable_sort: section.settings.enable_sort,
-                    enable_collection_count: block.settings.enable_collection_count,
-                    per_row: block.settings.per_row,
-                    mobile_flush_grid: block.settings.mobile_flush_grid,
-                    quick_shop_enable: settings.quick_shop_enable
-                  %}
-                  {%- if paginate.pages > 1 -%}
-                    {%- render 'pagination', paginate: paginate -%}
-                  {%- endif -%}
-                </div>
-              {%- endcase -%}
-            </div>
-          {%- endfor -%}
 
+          {%- paginate collection.products by paginate_by -%}
+            {%- for block in section.blocks -%}
+              <div {{ block.shopify_attributes }} {%- if block.type == 'product-grid' -%}data-scroll-to{%- endif -%}>
+                {%- case block.type -%}
+                  {%- when 'collection_description' -%}
+                    {%- if collection.description != blank and current_filter_size == 0 -%}
+                      <div class="rte collection__description">
+                        {{ collection.description }}
+                      </div>
+                    {%- endif -%}
+
+                  {%- when 'subcollections' -%}
+                    {%- if paginate.current_page == 1 and current_filter_size == 0 -%}
+                      {%- render 'subcollections', per_row: block.settings.subcollections_per_row -%}
+                    {%- endif -%}
+
+                  {%- when 'product_grid' -%}
+                    <div data-scroll-to>
+                      {% render 'collection-grid',
+                        collection: collection,
+                        items: collection.products,
+                        enable_sidebar: section.settings.enable_sidebar,
+                        filter_style: section.settings.filter_style,
+                        enable_sort: section.settings.enable_sort,
+                        enable_collection_count: block.settings.enable_collection_count,
+                        per_row: block.settings.per_row,
+                        mobile_flush_grid: block.settings.mobile_flush_grid,
+                        quick_shop_enable: settings.quick_shop_enable
+                      %}
+
+                      {%- if paginate.pages > 1 -%}
+                        {%- render 'pagination', paginate: paginate -%}
+                      {%- endif -%}
+                    </div>
+                {%- endcase -%}
+              </div>
+            {%- endfor -%}
           {%- endpaginate -%}
         </div>
       </div>
@@ -74,10 +78,341 @@
   </div>
 </div>
 
+<style>
+  .hoopers-collection-catalog {
+    --hh-bg: #ece7df;
+    --hh-card: #f5f3ee;
+    --hh-black: #050505;
+    --hh-text: #111111;
+    --hh-muted: rgba(17, 17, 17, 0.58);
+    --hh-border: rgba(17, 17, 17, 0.1);
+    --hh-gold: #c8a56a;
+
+    background: var(--hh-bg);
+    color: var(--hh-text);
+    padding-bottom: clamp(38px, 5vw, 72px);
+  }
+
+  .hoopers-collection-catalog .page-width {
+    max-width: 1560px;
+  }
+
+  .hoopers-collection-catalog .grid__item--content {
+    color: var(--hh-text);
+  }
+
+  .hoopers-collection-catalog .collection__description {
+    max-width: 900px;
+    margin: 0 auto 32px;
+    color: var(--hh-muted);
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.8;
+    text-align: center;
+  }
+
+  .hoopers-collection-catalog .collection-filter,
+  .hoopers-collection-catalog .collection-filter__item,
+  .hoopers-collection-catalog .collection-filter__sort-container,
+  .hoopers-collection-catalog .collection-filter select,
+  .hoopers-collection-catalog .collection-filter button,
+  .hoopers-collection-catalog .collection-filter__button {
+    color: var(--hh-text);
+  }
+
+  .hoopers-collection-catalog .collection-filter {
+    border-color: var(--hh-border);
+    margin-bottom: clamp(18px, 2vw, 28px);
+  }
+
+  .hoopers-collection-catalog .grid,
+  .hoopers-collection-catalog .grid--uniform {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .hoopers-collection-catalog .grid-product {
+    padding-left: clamp(8px, 1.2vw, 16px);
+    padding-right: clamp(8px, 1.2vw, 16px);
+    margin-bottom: clamp(24px, 3vw, 44px);
+  }
+
+  @media screen and (min-width: 769px) {
+    .hoopers-collection-catalog .grid-product {
+      width: 33.333333% !important;
+      flex: 0 0 33.333333% !important;
+      max-width: 33.333333% !important;
+    }
+  }
+
+  .hoopers-collection-catalog .grid-product__content,
+  .hoopers-collection-catalog .grid-product__link {
+    position: relative;
+    display: block;
+    color: var(--hh-text);
+    text-decoration: none;
+  }
+
+  .hoopers-collection-catalog .grid-product__image-mask,
+  .hoopers-collection-catalog .image-wrap,
+  .hoopers-collection-catalog .grid-product__image-wrapper {
+    position: relative;
+    overflow: hidden;
+    background: #ded8cd;
+    border: 1px solid var(--hh-border);
+  }
+
+  .hoopers-collection-catalog .grid-product__image-mask::after,
+  .hoopers-collection-catalog .image-wrap::after,
+  .hoopers-collection-catalog .grid-product__image-wrapper::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 58%, rgba(0, 0, 0, 0.16) 100%);
+    opacity: 0;
+    transition: opacity 240ms ease;
+  }
+
+  .hoopers-collection-catalog .grid-product__image,
+  .hoopers-collection-catalog .grid-product__secondary-image,
+  .hoopers-collection-catalog .grid-product__image-mask img,
+  .hoopers-collection-catalog .image-wrap img,
+  .hoopers-collection-catalog .grid-product__image-wrapper img {
+    transition: transform 420ms ease, opacity 260ms ease, filter 260ms ease;
+    will-change: transform;
+  }
+
+  .hoopers-collection-catalog .grid-product:hover .grid-product__image,
+  .hoopers-collection-catalog .grid-product:hover .grid-product__image-mask img,
+  .hoopers-collection-catalog .grid-product:hover .image-wrap img,
+  .hoopers-collection-catalog .grid-product:hover .grid-product__image-wrapper img {
+    transform: scale(1.035);
+    filter: contrast(1.03);
+  }
+
+  .hoopers-collection-catalog .grid-product:hover .grid-product__image-mask::after,
+  .hoopers-collection-catalog .grid-product:hover .image-wrap::after,
+  .hoopers-collection-catalog .grid-product:hover .grid-product__image-wrapper::after {
+    opacity: 1;
+  }
+
+  .hoopers-collection-catalog .grid-product__meta {
+    padding: 13px 0 0;
+    text-align: right;
+    color: var(--hh-text);
+  }
+
+  .hoopers-collection-catalog .grid-product__vendor {
+    margin: 0 0 5px;
+    color: var(--hh-muted);
+    font-size: 10px;
+    font-weight: 900;
+    line-height: 1.2;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .hoopers-collection-catalog .grid-product__title,
+  .hoopers-collection-catalog .grid-product__title a {
+    color: var(--hh-text);
+    font-size: clamp(13px, 1.05vw, 15px);
+    font-weight: 850;
+    line-height: 1.35;
+    letter-spacing: 0;
+    text-transform: none;
+    text-decoration: none;
+  }
+
+  .hoopers-collection-catalog .grid-product__title {
+    display: -webkit-box;
+    min-height: 2.7em;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .hoopers-collection-catalog .grid-product__price,
+  .hoopers-collection-catalog .grid-product__price--current,
+  .hoopers-collection-catalog .grid-product__price span {
+    color: var(--hh-text);
+    font-size: 14px;
+    font-weight: 900;
+    line-height: 1.35;
+  }
+
+  .hoopers-collection-catalog .grid-product__price {
+    margin-top: 6px;
+  }
+
+  .hoopers-collection-catalog .grid-product__price--original,
+  .hoopers-collection-catalog .grid-product__price--compare {
+    color: var(--hh-muted);
+    font-weight: 700;
+  }
+
+  .hoopers-collection-catalog .grid-product__tag {
+    top: 10px;
+    right: 10px;
+    left: auto;
+    background: var(--hh-black);
+    color: #ffffff;
+    border: 1px solid rgba(200, 165, 106, 0.42);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hoopers-collection-catalog .grid-product__colors,
+  .hoopers-collection-catalog .grid-product__swatch,
+  .hoopers-collection-catalog .grid-product__swatches,
+  .hoopers-collection-catalog .grid-product__variant-sizes,
+  .hoopers-collection-catalog .grid-product__size,
+  .hoopers-collection-catalog .grid-product__size-list,
+  .hoopers-collection-catalog .product-card__sizes,
+  .hoopers-collection-catalog .product-card-sizes,
+  .hoopers-collection-catalog [class*="size-list"],
+  .hoopers-collection-catalog [class*="SizeList"],
+  .hoopers-collection-catalog [class*="variant-size"],
+  .hoopers-collection-catalog .spr-badge,
+  .hoopers-collection-catalog .loox-rating,
+  .hoopers-collection-catalog [class*="review"],
+  .hoopers-collection-catalog [class*="rating"] {
+    display: none !important;
+  }
+
+  .hoopers-collection-catalog .quick-product__btn,
+  .hoopers-collection-catalog .quick-add-btn,
+  .hoopers-collection-catalog .grid-product__quick-add,
+  .hoopers-collection-catalog .product-card__quick-add,
+  .hoopers-collection-catalog .grid-product form[action*="/cart/add"] button,
+  .hoopers-collection-catalog .grid-product .add-to-cart,
+  .hoopers-collection-catalog .grid-product .btn {
+    border-radius: 0;
+    background: rgba(5, 5, 5, 0.88);
+    color: #ffffff;
+    border: 1px solid rgba(200, 165, 106, 0.45);
+    font-size: 11px;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    box-shadow: none;
+    transition: opacity 220ms ease, transform 220ms ease, background 220ms ease, border-color 220ms ease;
+  }
+
+  @media screen and (min-width: 769px) {
+    .hoopers-collection-catalog .quick-product__btn,
+    .hoopers-collection-catalog .quick-add-btn,
+    .hoopers-collection-catalog .grid-product__quick-add,
+    .hoopers-collection-catalog .product-card__quick-add,
+    .hoopers-collection-catalog .grid-product form[action*="/cart/add"] {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(8px);
+      pointer-events: none;
+    }
+
+    .hoopers-collection-catalog .grid-product:hover .quick-product__btn,
+    .hoopers-collection-catalog .grid-product:hover .quick-add-btn,
+    .hoopers-collection-catalog .grid-product:hover .grid-product__quick-add,
+    .hoopers-collection-catalog .grid-product:hover .product-card__quick-add,
+    .hoopers-collection-catalog .grid-product:hover form[action*="/cart/add"] {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+  }
+
+  .hoopers-collection-catalog .quick-product__btn:hover,
+  .hoopers-collection-catalog .quick-add-btn:hover,
+  .hoopers-collection-catalog .grid-product__quick-add:hover,
+  .hoopers-collection-catalog .product-card__quick-add:hover,
+  .hoopers-collection-catalog .grid-product form[action*="/cart/add"] button:hover,
+  .hoopers-collection-catalog .grid-product .add-to-cart:hover,
+  .hoopers-collection-catalog .grid-product .btn:hover {
+    background: var(--hh-gold);
+    border-color: var(--hh-gold);
+    color: var(--hh-black);
+  }
+
+  .hoopers-collection-catalog .pagination {
+    margin-top: clamp(16px, 3vw, 34px);
+  }
+
+  .hoopers-collection-catalog .pagination a,
+  .hoopers-collection-catalog .pagination span {
+    color: var(--hh-text);
+  }
+
+  @media screen and (max-width: 768px) {
+    .hoopers-collection-catalog {
+      padding-bottom: 44px;
+    }
+
+    .hoopers-collection-catalog .page-width {
+      padding-left: 12px;
+      padding-right: 12px;
+    }
+
+    .hoopers-collection-catalog .grid {
+      margin-left: -6px;
+      margin-right: -6px;
+    }
+
+    .hoopers-collection-catalog .grid-product {
+      width: 50% !important;
+      flex: 0 0 50% !important;
+      max-width: 50% !important;
+      padding-left: 6px;
+      padding-right: 6px;
+      margin-bottom: 24px;
+    }
+
+    .hoopers-collection-catalog .grid-product__meta {
+      padding-top: 9px;
+    }
+
+    .hoopers-collection-catalog .grid-product__vendor {
+      font-size: 9px;
+      margin-bottom: 4px;
+      letter-spacing: 0.12em;
+    }
+
+    .hoopers-collection-catalog .grid-product__title,
+    .hoopers-collection-catalog .grid-product__title a {
+      font-size: 12.5px;
+      line-height: 1.32;
+    }
+
+    .hoopers-collection-catalog .grid-product__title {
+      min-height: 2.64em;
+    }
+
+    .hoopers-collection-catalog .grid-product__price,
+    .hoopers-collection-catalog .grid-product__price--current,
+    .hoopers-collection-catalog .grid-product__price span {
+      font-size: 12.5px;
+    }
+
+    .hoopers-collection-catalog .quick-product__btn,
+    .hoopers-collection-catalog .quick-add-btn,
+    .hoopers-collection-catalog .grid-product__quick-add,
+    .hoopers-collection-catalog .product-card__quick-add,
+    .hoopers-collection-catalog .grid-product form[action*="/cart/add"] button,
+    .hoopers-collection-catalog .grid-product .add-to-cart,
+    .hoopers-collection-catalog .grid-product .btn {
+      min-height: 34px;
+      padding: 0 10px;
+      font-size: 10px;
+      line-height: 1;
+    }
+  }
+</style>
+
 {%- if section.settings.enable_sidebar == false or section.settings.filter_style == 'drawer' or collection.filters.size == 0 -%}
-{% comment %}
-  Override grid styles if sidebar is disabled
-{% endcomment %}
 {% style %}
   .collection-content .grid__item--sidebar { width: 0; padding:0; }
   .collection-content .grid__item--content { width: 100%; }
@@ -175,7 +510,7 @@
           "type": "range",
           "id": "per_row",
           "label": "t:sections.main-collection.blocks.products.settings.per_row.label",
-          "default": 4,
+          "default": 3,
           "min": 2,
           "max": 5,
           "step": 1

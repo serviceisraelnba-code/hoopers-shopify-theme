@@ -1,0 +1,533 @@
+<section class="hpt-size-guide hpt-size-guide--world-cup" dir="rtl">
+  <div class="hpt-wrap">
+    <div class="hpt-size-guide__header">
+      {%- if section.settings.title != blank -%}
+        <h2>{{ section.settings.title }}</h2>
+      {%- endif -%}
+      {%- if section.settings.intro != blank -%}
+        <p>{{ section.settings.intro }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="hpt-size-guide__table-wrap">
+      <table class="hpt-size-guide__table">
+        <thead>
+          <tr>
+            <th>מידה</th>
+            <th>חזה</th>
+            <th>אורך חולצה</th>
+            <th>גובה מומלץ</th>
+            <th>משקל מומלץ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>S</td>
+            <td>100</td>
+            <td>72</td>
+            <td>160-170</td>
+            <td>50-60</td>
+          </tr>
+          <tr>
+            <td>M</td>
+            <td>104</td>
+            <td>74</td>
+            <td>170-175</td>
+            <td>60-70</td>
+          </tr>
+          <tr>
+            <td>L</td>
+            <td>108</td>
+            <td>76</td>
+            <td>175-185</td>
+            <td>70-75</td>
+          </tr>
+          <tr>
+            <td>XL</td>
+            <td>112</td>
+            <td>78</td>
+            <td>180-190</td>
+            <td>75-85</td>
+          </tr>
+          <tr>
+            <td>XXL</td>
+            <td>116</td>
+            <td>80</td>
+            <td>185-200</td>
+            <td>85-90</td>
+          </tr>
+          <tr>
+            <td>XXXL</td>
+            <td>120</td>
+            <td>82</td>
+            <td>195-210</td>
+            <td>90-100</td>
+          </tr>
+          <tr>
+            <td>XXXXL</td>
+            <td>124</td>
+            <td>84</td>
+            <td>195-215</td>
+            <td>95-115</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="hpt-size-guide__note">
+      {%- if section.settings.recommendation_title != blank -%}
+        <strong>{{ section.settings.recommendation_title }}</strong>
+      {%- endif -%}
+      {%- if section.settings.recommendation_text != blank -%}
+        <span>{{ section.settings.recommendation_text }}</span>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  body.template-product,
+  .template-product .main-content {
+    background: #ece7df;
+  }
+
+  .template-product .page-content--product {
+    padding: 34px 0 56px;
+    background: #ece7df;
+  }
+
+  .template-product .page-content--product .page-width {
+    max-width: 1480px;
+  }
+
+  .template-product .product-section {
+    direction: rtl;
+    color: #050505;
+  }
+
+  .template-product .grid {
+    align-items: start;
+  }
+
+  .template-product .product-single__sticky {
+    background: transparent;
+    padding: 0;
+  }
+
+  .template-product .product__photos,
+  .template-product .product__main-photos,
+  .template-product .product-main-slide,
+  .template-product .product-image-main {
+    background: #f5f3ee;
+  }
+
+  .template-product .product__main-photos {
+    border: 1px solid rgba(5, 5, 5, 0.08);
+  }
+
+  .template-product .product__thumbs {
+    margin-top: 12px;
+  }
+
+  .template-product .product__thumb-item a,
+  .template-product .product__thumb {
+    border-color: rgba(5, 5, 5, 0.12);
+    background: #f5f3ee;
+  }
+
+  .template-product .product-single__meta {
+    position: sticky;
+    top: 90px;
+    padding: clamp(22px, 3vw, 34px);
+    background: #f5f3ee;
+    color: #050505;
+    border: 1px solid rgba(5, 5, 5, 0.1);
+  }
+
+  .template-product .product-block {
+    margin-bottom: 18px;
+  }
+
+  .template-product .product-block--header {
+    margin-bottom: 12px;
+  }
+
+  .template-product .product-single__vendor,
+  .template-product .product-single__sku {
+    color: #8f7040;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-size: 11px;
+    font-weight: 900;
+  }
+
+  .template-product .product-single__title {
+    margin: 0;
+    color: #050505;
+    font-size: clamp(34px, 3.6vw, 54px);
+    line-height: 1.04;
+    font-weight: 950;
+    letter-spacing: 0;
+  }
+
+  .template-product .product__price {
+    color: #050505;
+    font-size: clamp(21px, 2vw, 30px);
+    font-weight: 900;
+  }
+
+  .template-product .product__price--compare {
+    color: rgba(5, 5, 5, 0.45);
+  }
+
+  .template-product .product__policies,
+  .template-product .product__policies a,
+  .template-product .product-single__meta .rte,
+  .template-product .product-single__meta .rte a,
+  .template-product .product-single__description,
+  .template-product .product-block--tab,
+  .template-product .product-block--tab a,
+  .template-product .shopify-payment-terms,
+  .template-product .shopify-payment-terms a {
+    color: rgba(5, 5, 5, 0.78);
+  }
+
+  .template-product .variant__label,
+  .template-product .product__quantity label {
+    color: rgba(5, 5, 5, 0.78);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .template-product .variant-input-wrap {
+    border: 0;
+    padding: 0;
+  }
+
+  .template-product .variant-input-wrap label {
+    min-width: 54px;
+    min-height: 44px;
+    margin: 0 0 8px 8px;
+    border: 1px solid rgba(5, 5, 5, 0.2);
+    background: #ffffff;
+    color: #050505;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+  }
+
+  .template-product .variant-input-wrap input[type="radio"]:checked + label {
+    border-color: #000000;
+    background: #000000;
+    color: #ffffff;
+    box-shadow: none;
+  }
+
+  .template-product .size-chart__standalone,
+  .template-product tool-tip-trigger,
+  .template-product .advanced-wishlist,
+  .template-product .advanced-wishlist a,
+  .template-product [class*="wishlist"],
+  .template-product [class*="Wishlist"] {
+    color: #050505 !important;
+  }
+
+  .template-product .add-to-cart,
+  .template-product .add-to-cart.btn,
+  .template-product .add-to-cart.btn--secondary {
+    width: 100%;
+    min-height: 56px;
+    padding: 15px 24px;
+    border: 1px solid #000000 !important;
+    background: #000000 !important;
+    color: #ffffff !important;
+    font-size: 15px;
+    font-weight: 950;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .template-product .add-to-cart span,
+  .template-product .add-to-cart svg,
+  .template-product .add-to-cart .icon {
+    color: #ffffff !important;
+    fill: currentColor;
+    stroke: currentColor;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .template-product .add-to-cart:hover,
+  .template-product .add-to-cart.btn:hover {
+    border-color: #c8a56a !important;
+    background: #c8a56a !important;
+    color: #000000 !important;
+  }
+
+  .template-product .add-to-cart:hover span,
+  .template-product .add-to-cart:hover svg,
+  .template-product .add-to-cart:hover .icon {
+    color: #000000 !important;
+  }
+
+  .template-product .shopify-payment-button {
+    display: none;
+  }
+
+  .template-product .hpt-trust-badges {
+    display: grid;
+    gap: 8px;
+    margin-top: -2px;
+  }
+
+  .template-product .hpt-trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 42px;
+    padding: 10px 12px;
+    border: 1px solid rgba(5, 5, 5, 0.1);
+    background: #ffffff;
+    color: #050505;
+    font-size: 14px;
+    line-height: 1.35;
+  }
+
+  .template-product .hpt-trust-badge strong {
+    color: #050505;
+    font-weight: 800;
+  }
+
+  .template-product .hpt-trust-badge span {
+    color: #c8a56a;
+  }
+
+  .template-product .product-block .rte,
+  .template-product .product-single__description {
+    color: rgba(5, 5, 5, 0.76);
+    line-height: 1.85;
+  }
+
+  .template-product .product-block hr {
+    border-color: rgba(5, 5, 5, 0.12);
+  }
+
+  .template-product .product-block:has([class*="bundle"]),
+  .template-product .product-block:has([class*="upsell"]),
+  .template-product .product-block:has([id*="bundle"]),
+  .template-product .product-block:has([id*="upsell"]) {
+    padding: 18px;
+    border: 1px solid rgba(5, 5, 5, 0.1);
+    background: #ffffff;
+  }
+
+  .template-product [class*="bundle"],
+  .template-product [class*="upsell"] {
+    color: #050505;
+    font-family: inherit;
+  }
+
+  .template-product [class*="bundle"] button,
+  .template-product [class*="upsell"] button {
+    border-radius: 0;
+    font-weight: 900;
+  }
+
+  .template-product [id*="171766872569722c64"],
+  .template-product product-recommendations {
+    display: block;
+    background: #ece7df;
+  }
+
+  .template-product [id*="171766872569722c64"] .page-width,
+  .template-product product-recommendations .page-width {
+    max-width: 1320px;
+  }
+
+  .template-product .section-header__title {
+    color: #050505;
+    font-size: clamp(26px, 3.2vw, 44px);
+    line-height: 1.1;
+    font-weight: 950;
+    letter-spacing: 0;
+  }
+
+  .hpt-wrap {
+    width: min(1320px, calc(100% - 32px));
+    margin: 0 auto;
+  }
+
+  .hpt-size-guide {
+    padding: 70px 0;
+    background: #050505;
+    color: #ffffff;
+  }
+
+  .hpt-size-guide__header {
+    max-width: 820px;
+    margin: 0 auto 30px;
+    text-align: center;
+  }
+
+  .hpt-size-guide__header h2 {
+    margin: 0 0 14px;
+    color: #ffffff;
+    font-size: clamp(34px, 4vw, 58px);
+    line-height: 1.1;
+    font-weight: 950;
+    letter-spacing: 0;
+  }
+
+  .hpt-size-guide__header p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 17px;
+    line-height: 1.8;
+  }
+
+  .hpt-size-guide__table-wrap {
+    overflow-x: auto;
+    border: 1px solid rgba(200, 165, 106, 0.34);
+    background: #f5f3ee;
+  }
+
+  .hpt-size-guide__table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+    text-align: center;
+  }
+
+  .hpt-size-guide__table th,
+  .hpt-size-guide__table td {
+    padding: 18px 14px;
+    border-bottom: 1px solid rgba(5, 5, 5, 0.12);
+    border-left: 1px solid rgba(5, 5, 5, 0.08);
+  }
+
+  .hpt-size-guide__table th {
+    color: #c8a56a;
+    background: #111111;
+    font-size: 13px;
+    font-weight: 950;
+    letter-spacing: 0;
+  }
+
+  .hpt-size-guide__table td {
+    color: #111111;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .hpt-size-guide__table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .hpt-size-guide__note {
+    display: grid;
+    gap: 8px;
+    margin-top: 20px;
+    padding: 20px 22px;
+    border: 1px solid rgba(200, 165, 106, 0.38);
+    background: rgba(200, 165, 106, 0.1);
+  }
+
+  .hpt-size-guide__note strong {
+    color: #c8a56a;
+    font-size: 17px;
+    font-weight: 950;
+  }
+
+  .hpt-size-guide__note span {
+    color: rgba(255, 255, 255, 0.86);
+    line-height: 1.75;
+  }
+
+  @media (max-width: 749px) {
+    .template-product .page-content--product {
+      padding-top: 0;
+    }
+
+    .template-product .product-single__sticky {
+      margin-left: -17px;
+      margin-right: -17px;
+      padding: 0;
+    }
+
+    .template-product .product-single__meta {
+      position: static;
+      margin: 0 -17px;
+      padding: 24px 18px 30px;
+      border-left: 0;
+      border-right: 0;
+    }
+
+    .template-product .product-single__title {
+      font-size: clamp(34px, 9.5vw, 40px);
+    }
+
+    .template-product .variant-input-wrap label {
+      min-width: 48px;
+      min-height: 42px;
+    }
+
+    .template-product .add-to-cart,
+    .template-product .add-to-cart.btn,
+    .template-product .add-to-cart.btn--secondary {
+      min-height: 56px;
+      padding: 15px 18px;
+    }
+
+    .hpt-size-guide {
+      padding: 48px 0;
+    }
+
+    .hpt-size-guide__header {
+      text-align: right;
+    }
+
+    .hpt-size-guide__header h2 {
+      font-size: 36px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "HOOPERS WC Guide",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "📏 מדריך מידות"
+    },
+    {
+      "type": "textarea",
+      "id": "intro",
+      "label": "Intro",
+      "default": "מומלץ לבדוק את הטבלה לפני בחירת מידה. אם אתם בין מידות או אוהבים התאמה משוחררת, לרוב כדאי לבחור מידה אחת מעל."
+    },
+    {
+      "type": "text",
+      "id": "recommendation_title",
+      "label": "Recommendation title",
+      "default": "🔥 המלצת HOOPERS:"
+    },
+    {
+      "type": "textarea",
+      "id": "recommendation_text",
+      "label": "Recommendation text",
+      "default": "לחולצות וג׳רזים של World Cup אנחנו ממליצים לבחור לפי היקף חזה, גובה והעדפת התאמה. אם אתם אוהבים סטייל משוחרר יותר, לרוב כדאי לבחור מידה אחת מעל."
+    }
+  ],
+  "presets": [
+    {
+      "name": "HOOPERS WC Guide"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,668 @@
+{{ 'section-teamwear-landing.css' | asset_url | stylesheet_tag }}
+
+<section
+  class="teamwear-page"
+  dir="rtl"
+  data-teamwear-section
+  style="
+    --teamwear-hero-overlay: {{ section.settings.hero_overlay_opacity | divided_by: 100.0 }};
+    --teamwear-hero-position-desktop: {{ section.settings.hero_image_position_desktop }};
+    --teamwear-hero-position-mobile: {{ section.settings.hero_image_position_mobile }};
+  "
+>
+  <section class="teamwear-hero">
+    {% if section.settings.hero_image_desktop != blank %}
+      <picture class="teamwear-hero__picture">
+        {% if section.settings.hero_image_mobile != blank %}
+          <source media="(max-width: 749px)" srcset="{{ section.settings.hero_image_mobile | image_url: width: 1000 }}">
+        {% endif %}
+        {{ section.settings.hero_image_desktop | image_url: width: 2200 | image_tag: loading: 'eager', fetchpriority: 'high', widths: '800,1200,1600,2200', sizes: '100vw', class: 'teamwear-hero__image' }}
+      </picture>
+    {% endif %}
+
+    <div class="teamwear-hero__overlay"></div>
+
+    <div class="teamwear-container teamwear-hero__content">
+      <div class="teamwear-hero__text teamwear-reveal">
+        {% if section.settings.hero_eyebrow != blank %}<p class="teamwear-eyebrow">{{ section.settings.hero_eyebrow }}</p>{% endif %}
+        {% if section.settings.hero_title != blank %}<h1>{{ section.settings.hero_title }}</h1>{% endif %}
+        {% if section.settings.hero_subtitle != blank %}<h2>{{ section.settings.hero_subtitle }}</h2>{% endif %}
+        {% if section.settings.hero_description != blank %}<p class="teamwear-lead">{{ section.settings.hero_description }}</p>{% endif %}
+
+        <div class="teamwear-actions">
+          {% if section.settings.hero_primary_text != blank %}
+            <a class="teamwear-button teamwear-button--primary" href="{{ section.settings.hero_primary_link }}">{{ section.settings.hero_primary_text }}</a>
+          {% endif %}
+          {% if section.settings.hero_secondary_text != blank %}
+            <a class="teamwear-button teamwear-button--secondary" href="{{ section.settings.hero_secondary_link }}" data-teamwear-scroll>{{ section.settings.hero_secondary_text }}</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {% assign problem_count = 0 %}
+  {% assign process_count = 0 %}
+  {% assign case_count = 0 %}
+  {% assign product_card_count = 0 %}
+  {% assign approval_count = 0 %}
+  {% assign why_count = 0 %}
+  {% assign logo_count = 0 %}
+  {% assign faq_count = 0 %}
+
+  {% for block in section.blocks %}
+    {% case block.type %}
+      {% when 'problem_card' %}{% assign problem_count = problem_count | plus: 1 %}
+      {% when 'process_step' %}{% assign process_count = process_count | plus: 1 %}
+      {% when 'case_feature' %}{% assign case_count = case_count | plus: 1 %}
+      {% when 'product_banner_card' %}{% assign product_card_count = product_card_count | plus: 1 %}
+      {% when 'approval_step' %}{% assign approval_count = approval_count | plus: 1 %}
+      {% when 'why_card' %}{% assign why_count = why_count | plus: 1 %}
+      {% when 'club_logo' %}{% if block.settings.logo != blank %}{% assign logo_count = logo_count | plus: 1 %}{% endif %}
+      {% when 'faq_item' %}{% assign faq_count = faq_count | plus: 1 %}
+    {% endcase %}
+  {% endfor %}
+
+  <section class="teamwear-section">
+    <div class="teamwear-container">
+      <div class="teamwear-heading teamwear-reveal">
+        {% if section.settings.problem_eyebrow != blank %}<p>{{ section.settings.problem_eyebrow }}</p>{% endif %}
+        {% if section.settings.problem_title != blank %}<h2>{{ section.settings.problem_title }}</h2>{% endif %}
+        {% if section.settings.problem_description != blank %}<div>{{ section.settings.problem_description }}</div>{% endif %}
+      </div>
+
+      <div class="teamwear-grid teamwear-grid--3">
+        {% if problem_count > 0 %}
+          {% for block in section.blocks %}
+            {% if block.type == 'problem_card' %}
+              <article class="teamwear-card teamwear-reveal" {{ block.shopify_attributes }}>
+                {% if block.settings.icon != blank %}<span class="teamwear-card__icon">{{ block.settings.icon }}</span>{% endif %}
+                {% if block.settings.title != blank %}<h3>{{ block.settings.title }}</h3>{% endif %}
+                {% if block.settings.description != blank %}<p>{{ block.settings.description }}</p>{% endif %}
+              </article>
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          {% assign fallback_problem = '01::איסוף מידות::במקום לרדוף אחרי הורים ושחקנים, כל שחקן בוחר מידה ישירות באתר.|02::גביית תשלומים::התשלום מתבצע אונליין, ללא צורך בגבייה ידנית מצד האגודה.|03::חלוקת ציוד::ההזמנות נשלחות ישירות לבית הלקוח או לפי מודל שנבחר מראש.|04::החלפות מידה::תהליך החלפה מסודר שמפחית עומס מהאגודה.|05::מעקב הזמנות::כל הזמנה מתועדת ומנוהלת בצורה מסודרת.|06::פניות מהורים::פחות עומס על מנהלי הקבוצה והמאמנים.' | split: '|' %}
+          {% for item in fallback_problem %}
+            {% assign parts = item | split: '::' %}
+            <article class="teamwear-card teamwear-reveal">
+              <span class="teamwear-card__icon">{{ parts[0] }}</span>
+              <h3>{{ parts[1] }}</h3>
+              <p>{{ parts[2] }}</p>
+            </article>
+          {% endfor %}
+        {% endif %}
+      </div>
+
+      {% if section.settings.problem_bottom_text != blank %}
+        <p class="teamwear-center-text teamwear-reveal">{{ section.settings.problem_bottom_text }}</p>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="teamwear-section teamwear-section--soft">
+    <div class="teamwear-container">
+      <div class="teamwear-heading teamwear-reveal">
+        {% if section.settings.process_eyebrow != blank %}<p>{{ section.settings.process_eyebrow }}</p>{% endif %}
+        {% if section.settings.process_title != blank %}<h2>{{ section.settings.process_title }}</h2>{% endif %}
+        {% if section.settings.process_description != blank %}<div>{{ section.settings.process_description }}</div>{% endif %}
+      </div>
+
+      <div class="teamwear-process">
+        {% if process_count > 0 %}
+          {% for block in section.blocks %}
+            {% if block.type == 'process_step' %}
+              <article class="teamwear-process__item teamwear-reveal" {{ block.shopify_attributes }}>
+                {% if block.settings.number != blank %}<span>{{ block.settings.number }}</span>{% endif %}
+                {% if block.settings.title != blank %}<h3>{{ block.settings.title }}</h3>{% endif %}
+                {% if block.settings.description != blank %}<p>{{ block.settings.description }}</p>{% endif %}
+              </article>
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          {% assign fallback_process = '1::פגישת אפיון::מבינים את צרכי האגודה, כמות השחקנים, המוצרים והסגנון הרצוי.|2::בניית קונספט עיצובי::יוצרים שפה גרפית שמתאימה לצבעים, ללוגו ולאופי של המועדון.|3::יצירת הדמיות מקצועיות::מציגים סטים, אביזרים ומוצרים בצורה ויזואלית לפני ייצור.|4::אישור הנהלת המועדון::האגודה מאשרת את העיצובים, המוצרים והכמויות לפני התקדמות.|5::פתיחת חנות פרטית::נבנה עמוד ייעודי להזמנות עבור שחקני המועדון וההורים.|6::הזמנות מההורים::ההורים מזמינים ישירות באתר, ללא גבייה ידנית מצד האגודה.|7::ייצור ומשלוח::הציוד מיוצר ונשלח לפי המודל שנקבע עם האגודה.' | split: '|' %}
+          {% for item in fallback_process %}
+            {% assign parts = item | split: '::' %}
+            <article class="teamwear-process__item teamwear-reveal">
+              <span>{{ parts[0] }}</span>
+              <h3>{{ parts[1] }}</h3>
+              <p>{{ parts[2] }}</p>
+            </article>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <section id="examples" class="teamwear-section">
+    <div class="teamwear-container">
+      <div class="teamwear-heading teamwear-reveal">
+        {% if section.settings.case_eyebrow != blank %}<p>{{ section.settings.case_eyebrow }}</p>{% endif %}
+        {% if section.settings.case_title != blank %}<h2>{{ section.settings.case_title }}</h2>{% endif %}
+        {% if section.settings.case_description != blank %}<div>{{ section.settings.case_description }}</div>{% endif %}
+      </div>
+
+      {% if section.settings.case_image_desktop != blank %}
+        <picture class="teamwear-image teamwear-reveal">
+          {% if section.settings.case_image_mobile != blank %}
+            <source media="(max-width: 749px)" srcset="{{ section.settings.case_image_mobile | image_url: width: 1000 }}">
+          {% endif %}
+          {{ section.settings.case_image_desktop | image_url: width: 1800 | image_tag: loading: 'lazy', widths: '600,900,1200,1600,1800', sizes: '(min-width: 990px) 980px, 92vw' }}
+        </picture>
+      {% endif %}
+
+      <div class="teamwear-grid teamwear-grid--4">
+        {% if case_count > 0 %}
+          {% for block in section.blocks %}
+            {% if block.type == 'case_feature' %}
+              <article class="teamwear-card teamwear-reveal" {{ block.shopify_attributes }}>
+                {% if block.settings.title != blank %}<h3>{{ block.settings.title }}</h3>{% endif %}
+                {% if block.settings.description != blank %}<p>{{ block.settings.description }}</p>{% endif %}
+              </article>
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          {% assign fallback_case = 'סט משחק דו צדדי::שני צדדים באותו סט – בית וחוץ – עם שפה עיצובית אחידה.|עיצוב ייחודי למועדון::עיצוב שנבנה במיוחד לפי צבעי המועדון והזהות שלו.|התאמה מלאה לצבעי הקבוצה::שילוב צבעים, לוגו, מספרים ואלמנטים גרפיים בצורה מקצועית.|מיתוג מקצועי ואחיד::כל המוצרים מדברים באותה שפה ונראים כחלק ממערכת אחת.' | split: '|' %}
+          {% for item in fallback_case %}
+            {% assign parts = item | split: '::' %}
+            <article class="teamwear-card teamwear-reveal">
+              <h3>{{ parts[0] }}</h3>
+              <p>{{ parts[1] }}</p>
+            </article>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <section class="teamwear-section teamwear-section--soft">
+    <div class="teamwear-container">
+      <div class="teamwear-heading teamwear-reveal">
+        {% if section.settings.ecosystem_eyebrow != blank %}<p>{{ section.settings.ecosystem_eyebrow }}</p>{% endif %}
+        {% if section.settings.ecosystem_title != blank %}<h2>{{ section.settings.ecosystem_title }}</h2>{% endif %}
+        {% if section.settings.ecosystem_description != blank %}<div>{{ section.settings.ecosystem_description }}</div>{% endif %}
+      </div>
+
+      {% if section.settings.show_ecosystem_main_image and section.settings.ecosystem_image_desktop != blank %}
+        <picture class="teamwear-image teamwear-reveal">
+          {% if section.settings.ecosystem_image_mobile != blank %}
+            <source media="(max-width: 749px)" srcset="{{ section.settings.ecosystem_image_mobile | image_url: width: 1000 }}">
+          {% endif %}
+          {{ section.settings.ecosystem_image_desktop | image_url: width: 1800 | image_tag: loading: 'lazy', widths: '600,900,1200,1600,1800', sizes: '(min-width: 990px) 980px, 92vw' }}
+        </picture>
+      {% endif %}
+
+      <div class="teamwear-product-banners">
+        {% if product_card_count > 0 %}
+          {% for block in section.blocks %}
+            {% if block.type == 'product_banner_card' %}
+              <article class="teamwear-product-banner teamwear-reveal" {{ block.shopify_attributes }}>
+                {% if block.settings.image != blank %}
+                  <div class="teamwear-product-banner__media">
+                    {{ block.settings.image | image_url: width: 1000 | image_tag: loading: 'lazy', widths: '360,540,720,1000', sizes: '(min-width: 990px) 31vw, (min-width: 750px) 46vw, 92vw', style: 'object-position: ' | append: block.settings.image_position }}
+                  </div>
+                {% endif %}
+
+                <div class="teamwear-product-banner__content">
+                  {% if block.settings.subtitle != blank %}<p class="teamwear-product-banner__label">{{ block.settings.subtitle }}</p>{% endif %}
+                  {% if block.settings.title != blank %}<h3>{{ block.settings.title }}</h3>{% endif %}
+                  {% if block.settings.description != blank %}<div>{{ block.settings.description }}</div>{% endif %}
+                  {% if block.settings.button_text != blank %}
+                    <a class="teamwear-text-link" href="{{ block.settings.button_link }}">{{ block.settings.button_text }}</a>
+                  {% endif %}
+                </div>
+              </article>
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          {% assign fallback_product_banners = '01::כדור ממותג::כדור משחק בעיצוב המועדון, כחלק ממערכת מוצרים אחידה.|02::סט משחק דו צדדי::סט בית וחוץ באותו מוצר, עם התאמה מלאה לצבעי המועדון.|03::סט אימון::ביגוד אימון ממותג לשחקנים, מאמנים וצוות מקצועי.|04::חולצת חימום::חולצת חימום ייצוגית שמחברת בין הופעה מקצועית לנוחות.|05::תיק גב::תיק גב ממותג לשחקנים ולצוות, כחלק מערכה מלאה.|06::גרביים::גרבי משחק ואימון בצבעים ובמיתוג המתאימים.|07::בקבוק::בקבוק ממותג לשימוש יומיומי, אימונים ומשחקים.|08::מוצרים נוספים::מגבות, שרוולים, קפוצ׳ונים ומוצרים נוספים לפי צורך.' | split: '|' %}
+          {% for item in fallback_product_banners %}
+            {% assign parts = item | split: '::' %}
+            <article class="teamwear-product-banner teamwear-reveal">
+              <div class="teamwear-product-banner__content">
+                <p class="teamwear-product-banner__label">{{ parts[0] }}</p>
+                <h3>{{ parts[1] }}</h3>
+                <div>{{ parts[2] }}</div>
+              </div>
+            </article>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <section class="teamwear-section">
+    <div class="teamwear-container">
+      <div class="teamwear-heading teamwear-reveal">
+        {% if section.settings.approval_eyebrow != blank %}<p>{{ section.settings.approval_eyebrow }}</p>{% endif %}
+        {% if section.settings.approval_title != blank %}<h2>{{ section.settings.approval_title }}</h2>{% endif %}
+        {% if section.settings.approval_description != blank %}<div>{{ section.settings.approval_description }}</div>{% endif %}
+      </div>
+
+      <div class="teamwear-timeline">
+        {% if approval_count > 0 %}
+          {% for block in section.blocks %}
+            {% if block.type == 'approval_step' %}
+              <article class="teamwear-timeline__item teamwear-reveal" {{ block.shopify_attributes }}>
+                {% if block.settings.number != blank %}<span>{{ block.settings.number }}</span>{% endif %}
+                <div>
+                  {% if block.settings.title != blank %}<h3>{{ block.settings.title }}</h3>{% endif %}
+                  {% if block.settings.description != blank %}<p>{{ block.settings.description }}</p>{% endif %}
+                </div>
+              </article>
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          {% assign fallback_approval = '1::סקיצה ראשונית::יוצרים כיוון עיצובי ראשוני לפי צבעי המועדון, הלוגו והצרכים.|2::תיקונים והתאמות::מבצעים שינויים לפי הערות הנהלת המועדון.|3::הדמיה מלאה::מציגים את המוצרים בצורה ברורה לפני מעבר לייצור.|4::אישור סופי::האגודה מאשרת את העיצוב הסופי בכתב.|5::ייצור::העיצובים המאושרים עוברים לייצור מול הספקים.|6::בקרת איכות::נבדקים צבעים, הדפסות, גזרות והתאמה כללית.|7::משלוח::המוצרים נשלחים לפי מודל ההפצה שנקבע.' | split: '|' %}
+          {% for item in fallback_approval %}
+            {% assign parts = item | split: '::' %}
+            <article class="teamwear-timeline__item teamwear-reveal">
+              <span>{{ parts[0] }}</span>
+              <div>
+                <h3>{{ parts[1] }}</h3>
+                <p>{{ parts[2] }}</p>
+              </div>
+            </article>
+          {% endfor %}
+        {% endif %}
+      </div>
+
+      {% if section.settings.approval_trust_text != blank %}
+        <div class="teamwear-trust teamwear-reveal">{{ section.settings.approval_trust_text }}</div>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="teamwear-section teamwear-section--soft">
+    <div class="teamwear-container">
+      <div class="teamwear-heading teamwear-reveal">
+        {% if section.settings.why_eyebrow != blank %}<p>{{ section.settings.why_eyebrow }}</p>{% endif %}
+        {% if section.settings.why_title != blank %}<h2>{{ section.settings.why_title }}</h2>{% endif %}
+        {% if section.settings.why_description != blank %}<div>{{ section.settings.why_description }}</div>{% endif %}
+      </div>
+
+      <div class="teamwear-grid teamwear-grid--3">
+        {% if why_count > 0 %}
+          {% for block in section.blocks %}
+            {% if block.type == 'why_card' %}
+              <article class="teamwear-card teamwear-reveal" {{ block.shopify_attributes }}>
+                {% if block.settings.icon != blank %}<span class="teamwear-card__icon">{{ block.settings.icon }}</span>{% endif %}
+                {% if block.settings.title != blank %}<h3>{{ block.settings.title }}</h3>{% endif %}
+                {% if block.settings.description != blank %}<p>{{ block.settings.description }}</p>{% endif %}
+              </article>
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          {% assign fallback_why = '01::ניסיון במיתוג ספורט::אנחנו יודעים לבנות מוצרים שנראים כמו מותג, לא כמו עוד סט גנרי.|02::מעטפת מוצרים רחבה::סטי משחק, אימון, כדורים, תיקים, גרביים ואביזרים במקום אחד.|03::חנות אונליין פרטית::לכל אגודה ניתן לבנות עמוד הזמנות ייעודי באתר HOOPERS.|04::פחות התעסקות לאגודה::פחות גבייה, פחות מידות, פחות חלוקה ופחות עומס מההורים.|05::ספקים וייצור בינלאומי::עבודה מול ספקים קיימים, ייצור מותאם ושילוח מסודר.|06::ליווי לאורך העונה::אפשרות להוספת מוצרים, פתיחת חלונות הזמנה והמשך תמיכה.' | split: '|' %}
+          {% for item in fallback_why %}
+            {% assign parts = item | split: '::' %}
+            <article class="teamwear-card teamwear-reveal">
+              <span class="teamwear-card__icon">{{ parts[0] }}</span>
+              <h3>{{ parts[1] }}</h3>
+              <p>{{ parts[2] }}</p>
+            </article>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <section class="teamwear-section">
+    <div class="teamwear-container teamwear-split">
+      <div class="teamwear-reveal">
+        <div class="teamwear-heading teamwear-heading--right">
+          {% if section.settings.store_eyebrow != blank %}<p>{{ section.settings.store_eyebrow }}</p>{% endif %}
+          {% if section.settings.store_title != blank %}<h2>{{ section.settings.store_title }}</h2>{% endif %}
+          {% if section.settings.store_description != blank %}<div>{{ section.settings.store_description }}</div>{% endif %}
+        </div>
+      </div>
+
+      <div class="teamwear-devices teamwear-reveal">
+        <div class="teamwear-desktop">
+          {% if section.settings.store_url != blank %}<div class="teamwear-url">{{ section.settings.store_url }}</div>{% endif %}
+          <div class="teamwear-store-grid">
+            {% if section.settings.store_product_1_title != blank %}<div><span>{{ section.settings.store_product_1_icon }}</span><strong>{{ section.settings.store_product_1_title }}</strong></div>{% endif %}
+            {% if section.settings.store_product_2_title != blank %}<div><span>{{ section.settings.store_product_2_icon }}</span><strong>{{ section.settings.store_product_2_title }}</strong></div>{% endif %}
+            {% if section.settings.store_product_3_title != blank %}<div><span>{{ section.settings.store_product_3_icon }}</span><strong>{{ section.settings.store_product_3_title }}</strong></div>{% endif %}
+            {% if section.settings.store_product_4_title != blank %}<div><span>{{ section.settings.store_product_4_icon }}</span><strong>{{ section.settings.store_product_4_title }}</strong></div>{% endif %}
+            {% if section.settings.store_product_5_title != blank %}<div><span>{{ section.settings.store_product_5_icon }}</span><strong>{{ section.settings.store_product_5_title }}</strong></div>{% endif %}
+            {% if section.settings.store_product_6_title != blank %}<div><span>{{ section.settings.store_product_6_icon }}</span><strong>{{ section.settings.store_product_6_title }}</strong></div>{% endif %}
+          </div>
+        </div>
+
+        <div class="teamwear-mobile">
+          {% if section.settings.store_product_1_title != blank %}<span>{{ section.settings.store_product_1_title }}</span>{% endif %}
+          {% if section.settings.store_product_2_title != blank %}<span>{{ section.settings.store_product_2_title }}</span>{% endif %}
+          {% if section.settings.store_product_3_title != blank %}<span>{{ section.settings.store_product_3_title }}</span>{% endif %}
+          {% if section.settings.store_product_4_title != blank %}<span>{{ section.settings.store_product_4_title }}</span>{% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="teamwear-section teamwear-section--soft">
+    <div class="teamwear-container">
+      <div class="teamwear-heading teamwear-reveal">
+        {% if section.settings.logos_eyebrow != blank %}<p>{{ section.settings.logos_eyebrow }}</p>{% endif %}
+        {% if section.settings.logos_title != blank %}<h2>{{ section.settings.logos_title }}</h2>{% endif %}
+        {% if section.settings.logos_description != blank %}<div>{{ section.settings.logos_description }}</div>{% endif %}
+      </div>
+
+      {% if logo_count > 0 %}
+        <div class="teamwear-logos {% if logo_count == 1 %}teamwear-logos--single{% endif %} teamwear-reveal">
+          <div class="teamwear-logo-track">
+            {% for block in section.blocks %}
+              {% if block.type == 'club_logo' and block.settings.logo != blank %}
+                {% if block.settings.link != blank %}
+                  <a href="{{ block.settings.link }}" class="teamwear-logo" {{ block.shopify_attributes }}>
+                {% else %}
+                  <div class="teamwear-logo" {{ block.shopify_attributes }}>
+                {% endif %}
+                  {{ block.settings.logo | image_url: width: 360 | image_tag: loading: 'lazy', widths: '160,240,360', sizes: '180px', alt: block.settings.club_name }}
+                  {% if block.settings.club_name != blank %}<span>{{ block.settings.club_name }}</span>{% endif %}
+                {% if block.settings.link != blank %}</a>{% else %}</div>{% endif %}
+              {% endif %}
+            {% endfor %}
+
+            {% if logo_count > 1 %}
+              {% for block in section.blocks %}
+                {% if block.type == 'club_logo' and block.settings.logo != blank %}
+                  <div class="teamwear-logo" aria-hidden="true">
+                    {{ block.settings.logo | image_url: width: 360 | image_tag: loading: 'lazy', widths: '160,240,360', sizes: '180px', alt: block.settings.club_name }}
+                    {% if block.settings.club_name != blank %}<span>{{ block.settings.club_name }}</span>{% endif %}
+                  </div>
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="teamwear-section">
+    <div class="teamwear-container teamwear-narrow">
+      <div class="teamwear-heading teamwear-reveal">
+        {% if section.settings.faq_eyebrow != blank %}<p>{{ section.settings.faq_eyebrow }}</p>{% endif %}
+        {% if section.settings.faq_title != blank %}<h2>{{ section.settings.faq_title }}</h2>{% endif %}
+        {% if section.settings.faq_description != blank %}<div>{{ section.settings.faq_description }}</div>{% endif %}
+      </div>
+
+      <div class="teamwear-faq-list">
+        {% if faq_count > 0 %}
+          {% for block in section.blocks %}
+            {% if block.type == 'faq_item' %}
+              <details class="teamwear-faq teamwear-reveal" {{ block.shopify_attributes }}>
+                {% if block.settings.question != blank %}<summary>{{ block.settings.question }}</summary>{% endif %}
+                {% if block.settings.answer != blank %}<div>{{ block.settings.answer }}</div>{% endif %}
+              </details>
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          {% assign fallback_faq = 'האם ניתן להזמין רק חלק מהמוצרים?::כן. ניתן להתחיל מסט משחק בלבד, סט אימון בלבד או ערכה מלאה לפי צרכי האגודה.|האם ניתן לשלב לוגו מועדון?::כן. ניתן לשלב את לוגו המועדון, צבעי הקבוצה, מספרים, שמות ואלמנטים עיצוביים נוספים.|האם אפשר להוסיף שמות ומספרים?::כן. ניתן להוסיף מספרים ושמות בהתאם למוצר ולדרישות הייצור.|האם יש מינימום הזמנה?::המינימום משתנה לפי סוג המוצר והספק. לאחר אפיון נוכל לתת לאגודה תשובה מדויקת.|מה לגבי החלפות מידה?::המטרה היא לצמצם החלפות באמצעות טבלת מידות ברורה, הנחיות מדידה ותהליך הזמנה מסודר. במידת הצורך ניתן לבנות תהליך החלפה מוסכם מראש.|האם ניתן להוסיף מוצרים נוספים בעתיד?::כן. ניתן לפתוח חלונות הזמנה נוספים ולהוסיף מוצרים חדשים לאורך העונה.' | split: '|' %}
+          {% for item in fallback_faq %}
+            {% assign parts = item | split: '::' %}
+            <details class="teamwear-faq teamwear-reveal">
+              <summary>{{ parts[0] }}</summary>
+              <div>{{ parts[1] }}</div>
+            </details>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <section class="teamwear-final">
+    <div class="teamwear-container teamwear-reveal">
+      {% if section.settings.final_eyebrow != blank %}<p class="teamwear-eyebrow">{{ section.settings.final_eyebrow }}</p>{% endif %}
+      {% if section.settings.final_title != blank %}<h2>{{ section.settings.final_title }}</h2>{% endif %}
+      {% if section.settings.final_description != blank %}<div class="teamwear-final__text">{{ section.settings.final_description }}</div>{% endif %}
+      <div class="teamwear-actions teamwear-actions--center">
+        {% if section.settings.final_primary_text != blank %}
+          <a class="teamwear-button teamwear-button--primary" href="{{ section.settings.final_primary_link }}">{{ section.settings.final_primary_text }}</a>
+        {% endif %}
+        {% if section.settings.final_secondary_text != blank %}
+          <a class="teamwear-button teamwear-button--secondary" href="{{ section.settings.final_secondary_link }}">{{ section.settings.final_secondary_text }}</a>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+</section>
+
+<script>
+(() => {
+  document.querySelectorAll('[data-teamwear-section]').forEach((root) => {
+    root.classList.add('teamwear-js-ready');
+
+    root.querySelectorAll('[data-teamwear-scroll]').forEach((link) => {
+      link.addEventListener('click', (event) => {
+        const href = link.getAttribute('href');
+        if (!href || href.charAt(0) !== '#') return;
+        const target = root.querySelector(href);
+        if (!target) return;
+        event.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    const reveals = root.querySelectorAll('.teamwear-reveal');
+    if (!('IntersectionObserver' in window)) {
+      reveals.forEach((item) => item.classList.add('is-visible'));
+      return;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.08 });
+
+    reveals.forEach((item) => observer.observe(item));
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "HOOPERS Teamwear",
+  "settings": [
+    { "type": "text", "id": "hero_eyebrow", "label": "Hero eyebrow", "default": "HOOPERS TEAMWEAR" },
+    { "type": "text", "id": "hero_title", "label": "Hero title", "default": "HOOPERS TEAMWEAR" },
+    { "type": "text", "id": "hero_subtitle", "label": "Hero subtitle", "default": "פתרון הלבשה, מיתוג וניהול הזמנות מלא לאגודות כדורסל" },
+    { "type": "textarea", "id": "hero_description", "label": "Hero description", "default": "אנו מעצבים, מייצרים ומנהלים עבור האגודה את כל ציוד השחקנים – החל מסטי משחק ועד כדורים, תיקים ואביזרים – עם מערכת הזמנות ישירה להורים וללא התעסקות מצד האגודה." },
+    { "type": "image_picker", "id": "hero_image_desktop", "label": "Hero desktop image" },
+    { "type": "image_picker", "id": "hero_image_mobile", "label": "Hero mobile image" },
+    { "type": "range", "id": "hero_overlay_opacity", "label": "Hero overlay opacity", "min": 0, "max": 90, "step": 5, "unit": "%", "default": 45 },
+    {
+      "type": "select",
+      "id": "hero_image_position_desktop",
+      "label": "Hero desktop image position",
+      "default": "center center",
+      "options": [
+        { "value": "center center", "label": "Center" },
+        { "value": "center top", "label": "Top" },
+        { "value": "center bottom", "label": "Bottom" },
+        { "value": "left center", "label": "Left" },
+        { "value": "right center", "label": "Right" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "hero_image_position_mobile",
+      "label": "Hero mobile image position",
+      "default": "center center",
+      "options": [
+        { "value": "center center", "label": "Center" },
+        { "value": "center top", "label": "Top" },
+        { "value": "center bottom", "label": "Bottom" },
+        { "value": "left center", "label": "Left" },
+        { "value": "right center", "label": "Right" }
+      ]
+    },
+    { "type": "text", "id": "hero_primary_text", "label": "Hero primary button text", "default": "קבעו פגישת היכרות" },
+    { "type": "url", "id": "hero_primary_link", "label": "Hero primary button link" },
+    { "type": "text", "id": "hero_secondary_text", "label": "Hero secondary button text", "default": "צפו בדוגמאות" },
+    { "type": "text", "id": "hero_secondary_link", "label": "Hero secondary button link", "default": "#examples" },
+
+    { "type": "text", "id": "problem_eyebrow", "label": "Problem eyebrow", "default": "האתגר" },
+    { "type": "text", "id": "problem_title", "label": "Problem title", "default": "האגודה צריכה להתעסק בכדורסל. לא בלוגיסטיקה." },
+    { "type": "textarea", "id": "problem_description", "label": "Problem description", "default": "HOOPERS מורידה מהאגודה את ההתעסקות סביב ציוד, מידות, תשלומים והפצה." },
+    { "type": "textarea", "id": "problem_bottom_text", "label": "Problem bottom text", "default": "אגודות רבות מבזבזות עשרות שעות בכל עונה על ניהול ציוד במקום להתמקד בפיתוח השחקנים." },
+
+    { "type": "text", "id": "process_eyebrow", "label": "Process eyebrow", "default": "התהליך" },
+    { "type": "text", "id": "process_title", "label": "Process title", "default": "איך זה עובד?" },
+    { "type": "textarea", "id": "process_description", "label": "Process description", "default": "תהליך מסודר מהאפיון הראשון ועד להזמנה, ייצור ומשלוח." },
+
+    { "type": "text", "id": "case_eyebrow", "label": "Case eyebrow", "default": "Case Study" },
+    { "type": "text", "id": "case_title", "label": "Case title", "default": "דוגמה אמיתית – עירוני קרית אתא" },
+    { "type": "textarea", "id": "case_description", "label": "Case description", "default": "מערכת לבוש ממותגת שנבנתה סביב צבעי המועדון, זהות הקבוצה וחוויית הזמנה ברורה להורים." },
+    { "type": "image_picker", "id": "case_image_desktop", "label": "Case desktop image" },
+    { "type": "image_picker", "id": "case_image_mobile", "label": "Case mobile image" },
+
+    { "type": "text", "id": "ecosystem_eyebrow", "label": "Product ecosystem eyebrow", "default": "Product Ecosystem" },
+    { "type": "text", "id": "ecosystem_title", "label": "Product ecosystem title", "default": "מעטפת מוצרים מלאה למועדון" },
+    { "type": "textarea", "id": "ecosystem_description", "label": "Product ecosystem description", "default": "מסטי משחק ואימון ועד כדורים, תיקים, גרביים, בקבוקים ואביזרים – הכל בשפה אחידה של המועדון." },
+    { "type": "checkbox", "id": "show_ecosystem_main_image", "label": "Show main collection image", "default": false },
+    { "type": "image_picker", "id": "ecosystem_image_desktop", "label": "Optional collection desktop image" },
+    { "type": "image_picker", "id": "ecosystem_image_mobile", "label": "Optional collection mobile image" },
+
+    { "type": "text", "id": "approval_eyebrow", "label": "Approval eyebrow", "default": "Design Approval" },
+    { "type": "text", "id": "approval_title", "label": "Approval title", "default": "תהליך אישור העיצוב" },
+    { "type": "textarea", "id": "approval_description", "label": "Approval description", "default": "כל שלב נעשה בשקיפות מלאה, עם אישור ברור לפני מעבר לייצור." },
+    { "type": "textarea", "id": "approval_trust_text", "label": "Approval trust text", "default": "לא מתחילים ייצור ללא אישור סופי של המועדון." },
+
+    { "type": "text", "id": "why_eyebrow", "label": "Why eyebrow", "default": "Why HOOPERS" },
+    { "type": "text", "id": "why_title", "label": "Why title", "default": "למה אגודות בוחרות ב-HOOPERS?" },
+    { "type": "textarea", "id": "why_description", "label": "Why description", "default": "פתרון אחד שמחבר עיצוב, ייצור, חנות אונליין וניהול הזמנות." },
+
+    { "type": "text", "id": "store_eyebrow", "label": "Store eyebrow", "default": "Private Team Store" },
+    { "type": "text", "id": "store_title", "label": "Store title", "default": "חנות פרטית לכל אגודה" },
+    { "type": "textarea", "id": "store_description", "label": "Store description", "default": "כל אגודה מקבלת עמוד הזמנות פרטי משלה, עם מוצרים ממותגים, תמונות, מידות ותהליך הזמנה ברור להורים." },
+    { "type": "text", "id": "store_url", "label": "Store example URL", "default": "hoopers.co.il/kiryat-ata" },
+    { "type": "text", "id": "store_product_1_icon", "label": "Store product 1 icon", "default": "01" },
+    { "type": "text", "id": "store_product_1_title", "label": "Store product 1 title", "default": "סט משחק" },
+    { "type": "text", "id": "store_product_2_icon", "label": "Store product 2 icon", "default": "02" },
+    { "type": "text", "id": "store_product_2_title", "label": "Store product 2 title", "default": "סט אימון" },
+    { "type": "text", "id": "store_product_3_icon", "label": "Store product 3 icon", "default": "03" },
+    { "type": "text", "id": "store_product_3_title", "label": "Store product 3 title", "default": "כדור" },
+    { "type": "text", "id": "store_product_4_icon", "label": "Store product 4 icon", "default": "04" },
+    { "type": "text", "id": "store_product_4_title", "label": "Store product 4 title", "default": "תיק" },
+    { "type": "text", "id": "store_product_5_icon", "label": "Store product 5 icon", "default": "05" },
+    { "type": "text", "id": "store_product_5_title", "label": "Store product 5 title", "default": "גרביים" },
+    { "type": "text", "id": "store_product_6_icon", "label": "Store product 6 icon", "default": "06" },
+    { "type": "text", "id": "store_product_6_title", "label": "Store product 6 title", "default": "בקבוק" },
+
+    { "type": "text", "id": "logos_eyebrow", "label": "Logos eyebrow", "default": "Clubs" },
+    { "type": "text", "id": "logos_title", "label": "Logos title", "default": "האגודות שאנחנו עובדים איתן" },
+    { "type": "textarea", "id": "logos_description", "label": "Logos description" },
+
+    { "type": "text", "id": "faq_eyebrow", "label": "FAQ eyebrow", "default": "FAQ" },
+    { "type": "text", "id": "faq_title", "label": "FAQ title", "default": "שאלות נפוצות" },
+    { "type": "textarea", "id": "faq_description", "label": "FAQ description" },
+
+    { "type": "text", "id": "final_eyebrow", "label": "Final CTA eyebrow", "default": "Start Building" },
+    { "type": "text", "id": "final_title", "label": "Final CTA title", "default": "בואו נבנה את המותג של המועדון שלכם" },
+    { "type": "textarea", "id": "final_description", "label": "Final CTA description", "default": "רוצים לראות איך המועדון שלכם יכול להיראות?\nנשמח להכין עבורכם קונספט ראשוני ללא התחייבות." },
+    { "type": "text", "id": "final_primary_text", "label": "Final primary button text", "default": "קבעו פגישת היכרות" },
+    { "type": "url", "id": "final_primary_link", "label": "Final primary button link" },
+    { "type": "text", "id": "final_secondary_text", "label": "Final secondary button text", "default": "שלחו לנו הודעה" },
+    { "type": "url", "id": "final_secondary_link", "label": "Final secondary button link" }
+  ],
+  "blocks": [
+    {
+      "type": "problem_card",
+      "name": "Problem card",
+      "settings": [
+        { "type": "text", "id": "icon", "label": "Icon", "default": "01" },
+        { "type": "text", "id": "title", "label": "Title", "default": "איסוף מידות" },
+        { "type": "textarea", "id": "description", "label": "Description", "default": "במקום לרדוף אחרי הורים ושחקנים, כל שחקן בוחר מידה ישירות באתר." }
+      ]
+    },
+    {
+      "type": "process_step",
+      "name": "Process step",
+      "settings": [
+        { "type": "text", "id": "number", "label": "Number", "default": "1" },
+        { "type": "text", "id": "title", "label": "Title", "default": "פגישת אפיון" },
+        { "type": "textarea", "id": "description", "label": "Description", "default": "מבינים את צרכי האגודה, כמות השחקנים, המוצרים והסגנון הרצוי." }
+      ]
+    },
+    {
+      "type": "case_feature",
+      "name": "Case feature",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "סט משחק דו צדדי" },
+        { "type": "textarea", "id": "description", "label": "Description", "default": "שני צדדים באותו סט – בית וחוץ – עם שפה עיצובית אחידה." }
+      ]
+    },
+    {
+      "type": "product_banner_card",
+      "name": "Product banner card",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        {
+          "type": "select",
+          "id": "image_position",
+          "label": "Image position",
+          "default": "center center",
+          "options": [
+            { "value": "center center", "label": "Center" },
+            { "value": "center top", "label": "Top" },
+            { "value": "center bottom", "label": "Bottom" },
+            { "value": "left center", "label": "Left" },
+            { "value": "right center", "label": "Right" }
+          ]
+        },
+        { "type": "text", "id": "subtitle", "label": "Subtitle / red label", "default": "PRODUCT" },
+        { "type": "text", "id": "title", "label": "Title", "default": "כדור ממותג" },
+        { "type": "textarea", "id": "description", "label": "Description", "default": "מוצר ממותג כחלק ממערכת לבוש מלאה למועדון." },
+        { "type": "text", "id": "button_text", "label": "Optional button text" },
+        { "type": "url", "id": "button_link", "label": "Optional button link" }
+      ]
+    },
+    {
+      "type": "approval_step",
+      "name": "Approval step",
+      "settings": [
+        { "type": "text", "id": "number", "label": "Number", "default": "1" },
+        { "type": "text", "id": "title", "label": "Title", "default": "סקיצה ראשונית" },
+        { "type": "textarea", "id": "description", "label": "Description", "default": "יוצרים כיוון עיצובי ראשוני לפי צבעי המועדון, הלוגו והצרכים." }
+      ]
+    },
+    {
+      "type": "why_card",
+      "name": "Why card",
+      "settings": [
+        { "type": "text", "id": "icon", "label": "Icon", "default": "01" },
+        { "type": "text", "id": "title", "label": "Title", "default": "ניסיון במיתוג ספורט" },
+        { "type": "textarea", "id": "description", "label": "Description", "default": "אנחנו יודעים לבנות מוצרים שנראים כמו מותג, לא כמו עוד סט גנרי." }
+      ]
+    },
+    {
+      "type": "club_logo",
+      "name": "Club logo",
+      "settings": [
+        { "type": "image_picker", "id": "logo", "label": "Logo image" },
+        { "type": "text", "id": "club_name", "label": "Club name", "default": "עירוני קרית אתא" },
+        { "type": "url", "id": "link", "label": "Optional link" }
+      ]
+    },
+    {
+      "type": "faq_item",
+      "name": "FAQ item",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "האם ניתן להזמין רק חלק מהמוצרים?" },
+        { "type": "textarea", "id": "answer", "label": "Answer", "default": "כן. ניתן להתחיל מסט משחק בלבד, סט אימון בלבד או ערכה מלאה לפי צרכי האגודה." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "HOOPERS Teamwear"
+    }
+  ]
+}
+{% endschema %}

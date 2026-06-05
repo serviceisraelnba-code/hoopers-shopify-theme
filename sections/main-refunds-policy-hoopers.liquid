@@ -1,0 +1,679 @@
+{%- liquid
+  assign section_id = 'hoopers-refunds-policy-' | append: section.id
+-%}
+
+<style>
+  #{{ section_id }} {
+    --hrp-black: #050505;
+    --hrp-cream: #f7f2e8;
+    --hrp-ink: #111111;
+    --hrp-muted: rgba(17, 17, 17, 0.64);
+    --hrp-gold: #c8a56a;
+    --hrp-border: rgba(5, 5, 5, 0.1);
+    background: var(--hrp-cream);
+    color: var(--hrp-ink);
+    direction: rtl;
+  }
+
+  #{{ section_id }} * {
+    box-sizing: border-box;
+  }
+
+  #{{ section_id }} .hrp-page-width {
+    width: min(100%, 1240px);
+    margin: 0 auto;
+    padding: 0 18px;
+  }
+
+  #{{ section_id }} .hrp-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--hrp-black);
+    color: #fff;
+    padding: 92px 0 58px;
+  }
+
+  #{{ section_id }} .hrp-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(5, 5, 5, 0), rgba(5, 5, 5, 0.55)),
+      radial-gradient(circle at 16% 16%, rgba(200, 165, 106, 0.18), transparent 34%);
+    pointer-events: none;
+  }
+
+  #{{ section_id }} .hrp-hero__content {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+  }
+
+  #{{ section_id }} .hrp-kicker {
+    margin: 0 0 16px;
+    color: var(--hrp-gold);
+    font-size: 11px;
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  #{{ section_id }} .hrp-title {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(38px, 6vw, 76px);
+    line-height: 0.98;
+    font-weight: 950;
+    letter-spacing: 0.01em;
+  }
+
+  #{{ section_id }} .hrp-subtitle {
+    max-width: 760px;
+    margin: 20px 0 0;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: clamp(16px, 2vw, 22px);
+    line-height: 1.55;
+    font-weight: 650;
+  }
+
+  #{{ section_id }} .hrp-top-cards {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: -28px;
+    position: relative;
+    z-index: 3;
+  }
+
+  #{{ section_id }} .hrp-card {
+    min-height: 185px;
+    background: #fff;
+    border: 1px solid var(--hrp-border);
+    padding: 22px;
+    transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+  }
+
+  #{{ section_id }} .hrp-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(200, 165, 106, 0.58);
+    box-shadow: 0 18px 44px rgba(5, 5, 5, 0.08);
+  }
+
+  #{{ section_id }} .hrp-card__icon {
+    display: block;
+    margin-bottom: 14px;
+    font-size: 25px;
+    line-height: 1;
+  }
+
+  #{{ section_id }} .hrp-card__title {
+    margin: 0;
+    color: var(--hrp-ink);
+    font-size: 22px;
+    line-height: 1.08;
+    font-weight: 950;
+  }
+
+  #{{ section_id }} .hrp-card__text {
+    margin: 14px 0 0;
+    color: var(--hrp-ink);
+    font-size: 17px;
+    line-height: 1.3;
+    font-weight: 850;
+  }
+
+  #{{ section_id }} .hrp-card__small {
+    margin: 8px 0 0;
+    color: var(--hrp-muted);
+    font-size: 14px;
+    line-height: 1.45;
+    font-weight: 650;
+  }
+
+  #{{ section_id }} .hrp-section {
+    padding: 44px 0;
+  }
+
+  #{{ section_id }} .hrp-section__title {
+    margin: 0 0 24px;
+    color: var(--hrp-ink);
+    font-size: clamp(30px, 4vw, 48px);
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: 0.015em;
+  }
+
+  #{{ section_id }} .hrp-timeline {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  #{{ section_id }} .hrp-step {
+    position: relative;
+    min-height: 210px;
+    background: var(--hrp-black);
+    color: #fff;
+    padding: 24px;
+    border: 1px solid rgba(200, 165, 106, 0.22);
+  }
+
+  #{{ section_id }} .hrp-step__number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    margin-bottom: 18px;
+    background: var(--hrp-gold);
+    color: var(--hrp-black);
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 950;
+  }
+
+  #{{ section_id }} .hrp-step__title {
+    margin: 0;
+    color: #fff;
+    font-size: 22px;
+    line-height: 1.1;
+    font-weight: 950;
+  }
+
+  #{{ section_id }} .hrp-step__text {
+    margin: 12px 0 0;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 15px;
+    line-height: 1.5;
+    font-weight: 650;
+  }
+
+  #{{ section_id }} .hrp-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  #{{ section_id }} .hrp-panel {
+    background: #fff;
+    border: 1px solid var(--hrp-border);
+    padding: 26px;
+  }
+
+  #{{ section_id }} .hrp-panel--dark {
+    background: var(--hrp-black);
+    color: #fff;
+    border-color: rgba(200, 165, 106, 0.22);
+  }
+
+  #{{ section_id }} .hrp-panel__title {
+    margin: 0 0 18px;
+    color: inherit;
+    font-size: clamp(26px, 3vw, 40px);
+    line-height: 1;
+    font-weight: 950;
+  }
+
+  #{{ section_id }} .hrp-panel__text {
+    margin: 0;
+    color: var(--hrp-muted);
+    font-size: 16px;
+    line-height: 1.7;
+    font-weight: 650;
+    white-space: pre-line;
+  }
+
+  #{{ section_id }} .hrp-panel--dark .hrp-panel__text {
+    color: rgba(255, 255, 255, 0.76);
+  }
+
+  #{{ section_id }} .hrp-list {
+    display: grid;
+    gap: 13px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  #{{ section_id }} .hrp-list li {
+    color: var(--hrp-muted);
+    font-size: 16px;
+    line-height: 1.5;
+    font-weight: 700;
+  }
+
+  #{{ section_id }} .hrp-panel--dark .hrp-list li {
+    color: rgba(255, 255, 255, 0.78);
+  }
+
+  #{{ section_id }} .hrp-faq {
+    display: grid;
+    gap: 10px;
+  }
+
+  #{{ section_id }} .hrp-faq details,
+  #{{ section_id }} .hrp-legal details {
+    background: #fff;
+    border: 1px solid var(--hrp-border);
+  }
+
+  #{{ section_id }} .hrp-faq summary,
+  #{{ section_id }} .hrp-legal summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 20px 22px;
+    color: var(--hrp-ink);
+    cursor: pointer;
+    list-style: none;
+    font-size: 18px;
+    line-height: 1.25;
+    font-weight: 900;
+  }
+
+  #{{ section_id }} .hrp-faq summary::-webkit-details-marker,
+  #{{ section_id }} .hrp-legal summary::-webkit-details-marker {
+    display: none;
+  }
+
+  #{{ section_id }} .hrp-faq summary::after,
+  #{{ section_id }} .hrp-legal summary::after {
+    content: "+";
+    flex: 0 0 auto;
+    color: var(--hrp-gold);
+    font-size: 28px;
+    line-height: 1;
+    font-weight: 500;
+    transition: transform 0.2s ease;
+  }
+
+  #{{ section_id }} .hrp-faq details[open] summary::after,
+  #{{ section_id }} .hrp-legal details[open] summary::after {
+    transform: rotate(45deg);
+  }
+
+  #{{ section_id }} .hrp-faq__answer,
+  #{{ section_id }} .hrp-legal__content {
+    padding: 0 22px 20px;
+    color: var(--hrp-muted);
+    font-size: 16px;
+    line-height: 1.65;
+    font-weight: 650;
+  }
+
+  #{{ section_id }} .hrp-legal__content.rte {
+    max-width: none;
+  }
+
+  #{{ section_id }} .hrp-legal__content.rte > *:first-child {
+    margin-top: 0;
+  }
+
+  #{{ section_id }} .hrp-promise {
+    background: var(--hrp-black);
+    color: #fff;
+    padding: 42px 0;
+  }
+
+  #{{ section_id }} .hrp-promise__inner {
+    display: grid;
+    grid-template-columns: minmax(180px, 0.4fr) minmax(0, 1fr);
+    gap: 24px;
+    align-items: center;
+  }
+
+  #{{ section_id }} .hrp-promise__title {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(28px, 4vw, 48px);
+    line-height: 1;
+    font-weight: 950;
+  }
+
+  #{{ section_id }} .hrp-promise__items {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  #{{ section_id }} .hrp-promise__item {
+    min-height: 76px;
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 14px;
+    line-height: 1.35;
+    font-weight: 850;
+  }
+
+  @media screen and (max-width: 990px) {
+    #{{ section_id }} .hrp-top-cards,
+    #{{ section_id }} .hrp-timeline,
+    #{{ section_id }} .hrp-promise__items {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    #{{ section_id }} .hrp-info-grid,
+    #{{ section_id }} .hrp-promise__inner {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media screen and (max-width: 640px) {
+    #{{ section_id }} .hrp-page-width {
+      padding: 0 14px;
+    }
+
+    #{{ section_id }} .hrp-hero {
+      padding: 74px 0 48px;
+    }
+
+    #{{ section_id }} .hrp-top-cards {
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: -18px;
+    }
+
+    #{{ section_id }} .hrp-section {
+      padding: 34px 0;
+    }
+
+    #{{ section_id }} .hrp-timeline,
+    #{{ section_id }} .hrp-promise__items {
+      grid-template-columns: 1fr;
+    }
+
+    #{{ section_id }} .hrp-card,
+    #{{ section_id }} .hrp-step,
+    #{{ section_id }} .hrp-panel {
+      padding: 22px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #{{ section_id }} * {
+      transition: none !important;
+    }
+  }
+</style>
+
+<section id="{{ section_id }}">
+  <div class="hrp-hero">
+    <div class="hrp-page-width">
+      <div class="hrp-hero__content">
+        <p class="hrp-kicker">{{ section.settings.hero_kicker }}</p>
+        <h1 class="hrp-title">{{ section.settings.hero_title }}</h1>
+        <div class="hrp-subtitle">{{ section.settings.hero_subtitle }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hrp-page-width">
+    <div class="hrp-top-cards">
+      <div class="hrp-card">
+        <span class="hrp-card__icon">{{ section.settings.card_1_icon }}</span>
+        <h2 class="hrp-card__title">{{ section.settings.card_1_title }}</h2>
+        <p class="hrp-card__text">{{ section.settings.card_1_text }}</p>
+        <p class="hrp-card__small">{{ section.settings.card_1_small }}</p>
+      </div>
+
+      <div class="hrp-card">
+        <span class="hrp-card__icon">{{ section.settings.card_2_icon }}</span>
+        <h2 class="hrp-card__title">{{ section.settings.card_2_title }}</h2>
+        <p class="hrp-card__text">{{ section.settings.card_2_text }}</p>
+        <p class="hrp-card__small">{{ section.settings.card_2_small }}</p>
+      </div>
+
+      <div class="hrp-card">
+        <span class="hrp-card__icon">{{ section.settings.card_3_icon }}</span>
+        <h2 class="hrp-card__title">{{ section.settings.card_3_title }}</h2>
+        <p class="hrp-card__text">{{ section.settings.card_3_text }}</p>
+        <p class="hrp-card__small">{{ section.settings.card_3_small }}</p>
+      </div>
+
+      <div class="hrp-card">
+        <span class="hrp-card__icon">{{ section.settings.card_4_icon }}</span>
+        <h2 class="hrp-card__title">{{ section.settings.card_4_title }}</h2>
+        <p class="hrp-card__text">{{ section.settings.card_4_text }}</p>
+        <p class="hrp-card__small">{{ section.settings.card_4_small }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="hrp-section">
+    <div class="hrp-page-width">
+      <h2 class="hrp-section__title">{{ section.settings.timeline_title }}</h2>
+      <div class="hrp-timeline">
+        <div class="hrp-step">
+          <span class="hrp-step__number">1</span>
+          <h3 class="hrp-step__title">{{ section.settings.step_1_title }}</h3>
+          <p class="hrp-step__text">{{ section.settings.step_1_text }}</p>
+        </div>
+
+        <div class="hrp-step">
+          <span class="hrp-step__number">2</span>
+          <h3 class="hrp-step__title">{{ section.settings.step_2_title }}</h3>
+          <p class="hrp-step__text">{{ section.settings.step_2_text }}</p>
+        </div>
+
+        <div class="hrp-step">
+          <span class="hrp-step__number">3</span>
+          <h3 class="hrp-step__title">{{ section.settings.step_3_title }}</h3>
+          <p class="hrp-step__text">{{ section.settings.step_3_text }}</p>
+        </div>
+
+        <div class="hrp-step">
+          <span class="hrp-step__number">4</span>
+          <h3 class="hrp-step__title">{{ section.settings.step_4_title }}</h3>
+          <p class="hrp-step__text">{{ section.settings.step_4_text }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hrp-section">
+    <div class="hrp-page-width">
+      <div class="hrp-info-grid">
+        <div class="hrp-panel hrp-panel--dark">
+          <h2 class="hrp-panel__title">{{ section.settings.defects_title }}</h2>
+          <div class="hrp-panel__text">{{ section.settings.defects_text }}</div>
+        </div>
+
+        <div class="hrp-panel">
+          <h2 class="hrp-panel__title">{{ section.settings.size_exchange_title }}</h2>
+          <div class="hrp-panel__text">{{ section.settings.size_exchange_text }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hrp-section">
+    <div class="hrp-page-width">
+      <div class="hrp-info-grid">
+        <div class="hrp-panel">
+          <h2 class="hrp-panel__title">{{ section.settings.conditions_title }}</h2>
+          <ul class="hrp-list">
+            <li>{{ section.settings.condition_1 }}</li>
+            <li>{{ section.settings.condition_2 }}</li>
+            <li>{{ section.settings.condition_3 }}</li>
+            <li>{{ section.settings.condition_4 }}</li>
+            <li>{{ section.settings.condition_5 }}</li>
+          </ul>
+        </div>
+
+        <div class="hrp-panel">
+          <h2 class="hrp-panel__title">{{ section.settings.refunds_title }}</h2>
+          <ul class="hrp-list">
+            <li>{{ section.settings.refund_1 }}</li>
+            <li>{{ section.settings.refund_2 }}</li>
+            <li>{{ section.settings.refund_3 }}</li>
+            <li>{{ section.settings.refund_4 }}</li>
+            <li>{{ section.settings.refund_5 }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hrp-section">
+    <div class="hrp-page-width">
+      <h2 class="hrp-section__title">{{ section.settings.faq_title }}</h2>
+      <div class="hrp-faq">
+        <details>
+          <summary>{{ section.settings.faq_1_question }}</summary>
+          <div class="hrp-faq__answer">{{ section.settings.faq_1_answer }}</div>
+        </details>
+
+        <details>
+          <summary>{{ section.settings.faq_2_question }}</summary>
+          <div class="hrp-faq__answer">{{ section.settings.faq_2_answer }}</div>
+        </details>
+
+        <details>
+          <summary>{{ section.settings.faq_3_question }}</summary>
+          <div class="hrp-faq__answer">{{ section.settings.faq_3_answer }}</div>
+        </details>
+
+        <details>
+          <summary>{{ section.settings.faq_4_question }}</summary>
+          <div class="hrp-faq__answer">{{ section.settings.faq_4_answer }}</div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <div class="hrp-promise">
+    <div class="hrp-page-width">
+      <div class="hrp-promise__inner">
+        <h2 class="hrp-promise__title">{{ section.settings.promise_title }}</h2>
+        <div class="hrp-promise__items">
+          <div class="hrp-promise__item">{{ section.settings.promise_item_1 }}</div>
+          <div class="hrp-promise__item">{{ section.settings.promise_item_2 }}</div>
+          <div class="hrp-promise__item">{{ section.settings.promise_item_3 }}</div>
+          <div class="hrp-promise__item">{{ section.settings.promise_item_4 }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hrp-section">
+  <div class="hrp-page-width">
+    <div class="hrp-legal">
+      <details>
+        <summary>{{ section.settings.legal_title }}</summary>
+        <div class="hrp-legal__content rte">
+          <p>אם קיבלת מוצר פגום(מוצר שהגיע פגום ולא מוצר שנפגע עקב השימוש בו) – ניתן להחליף אותו למוצר תקין או להחזיר אותו ולבטל את הקנייה בכמה צעדים פשוטים. בחלק מהמקרים נפתור לך את הבעיה, גם ללא הצורך בהחזרת המוצר. על מנת שנוכל לטפל בנושא ולספק פתרון, נבקש ממך לצרף צילומים שממחישים את הפגמים במוצר עם תיאור של התקלה. אם סיבת הביטול היא ללא פגם– יגבו דמי ביטול בשיעור 5% משווי העסקה או 100 ש”ח לפי הנמוך מביניהם. כמו כן בעסקאות בכרטיס האשראי חלה עמלת ביטול נוספת מצד חברת האשראי. החזרת המוצר מתאפשרת בטווח של 14 יום מיום קבלת המוצר בכפוף להוראות החוק להגנת הצרכן. כפי שמצוין בחוק המלא בקישור המצורף בכדי למנוע אי נעימות, נבקש לוודא כי המוצר לא נפגע כתוצאה משימוש וכי לא בוצע בו שימוש מסוג כלשהו(מובהר כי חיבור לחשמל, גז ומים ייחשב לשימוש) החזרת המוצר באריזתו המקורית, מצביעה על אי עשיית שימוש במוצר (בכפוף לבדיקתנו) בעת החזרת המוצר אנא וודאו שהמוצר מוחזר בשלמותו עם כל האביזרים אשר הגיעו עם המוצר.</p>
+
+          <p>הזיכוי יתבצע לאחר בדיקת המוצר, בטווח שלא יעלה על 7 ימי עסקים מיום שנאסף על ידינו. ההחזרה מתאפשרת בדואר רשום בלבד עם מספר מעקב, דרך סניף של דואר ישראל. ניתן לבטל עסקה מכל סיבה בתוך 14 יום ממועד קבלת המוצר, במידה שתרצו לבטל מוצר לאחר שליחתו, עליכם להמתין לקבלתו ולשלוח אותו בחזרה למחסני הספק בסין או ישירות אל משרדינו בישראל, בתיאום עם שירות הלקוחות שלנו בוואטספ או במייל(חובה ליצור עמנו קשר בכדי לתאם את ההחזרה). עלויות משלוח המוצרים למרכז המשלוחים של האתר יחולו על הרוכש. עבור מוצרים אלה שיוחזרו כאמור, יינתן זיכוי כספי מלא, בניכוי עלויות המשלוח. אם תהיינה לעסק עלויות נוספות, כדוגמת דמי ביטול לחברת האשראי, ינוכו עלויות אלה מסכום הזיכוי אשר יעמוד לרשות הלקוח.</p>
+
+          <p>הזיכוי יינתן לכרטיס האשראי בו בוצע התשלום על הרכישה. למרות האמור לעיל, מוצרים לגביהם יצוין באתר שאינם ניתנים להחזרה, לא תתאפשר החזרה כאמור. מוצרים אלה כוללים, למשל, מוצרים בהתאמה אישית ומוצרים במשלוחים מיוחדים. החזר מלא ישלח לאחר שהלקוח ישלח את המוצר חזרה למפעל בסין. בכל מקרה בו יש אי התאמה בין מדיניות האתר לחוק הגנת הצרכן, יגברו הוראות החוק על מדיניות האתר.</p>
+
+          <p>מדיניות החזרת מוצרים משתנה ממוצר למוצר, בהתאם למגוון השותפים והספקים השונים. על אחריות מבצע ההזמנה להודיע מיידית, לכל היותר עד 5 ימי עסקים, על קבלת מוצר פגום/מוצר שאינו תואם להזמנה. החברה תנהל עבור המשתמש את ההתקשרות מול השותפים, ותפעל בהתאם למדיניותם, אך היא אינה האחראית בדבר זיכוי כספי או פיצוי הרוכש. במקרה של החזרת מוצר, על אחריות מזמין המוצר לשלוח את המוצר בחזרה אל כתובת היעד ממנה הוא נשלח, ולשאת בעלויות השילוח או כל עלות נוספת הנדרשת להחזרת המוצר.</p>
+
+          <p>בעסקה בכרטיס אשראי(להבדיל מעסקת "פייפאל") – בנוסף לדמי הביטול הקבועים בחוק, תגבה 'עמלת ביטול עסקה' נוספת אשר נגבת מחברת האשראי 'ישראכארט'. מדיניות ביטול הזמנת מוצר חוק הגנת הצרכן מאפשר ללקוח של עסקת מכר מרחוק לבטל את העסקה בתוך 14 ימים מיום קבלת המוצר, או ממועד קבלת פרטי העסקה – לפי המאוחר מביניהם, ובעלות דמי ביטול בגובה 5% מהעסקה או 100 ש"ח – לפי הנמוך מביניהם.</p>
+
+          <p>הגנה על קנייתכם ממועד ההזמנה ועד שליחת המוצר: במידה ונשלחה בקשה לביטול הזמנה, והמוצר טרם נשלח, החברה תבצע זיכוי כספי הכולל דמי ביטול עסקה. במידה והמוצר כבר נשלח, יצטרך לחכות הלקוח עד להגעת המוצר, ולהחזירו בהתהם למדיניות החזרת מוצרים. פעמים רבות המוצר נשלח, אך מספר מעקבו טרם עודכן במערכת. על כן, אין לקחת את העובדה שטרם עודכן מספר מעקב כראייה שהמוצר טרם נשלח</p>
+        </div>
+      </details>
+    </div>
+  </div>
+</div>
+</section>
+
+{% schema %}
+{
+  "name": "HOOPERS Refunds Policy",
+  "settings": [
+    { "type": "header", "content": "Hero" },
+    { "type": "text", "id": "hero_kicker", "label": "Hero small label", "default": "POLICY" },
+    { "type": "text", "id": "hero_title", "label": "Hero title", "default": "מדיניות החזרות וזיכויים | HOOPERS" },
+    { "type": "textarea", "id": "hero_subtitle", "label": "Hero subtitle", "default": "כל מה שצריך לדעת על החזרות, החלפות מידה וזיכויים כספיים." },
+
+    { "type": "header", "content": "Top info cards" },
+    { "type": "text", "id": "card_1_icon", "label": "Card 1 icon", "default": "⏱️" },
+    { "type": "text", "id": "card_1_title", "label": "Card 1 title", "default": "החזרה תוך 14 יום" },
+    { "type": "text", "id": "card_1_text", "label": "Card 1 text", "default": "בכפוף לחוק הגנת הצרכן" },
+    { "type": "text", "id": "card_1_small", "label": "Card 1 small text", "default": "✓ תנאי החזרה ברורים" },
+
+    { "type": "text", "id": "card_2_icon", "label": "Card 2 icon", "default": "🔄" },
+    { "type": "text", "id": "card_2_title", "label": "Card 2 title", "default": "החלפת מידה" },
+    { "type": "text", "id": "card_2_text", "label": "Card 2 text", "default": "אפשרית בתיאום עם שירות הלקוחות" },
+    { "type": "text", "id": "card_2_small", "label": "Card 2 small text", "default": "✓ בכפוף לזמינות מלאי" },
+
+    { "type": "text", "id": "card_3_icon", "label": "Card 3 icon", "default": "💳" },
+    { "type": "text", "id": "card_3_title", "label": "Card 3 title", "default": "זיכוי כספי" },
+    { "type": "text", "id": "card_3_text", "label": "Card 3 text", "default": "לפי תנאי החוק והמדיניות" },
+    { "type": "text", "id": "card_3_small", "label": "Card 3 small text", "default": "✓ לאחר בדיקת המוצר" },
+
+    { "type": "text", "id": "card_4_icon", "label": "Card 4 icon", "default": "📦" },
+    { "type": "text", "id": "card_4_title", "label": "Card 4 title", "default": "מוצר פגום" },
+    { "type": "text", "id": "card_4_text", "label": "Card 4 text", "default": "טיפול מהיר מול שירות הלקוחות" },
+    { "type": "text", "id": "card_4_small", "label": "Card 4 small text", "default": "✓ צרו קשר תוך 5 ימי עסקים" },
+
+    { "type": "header", "content": "How it works" },
+    { "type": "text", "id": "timeline_title", "label": "Timeline title", "default": "איך מחזירים מוצר?" },
+    { "type": "text", "id": "step_1_title", "label": "Step 1 title", "default": "פונים אלינו" },
+    { "type": "textarea", "id": "step_1_text", "label": "Step 1 text", "default": "יוצרים קשר דרך עמוד צור קשר או במייל." },
+    { "type": "text", "id": "step_2_title", "label": "Step 2 title", "default": "בדיקת הבקשה" },
+    { "type": "textarea", "id": "step_2_text", "label": "Step 2 text", "default": "נציג בודק את פרטי ההזמנה והמוצר." },
+    { "type": "text", "id": "step_3_title", "label": "Step 3 title", "default": "שליחת המוצר" },
+    { "type": "textarea", "id": "step_3_text", "label": "Step 3 text", "default": "הלקוח שולח את המוצר בהתאם להנחיות." },
+    { "type": "text", "id": "step_4_title", "label": "Step 4 title", "default": "זיכוי או החלפה" },
+    { "type": "textarea", "id": "step_4_text", "label": "Step 4 text", "default": "לאחר בדיקה מאשרים זיכוי או החלפת מוצר." },
+
+    { "type": "header", "content": "Product defects" },
+    { "type": "text", "id": "defects_title", "label": "Defects title", "default": "מוצר פגום או שגוי" },
+    { "type": "textarea", "id": "defects_text", "label": "Defects text", "default": "אם קיבלתם מוצר פגום או מוצר שאינו תואם להזמנה,\nאנא צרו קשר תוך 5 ימי עסקים ממועד קבלת המוצר.\n\nיש לצרף:\n• תמונות ברורות\n• מספר הזמנה\n• תיאור התקלה\n\nבמקרים רבים נוכל לספק פתרון גם ללא החזרת המוצר." },
+
+    { "type": "header", "content": "Returns conditions" },
+    { "type": "text", "id": "conditions_title", "label": "Conditions title", "default": "תנאי החזרה" },
+    { "type": "text", "id": "condition_1", "label": "Condition 1", "default": "✓ החזרה אפשרית עד 14 יום ממועד קבלת המוצר." },
+    { "type": "text", "id": "condition_2", "label": "Condition 2", "default": "✓ המוצר חייב להיות במצב חדש וללא שימוש." },
+    { "type": "text", "id": "condition_3", "label": "Condition 3", "default": "✓ יש להחזיר באריזה המקורית ככל האפשר." },
+    { "type": "text", "id": "condition_4", "label": "Condition 4", "default": "✓ יש להחזיר את כל האביזרים שנשלחו עם המוצר." },
+    { "type": "text", "id": "condition_5", "label": "Condition 5", "default": "✓ מוצרים בהתאמה אישית אינם ניתנים להחזרה." },
+
+    { "type": "header", "content": "Refund policy" },
+    { "type": "text", "id": "refunds_title", "label": "Refunds title", "default": "זיכויים כספיים" },
+    { "type": "text", "id": "refund_1", "label": "Refund item 1", "default": "✓ הזיכוי מתבצע לאחר בדיקת המוצר." },
+    { "type": "text", "id": "refund_2", "label": "Refund item 2", "default": "✓ הזיכוי יוחזר לאמצעי התשלום המקורי." },
+    { "type": "text", "id": "refund_3", "label": "Refund item 3", "default": "✓ עלויות משלוח אינן מוחזרות." },
+    { "type": "text", "id": "refund_4", "label": "Refund item 4", "default": "✓ במקרה של ביטול עסקה יחולו דמי ביטול בהתאם לחוק." },
+    { "type": "text", "id": "refund_5", "label": "Refund item 5", "default": "✓ 5% מערך העסקה או 100₪ – הנמוך מביניהם." },
+
+    { "type": "header", "content": "Size exchanges" },
+    { "type": "text", "id": "size_exchange_title", "label": "Size exchange title", "default": "החלפות מידה" },
+    { "type": "textarea", "id": "size_exchange_text", "label": "Size exchange text", "default": "במידה והמידה שהוזמנה אינה מתאימה,\nניתן ליצור קשר עם שירות הלקוחות לצורך בדיקת אפשרות החלפה." },
+
+    { "type": "header", "content": "FAQ" },
+    { "type": "text", "id": "faq_title", "label": "FAQ title", "default": "שאלות נפוצות" },
+    { "type": "text", "id": "faq_1_question", "label": "FAQ 1 question", "default": "תוך כמה זמן אקבל זיכוי?" },
+    { "type": "textarea", "id": "faq_1_answer", "label": "FAQ 1 answer", "default": "עד 7 ימי עסקים לאחר אישור ההחזרה." },
+    { "type": "text", "id": "faq_2_question", "label": "FAQ 2 question", "default": "מי משלם על משלוח ההחזרה?" },
+    { "type": "textarea", "id": "faq_2_answer", "label": "FAQ 2 answer", "default": "עלות משלוח ההחזרה חלה על הלקוח." },
+    { "type": "text", "id": "faq_3_question", "label": "FAQ 3 question", "default": "האם ניתן להחזיר מוצר מותאם אישית?" },
+    { "type": "textarea", "id": "faq_3_answer", "label": "FAQ 3 answer", "default": "לא. מוצרים בהתאמה אישית אינם ניתנים להחזרה." },
+    { "type": "text", "id": "faq_4_question", "label": "FAQ 4 question", "default": "מה עושים אם המוצר הגיע פגום?" },
+    { "type": "textarea", "id": "faq_4_answer", "label": "FAQ 4 answer", "default": "פונים אלינו תוך 5 ימי עסקים ומצרפים תמונות." },
+
+    { "type": "header", "content": "HOOPERS Promise" },
+    { "type": "text", "id": "promise_title", "label": "Promise title", "default": "למה לקוחות בוחרים HOOPERS?" },
+    { "type": "text", "id": "promise_item_1", "label": "Promise item 1", "default": "✓ שירות אישי ומהיר" },
+    { "type": "text", "id": "promise_item_2", "label": "Promise item 2", "default": "✓ החלפות מידה בקלות" },
+    { "type": "text", "id": "promise_item_3", "label": "Promise item 3", "default": "✓ אלפי לקוחות מרוצים" },
+    { "type": "text", "id": "promise_item_4", "label": "Promise item 4", "default": "✓ ליווי מלא עד לפתרון" },
+
+    { "type": "header", "content": "Legal text" },
+    { "type": "text", "id": "legal_title", "label": "Legal accordion title", "default": "תנאים משפטיים מלאים" }
+  ],
+  "presets": [
+    {
+      "name": "HOOPERS Refunds Policy"
+    }
+  ]
+}
+{% endschema %}
