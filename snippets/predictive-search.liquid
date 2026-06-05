@@ -53,20 +53,39 @@
 
 <style>
   .hh-native-search {
-    position: fixed;
-    inset: 0;
-    z-index: 999999;
-    display: block;
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    z-index: 2147483000 !important;
+    display: block !important;
+    width: 100vw !important;
+    max-width: none !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    background: #050505 !important;
     opacity: 0;
     pointer-events: none;
     color: #f7f3ea;
     direction: rtl;
+    transform: none !important;
     transition: opacity 220ms ease;
   }
 
   .hh-native-search.is-active {
     opacity: 1;
     pointer-events: auto;
+  }
+
+  html.hh-native-search-lock,
+  body.hh-native-search-lock,
+  body.predictive-overflow-hidden {
+    overflow: hidden !important;
+    height: 100% !important;
+    touch-action: none;
   }
 
   .hh-native-search-container {
@@ -110,31 +129,40 @@
   .hh-native-search .predictive__screen {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.66);
+    z-index: 1;
+    background: #050505;
     backdrop-filter: blur(8px);
   }
 
   .hh-native-search form {
-    position: absolute;
-    inset: 0;
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    z-index: 2;
     display: flex;
     flex-direction: column;
-    width: 100vw;
-    height: 100vh;
-    height: 100dvh;
-    margin: 0;
+    width: 100vw !important;
+    max-width: none !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    margin: 0 !important;
     padding: clamp(22px, 4vw, 48px);
     overflow-y: auto;
+    overflow-x: hidden;
     background:
-      radial-gradient(circle at 20% 0%, rgba(200, 165, 106, 0.16), transparent 28%),
+      radial-gradient(circle at 18% 0%, rgba(200, 165, 106, 0.14), transparent 30%),
       linear-gradient(180deg, #070707 0%, #12100d 100%);
     border: 0;
     box-shadow: none;
+    overscroll-behavior: contain;
   }
 
   .hh-native-search__inner {
     width: min(1180px, 100%);
     margin: 0 auto;
+    padding-top: 10px;
   }
 
   .hh-native-search__top {
@@ -164,19 +192,23 @@
   }
 
   .hh-native-search .btn--close-search {
-    position: static;
+    position: fixed !important;
+    top: clamp(16px, 3vw, 30px);
+    right: clamp(16px, 3vw, 34px);
+    z-index: 5;
     flex: 0 0 auto;
     display: grid;
-    width: 42px;
-    height: 42px;
-    min-width: 42px;
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
     padding: 0;
     place-items: center;
-    border: 1px solid rgba(200, 165, 106, 0.36);
+    border: 1px solid rgba(200, 165, 106, 0.55);
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(5, 5, 5, 0.82);
     color: #fff;
     cursor: pointer;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
   }
 
   .hh-native-search .btn--close-search svg,
@@ -191,7 +223,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    margin: 0 0 28px;
+    margin: 0 0 30px;
     padding: 10px 10px 10px 18px;
     border: 1px solid rgba(200, 165, 106, 0.34);
     border-radius: 999px;
@@ -204,14 +236,19 @@
     padding: 0 14px;
     border: 0;
     background: transparent;
-    color: #fff;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+    caret-color: #fff !important;
     font-size: clamp(18px, 2vw, 24px);
     font-weight: 700;
+    line-height: 1.2;
+    text-align: right;
     outline: none;
   }
 
   .hh-native-search .search__input::placeholder {
-    color: rgba(255, 255, 255, 0.52);
+    color: rgba(255, 255, 255, 0.55) !important;
+    -webkit-text-fill-color: rgba(255, 255, 255, 0.55) !important;
   }
 
   .hh-native-search .btn--search {
@@ -237,20 +274,27 @@
 
   .hh-search-empty {
     display: grid;
-    gap: clamp(22px, 3vw, 34px);
+    gap: clamp(28px, 4vw, 46px);
   }
 
   .hh-search-section {
     display: grid;
-    gap: 13px;
+    gap: 16px;
+    padding-top: clamp(20px, 3vw, 30px);
+    border-top: 1px solid rgba(255, 255, 255, 0.09);
+  }
+
+  .hh-search-section:first-child {
+    padding-top: 0;
+    border-top: 0;
   }
 
   .hh-search-section__title {
     margin: 0;
-    color: rgba(255, 255, 255, 0.92);
-    font-size: 12px;
+    color: #fff;
+    font-size: 13px;
     font-weight: 900;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
   }
 
@@ -291,12 +335,9 @@
 
   .hh-search-rail {
     display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(170px, 1fr);
-    gap: 14px;
-    overflow-x: auto;
-    overscroll-behavior-inline: contain;
-    scroll-snap-type: x mandatory;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(12px, 1.8vw, 18px);
+    overflow: visible;
     scrollbar-width: none;
   }
 
@@ -308,15 +349,14 @@
     min-width: 0;
     color: #fff;
     text-decoration: none;
-    scroll-snap-align: start;
   }
 
   .hh-search-product__media {
     display: block;
     aspect-ratio: 3 / 4;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.11);
+    border-radius: 8px;
     background: #1a1a1a;
   }
 
@@ -334,7 +374,8 @@
 
   .hh-search-product__title {
     display: -webkit-box;
-    margin: 10px 0 4px;
+    min-height: 36px;
+    margin: 10px 0 5px;
     overflow: hidden;
     color: #fff;
     font-size: 13px;
@@ -359,9 +400,13 @@
     display: none;
   }
 
+  .hh-native-search.hh-search-has-query .hh-search-empty {
+    display: none !important;
+  }
+
   .hh-native-search .predictive-search-results {
     display: grid;
-    gap: 18px;
+    gap: 24px;
     color: #fff;
   }
 
@@ -376,7 +421,8 @@
 
   .hh-native-search .predictive-search-results ul {
     display: grid;
-    gap: 10px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(12px, 1.8vw, 18px);
     margin: 0;
     padding: 0;
     list-style: none;
@@ -409,8 +455,12 @@
       width: 100vw;
       height: 100vh;
       height: 100dvh;
-      padding: 22px 16px 26px;
+      padding: 74px 16px 26px;
       border-inline-start: 0;
+    }
+
+    .hh-native-search__inner {
+      padding-top: 0;
     }
 
     .hh-native-search__top {
@@ -427,6 +477,24 @@
       font-size: 16px;
     }
 
+    .hh-native-search .search__input-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 4;
+      margin-bottom: 22px;
+      padding: 8px;
+      background: rgba(14, 14, 14, 0.96);
+      backdrop-filter: blur(12px);
+    }
+
+    .hh-native-search .btn--close-search {
+      top: 16px;
+      right: 16px;
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+    }
+
     .hh-native-search .btn--search {
       width: 46px;
       height: 46px;
@@ -434,7 +502,18 @@
     }
 
     .hh-search-rail {
-      grid-auto-columns: 42vw;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .hh-native-search .predictive-search-results ul {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .hh-search-section {
+      gap: 14px;
+      padding-top: 24px;
     }
   }
 </style>
@@ -619,6 +698,18 @@
           if (page) page.classList.add('hh-native-search-page');
         });
 
+        function setSearchLock(isLocked) {
+          document.documentElement.classList.toggle('hh-native-search-lock', isLocked);
+          document.body.classList.toggle('hh-native-search-lock', isLocked);
+        }
+
+        function syncQueryState(root) {
+          if (!root) return;
+          var input = root.querySelector('input[type="search"]');
+          var hasQuery = !!(input && input.value.trim());
+          root.classList.toggle('hh-search-has-query', hasQuery);
+        }
+
         function readRecent() {
           try {
             return JSON.parse(window.localStorage.getItem(key) || '[]');
@@ -661,13 +752,28 @@
         }
 
         document.addEventListener('predictive-search:open', function () {
-          window.setTimeout(renderRecent, 60);
+          setSearchLock(true);
+          window.setTimeout(function () {
+            document.querySelectorAll('.hh-native-search').forEach(syncQueryState);
+            renderRecent();
+          }, 60);
+        });
+
+        document.addEventListener('predictive-search:close', function () {
+          setSearchLock(false);
+        });
+
+        document.addEventListener('predictive-search:close-all', function () {
+          setSearchLock(false);
         });
 
         document.addEventListener('input', function (event) {
           if (!event.target.matches('.hh-native-search input[type="search"]')) return;
           var root = event.target.closest('.hh-native-search');
           var results = root && root.querySelector('.search__results');
+
+          syncQueryState(root);
+
           if (results && !event.target.value.trim()) {
             results.style.display = 'none';
             results.innerHTML = '';
