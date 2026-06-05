@@ -177,10 +177,14 @@
   .hh-native-search__inner {
     position: relative;
     z-index: 3;
-    display: block !important;
+    display: flex !important;
+    flex-direction: column;
     width: min(1180px, 100%);
+    height: 100%;
+    min-height: 0;
     margin: 0 auto;
     padding-top: 10px;
+    overflow: hidden;
   }
 
   .hh-native-search__top {
@@ -188,6 +192,7 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: 18px;
+    flex: 0 0 auto;
     margin-bottom: 22px;
   }
 
@@ -241,6 +246,7 @@
     display: flex !important;
     align-items: center;
     gap: 10px;
+    flex: 0 0 auto;
     margin: 0 0 30px;
     padding: 10px 10px 10px 18px;
     border: 1px solid rgba(200, 165, 106, 0.34);
@@ -293,6 +299,12 @@
   .hh-search-empty {
     display: grid !important;
     gap: clamp(28px, 4vw, 46px);
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 2px 44px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(200, 165, 106, 0.55) rgba(255, 255, 255, 0.08);
   }
 
   .hh-search-section {
@@ -411,7 +423,21 @@
 
   .hh-native-search .search__results {
     display: none;
-    padding: 6px 0 24px;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding: 6px 2px 44px !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #fff !important;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(200, 165, 106, 0.55) rgba(255, 255, 255, 0.08);
+  }
+
+  .hh-native-search .search__results * {
+    color: inherit;
   }
 
   .hh-native-search .search__results[style*="block"] ~ .hh-search-empty {
@@ -431,6 +457,8 @@
   .hh-native-search-results {
     display: grid;
     gap: 28px;
+    background: transparent !important;
+    color: #fff;
   }
 
   .hh-native-search-results__grid {
@@ -504,8 +532,9 @@
       width: 100vw;
       height: 100vh;
       height: 100dvh;
-      padding: 74px 16px 26px;
+      padding: 72px 16px 18px;
       border-inline-start: 0;
+      overflow: hidden;
     }
 
     .hh-native-search__inner {
@@ -527,13 +556,17 @@
     }
 
     .hh-native-search .search__input-wrap {
-      position: sticky;
-      top: 0;
+      position: relative;
       z-index: 4;
       margin-bottom: 22px;
       padding: 8px;
       background: rgba(14, 14, 14, 0.96);
       backdrop-filter: blur(12px);
+    }
+
+    .hh-native-search .search__results,
+    .hh-search-empty {
+      padding-bottom: 28px !important;
     }
 
     .hh-native-search .btn--close-search {
@@ -780,6 +813,28 @@
           });
         }
 
+        function resetOpenState(root) {
+          if (!root) return;
+
+          root.classList.remove('hh-search-has-query');
+
+          var input = root.querySelector('input[type="search"]');
+          var results = root.querySelector('.search__results');
+          var emptyState = root.querySelector('[data-hh-search-empty]');
+
+          if (input) input.value = '';
+
+          if (results) {
+            results.style.display = 'none';
+            results.innerHTML = '';
+          }
+
+          if (emptyState) {
+            emptyState.style.display = '';
+            emptyState.scrollTop = 0;
+          }
+        }
+
         function closeNativeSearch() {
           allowClose = true;
           resetNativeSearchRoots();
@@ -923,6 +978,7 @@
           html += '</div>';
           results.innerHTML = html;
           results.style.display = 'block';
+          results.style.background = 'transparent';
           root.classList.add('hh-search-has-query');
           setSearchLock(true);
           activateVisibleSearchRoot();
@@ -942,6 +998,7 @@
           searchAbortController = new AbortController();
           results.innerHTML = '<div class="hh-native-search-results__loading">מחפש...</div>';
           results.style.display = 'block';
+          results.style.background = 'transparent';
 
           var params = new URLSearchParams();
           params.set('q', searchTerm);
@@ -965,6 +1022,7 @@
               if (error.name === 'AbortError') return;
               results.innerHTML = '<div class="hh-native-search-results__empty">החיפוש לא נטען כרגע. נסו שוב בעוד רגע.</div>';
               results.style.display = 'block';
+              results.style.background = 'transparent';
               root.classList.add('hh-search-has-query');
               setSearchLock(true);
               activateVisibleSearchRoot();
@@ -1016,6 +1074,8 @@
           setSearchLock(true);
           window.setTimeout(function () {
             activateVisibleSearchRoot();
+            var activeRoot = document.querySelector('.hh-native-search.is-active:not(.hh-native-search--inactive-duplicate)');
+            resetOpenState(activeRoot);
             document.querySelectorAll('.hh-native-search').forEach(syncQueryState);
             renderRecent();
           }, 60);
@@ -1092,6 +1152,7 @@
             if (searchAbortController) searchAbortController.abort();
             results.style.display = 'none';
             results.innerHTML = '';
+            results.style.background = 'transparent';
             setSearchLock(true);
             activateVisibleSearchRoot();
             return;
