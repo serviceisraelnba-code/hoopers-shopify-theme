@@ -782,6 +782,17 @@
         var key = 'hoopers_recently_viewed_products';
         var currentProductScript = document.querySelector('[data-hh-current-product]');
         var allowClose = false;
+        var debugPrefix = '[HOOPERS search]';
+
+        function debugLog(label, payload) {
+          try {
+            if (payload !== undefined) {
+              console.log(debugPrefix, label, payload);
+            } else {
+              console.log(debugPrefix, label);
+            }
+          } catch (error) {}
+        }
 
         document.querySelectorAll('.hh-native-search').forEach(function (root) {
           var container = root.closest('.site-header__search-container');
@@ -1047,6 +1058,11 @@
             });
           });
 
+          debugLog('parsed product count', {
+            productLinks: links.length,
+            products: products.length
+          });
+
           return products.slice(0, 8);
         }
 
@@ -1074,6 +1090,12 @@
 
         function renderFallbackProducts(root, searchTerm, products) {
           var results = root && root.querySelector('.search__results');
+          debugLog('render fallback called', {
+            query: searchTerm,
+            products: products.length,
+            resultsFound: !!results
+          });
+
           if (!results) return;
 
           var html = '<div class="hh-native-search-results">';
@@ -1112,13 +1134,30 @@
 
         function runSearchPageFallback(root, searchTerm, requestId, signal) {
           var url = '{{ routes.search_url }}?type=product&q=' + encodeURIComponent(searchTerm);
+          debugLog('fetch search page', {
+            query: searchTerm,
+            url: url,
+            requestId: requestId,
+            resultsFound: !!(root && root.querySelector('.search__results'))
+          });
 
           return fetch(url, { signal: signal })
             .then(function (response) {
+              debugLog('search page response', {
+                query: searchTerm,
+                status: response.status,
+                ok: response.ok
+              });
               if (!response.ok) throw new Error(response.status);
               return response.text();
             })
             .then(function (html) {
+              debugLog('search page html received', {
+                query: searchTerm,
+                length: html.length,
+                requestId: requestId,
+                activeSearchRequestId: activeSearchRequestId
+              });
               if (requestId !== activeSearchRequestId) return;
               renderFallbackProducts(root, searchTerm, extractProductsFromSearchHtml(html));
             });
@@ -1133,14 +1172,33 @@
           params.set('resources[options][unavailable_products]', 'last');
           params.set('resources[options][fields]', 'title,product_type,variants.title,vendor');
 
-          return fetch('{{ routes.predictive_search_url }}.json?' + params.toString(), {
+          var url = '{{ routes.predictive_search_url }}.json?' + params.toString();
+          debugLog('fetch predictive json', {
+            query: searchTerm,
+            url: url,
+            requestId: requestId
+          });
+
+          return fetch(url, {
             signal: signal
           })
             .then(function (response) {
+              debugLog('predictive json response', {
+                query: searchTerm,
+                status: response.status,
+                ok: response.ok
+              });
               if (!response.ok) throw new Error(response.status);
               return response.json();
             })
             .then(function (data) {
+              var resources = data && data.resources && data.resources.results ? data.resources.results : {};
+              debugLog('predictive json parsed', {
+                query: searchTerm,
+                products: resources.products ? resources.products.length : 0,
+                collections: resources.collections ? resources.collections.length : 0,
+                queries: resources.queries ? resources.queries.length : 0
+              });
               if (requestId !== activeSearchRequestId) return;
               renderSearchResults(root, searchTerm, data);
             });
@@ -1148,6 +1206,11 @@
 
         function renderSearchResults(root, searchTerm, data) {
           var results = root && root.querySelector('.search__results');
+          debugLog('render json called', {
+            query: searchTerm,
+            resultsFound: !!results
+          });
+
           if (!results) return;
 
           var resources = data && data.resources && data.resources.results ? data.resources.results : {};
@@ -1155,6 +1218,13 @@
           var collections = resources.collections || [];
           var queries = resources.queries || [];
           var html = '<div class="hh-native-search-results">';
+
+          debugLog('render json counts', {
+            query: searchTerm,
+            products: products.length,
+            collections: collections.length,
+            queries: queries.length
+          });
 
           if (products.length) {
             html += '<section class="hh-search-section"><h3 class="hh-search-section__title">Products</h3><ul class="hh-native-search-results__grid">';
@@ -1201,6 +1271,13 @@
           var results = root && root.querySelector('.search__results');
           var searchTerm = input ? input.value.trim() : '';
 
+          debugLog('input event fired', {
+            query: searchTerm,
+            rootFound: !!root,
+            resultsFound: !!results,
+            activeRoot: !!(root && root.classList.contains('is-active'))
+          });
+
           syncQueryState(root);
 
           if (results && !searchTerm) {
@@ -1218,6 +1295,9 @@
 
           window.clearTimeout(searchTimer);
           searchTimer = window.setTimeout(function () {
+            debugLog('debounced search fired', {
+              query: searchTerm
+            });
             runNativePredictiveSearch(root, searchTerm);
           }, 180);
         }
@@ -1226,6 +1306,10 @@
           document.querySelectorAll('.hh-native-search input[type="search"]').forEach(function (input) {
             if (input.dataset.hhNativeSearchBound === 'true') return;
             input.dataset.hhNativeSearchBound = 'true';
+            debugLog('bound input', {
+              id: input.id,
+              value: input.value || ''
+            });
 
             input.addEventListener('input', function (event) {
               event.stopPropagation();
@@ -1236,11 +1320,24 @@
             input.addEventListener('keyup', function () {
               handleNativeSearchInput(input);
             });
+
+            input.addEventListener('compositionend', function () {
+              handleNativeSearchInput(input);
+            });
+
+            input.addEventListener('change', function () {
+              handleNativeSearchInput(input);
+            });
           });
         }
 
         function runNativePredictiveSearch(root, searchTerm) {
           var results = root && root.querySelector('.search__results');
+          debugLog('run search called', {
+            query: searchTerm,
+            resultsFound: !!results
+          });
+
           if (!results) return;
 
           if (searchAbortController) {
@@ -1388,8 +1485,27 @@
           handleNativeSearchInput(event.target);
         }, true);
 
+        document.addEventListener('keyup', function (event) {
+          if (!event.target.matches('.hh-native-search input[type="search"]')) return;
+          handleNativeSearchInput(event.target);
+        }, true);
+
+        document.addEventListener('compositionend', function (event) {
+          if (!event.target.matches('.hh-native-search input[type="search"]')) return;
+          handleNativeSearchInput(event.target);
+        }, true);
+
         bindNativeSearchInputs();
         document.addEventListener('DOMContentLoaded', bindNativeSearchInputs);
+
+        if (window.MutationObserver) {
+          new MutationObserver(function () {
+            bindNativeSearchInputs();
+          }).observe(document.documentElement, {
+            childList: true,
+            subtree: true
+          });
+        }
       })();
     }
   </script>
