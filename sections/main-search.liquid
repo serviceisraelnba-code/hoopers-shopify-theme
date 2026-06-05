@@ -3,6 +3,68 @@
   assign has_search = search.performed
   assign result_count = search.results_count | default: 0
   assign paginate_by = section.settings.per_row | times: section.settings.rows_per_page
+  assign query_downcase = search_terms | downcase
+  assign active_filter_count = 0
+
+  for filter in search.filters
+    assign active_filter_count = active_filter_count | plus: filter.active_values.size
+    if filter.type == 'price_range'
+      if filter.min_value.value != blank or filter.max_value.value != blank
+        assign active_filter_count = active_filter_count | plus: 1
+      endif
+    endif
+  endfor
+
+  assign intent_title = ''
+  assign intent_text = ''
+  assign intent_link = ''
+  assign intent_button = ''
+
+  if has_search and search_terms != blank
+    if query_downcase contains 'jordan'
+      assign intent_title = 'Looking for Jordan?'
+      assign intent_text = 'עברו ישירות לקולקציית Jordan כדי לראות את כל הדגמים במקום אחד.'
+      assign intent_link = '/collections/jordan'
+      assign intent_button = 'View Jordan Collection'
+    elsif query_downcase contains 'fear' or query_downcase contains 'fog'
+      assign intent_title = 'Looking for Fear Of God?'
+      assign intent_text = 'כל פריטי Fear Of God מחכים לכם בקולקציה אחת נקייה.'
+      assign intent_link = '/collections/fog'
+      assign intent_button = 'View Fear Of God'
+    elsif query_downcase contains 'world' or query_downcase contains 'מונדיאל'
+      assign intent_title = 'Looking for World Cup?'
+      assign intent_text = 'עברו לקולקציית המונדיאל לכל הנבחרות והחולצות.'
+      assign intent_link = '/collections/מונדיאל'
+      assign intent_button = 'View World Cup'
+    elsif query_downcase contains 'kids' or query_downcase contains 'ילדים'
+      assign intent_title = 'Looking for Kids?'
+      assign intent_text = 'כל פריטי הילדים של HOOPERS מרוכזים כאן.'
+      assign intent_link = '/collections/ילדים'
+      assign intent_button = 'View Kids Collection'
+    elsif query_downcase contains 'lakers' or query_downcase contains 'לייקרס'
+      assign intent_title = 'Looking for Lakers?'
+      assign intent_text = 'מצאו את כל פריטי Los Angeles Lakers בקולקציה אחת.'
+      assign intent_link = '/collections/לוס-אנגלס-לייקרס'
+      assign intent_button = 'View Lakers'
+    elsif query_downcase contains 'golden' or query_downcase contains 'warriors' or query_downcase contains 'גולדן'
+      assign intent_title = 'Looking for Golden State?'
+      assign intent_text = 'עברו ישירות לקולקציית Golden State Warriors.'
+      assign intent_link = '/collections/גולדן-סטייט-ווריוס'
+      assign intent_button = 'View Warriors'
+    endif
+  endif
+
+  assign best_sellers_collection = collections['הנמכרים-ביותר']
+  if best_sellers_collection == blank
+    assign best_sellers_collection = collections['best-sellers']
+  endif
+
+  assign show_best_sellers = false
+  if best_sellers_collection != blank and best_sellers_collection.products_count > 0
+    if result_count == 0 or result_count < 4
+      assign show_best_sellers = true
+    endif
+  endif
 -%}
 
 <section class="hh-search-results-page" data-section-id="{{ section.id }}" data-section-type="collection-grid">
@@ -79,6 +141,63 @@
               </aside>
 
               <div class="hh-search-results-page__content">
+                <div class="hh-search-discovery">
+                  {%- if intent_link != blank -%}
+                    <a class="hh-search-intent" href="{{ intent_link }}" data-search-action="intent-collection">
+                      <span class="hh-search-intent__eyebrow">Suggested collection</span>
+                      <strong>{{ intent_title }}</strong>
+                      <span>{{ intent_text }}</span>
+                      <em>{{ intent_button }} →</em>
+                    </a>
+                  {%- endif -%}
+
+                  <div class="hh-search-collection-strip" aria-label="Suggested collections">
+                    <span>Suggested paths</span>
+                    <a href="/collections/גופיות" data-search-action="collection-suggestion">גופיות NBA</a>
+                    <a href="/collections/המכנסיים-שלנו" data-search-action="collection-suggestion">מכנסיים</a>
+                    <a href="/collections/מונדיאל" data-search-action="collection-suggestion">World Cup</a>
+                    <a href="/collections/fog" data-search-action="collection-suggestion">Fear Of God</a>
+                    <a href="/collections/jordan" data-search-action="collection-suggestion">Jordan</a>
+                    <a href="/collections/ילדים" data-search-action="collection-suggestion">Kids</a>
+                  </div>
+
+                  <div class="hh-search-team-strip" aria-label="NBA team shortcuts">
+                    <span>Shop by team</span>
+                    <a href="/collections/לוס-אנגלס-לייקרס" data-search-action="team-shortcut">Lakers</a>
+                    <a href="/collections/גולדן-סטייט-ווריוס" data-search-action="team-shortcut">Golden State</a>
+                    <a href="/collections/בוסטון-סלטיקס" data-search-action="team-shortcut">Boston</a>
+                    <a href="/collections/ניו-יורק-ניקס" data-search-action="team-shortcut">New York</a>
+                    <a href="/collections/שיקגו-בולס" data-search-action="team-shortcut">Chicago</a>
+                  </div>
+
+                  {%- if active_filter_count > 0 -%}
+                    <div class="hh-search-active-filters" aria-label="Active filters">
+                      <span>מסננים פעילים</span>
+                      {%- for filter in search.filters -%}
+                        {%- for filter_value in filter.active_values -%}
+                          <a href="{{ filter_value.url_to_remove }}" data-search-action="remove-filter">
+                            {{ filter_value.label | escape }} <b aria-hidden="true">×</b>
+                          </a>
+                        {%- endfor -%}
+
+                        {%- if filter.type == 'price_range' -%}
+                          {%- if filter.min_value.value != blank or filter.max_value.value != blank -%}
+                            <a href="{{ filter.url_to_remove }}" data-search-action="remove-filter">
+                              {%- if filter.min_value.value != blank -%}{{ filter.min_value.value | money_without_trailing_zeros }}{%- else -%}₪0{%- endif -%}
+                              –
+                              {%- if filter.max_value.value != blank -%}{{ filter.max_value.value | money_without_trailing_zeros }}{%- else -%}{{ filter.range_max | money_without_trailing_zeros }}{%- endif -%}
+                              <b aria-hidden="true">×</b>
+                            </a>
+                          {%- endif -%}
+                        {%- endif -%}
+                      {%- endfor -%}
+                      <a class="hh-search-active-filters__clear" href="{{ routes.search_url }}?q={{ search_terms | url_encode }}&type=product" data-search-action="clear-filters">
+                        Clear all
+                      </a>
+                    </div>
+                  {%- endif -%}
+                </div>
+
                 {% render 'collection-grid',
                   collection: search,
                   items: search.results,
@@ -94,6 +213,37 @@
                 {%- if paginate.pages > 1 -%}
                   {%- render 'pagination', paginate: paginate -%}
                 {%- endif -%}
+
+                {%- if show_best_sellers -%}
+                  <section class="hh-search-recovery" aria-label="Best sellers">
+                    <div class="hh-search-recovery__header">
+                      <span>Still browsing?</span>
+                      <h2>HOOPERS Best Sellers</h2>
+                      <a href="{{ best_sellers_collection.url }}">View all</a>
+                    </div>
+                    <div class="grid grid--uniform">
+                      {%- for product in best_sellers_collection.products limit: 4 -%}
+                        {%- render 'product-grid-item',
+                          product: product,
+                          per_row: 4,
+                          quick_shop_enable: false
+                        -%}
+                      {%- endfor -%}
+                    </div>
+                  </section>
+                {%- endif -%}
+
+                <section
+                  class="hh-search-recent"
+                  data-hh-search-recent-section
+                  hidden
+                >
+                  <div class="hh-search-recovery__header">
+                    <span>Recently viewed</span>
+                    <h2>המשכתם מאיפה שעצרתם</h2>
+                  </div>
+                  <div class="hh-search-recent__grid" data-hh-search-recent-items></div>
+                </section>
               </div>
             </div>
           {%- endpaginate -%}
@@ -112,6 +262,25 @@
               <a href="/collections/מונדיאל">WORLD CUP</a>
               <a href="/collections/ילדים">KIDS</a>
             </div>
+
+            {%- if show_best_sellers -%}
+              <section class="hh-search-recovery hh-search-recovery--empty" aria-label="Best sellers">
+                <div class="hh-search-recovery__header">
+                  <span>Try these instead</span>
+                  <h2>HOOPERS Best Sellers</h2>
+                  <a href="{{ best_sellers_collection.url }}">View all</a>
+                </div>
+                <div class="grid grid--uniform">
+                  {%- for product in best_sellers_collection.products limit: 4 -%}
+                    {%- render 'product-grid-item',
+                      product: product,
+                      per_row: 4,
+                      quick_shop_enable: false
+                    -%}
+                  {%- endfor -%}
+                </div>
+              </section>
+            {%- endif -%}
           </div>
         {%- endif -%}
       {%- else -%}
@@ -148,9 +317,9 @@
   }
 
   .hh-search-results-page .page-width {
-    max-width: 1760px;
-    padding-left: clamp(12px, 2vw, 32px);
-    padding-right: clamp(12px, 2vw, 32px);
+    max-width: 1840px;
+    padding-left: clamp(10px, 1.5vw, 26px);
+    padding-right: clamp(10px, 1.5vw, 26px);
   }
 
   .hh-search-results-page__hero {
@@ -306,8 +475,8 @@
 
   .hh-search-results-page__layout {
     display: grid;
-    grid-template-columns: minmax(220px, 238px) minmax(0, 1fr);
-    gap: clamp(18px, 2vw, 30px);
+    grid-template-columns: minmax(214px, 232px) minmax(0, 1fr);
+    gap: clamp(14px, 1.7vw, 26px);
     align-items: start;
   }
 
@@ -331,6 +500,9 @@
     border-color: var(--hh-border);
     background: var(--hh-card);
     color: var(--hh-text);
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
 
   .hh-search-results-page .collection-filter__item,
@@ -339,11 +511,60 @@
     color: var(--hh-text);
   }
 
+  .hh-search-results-page .collection-filter__item--count {
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--hh-muted);
+  }
+
+  .hh-search-results-page .collection-filter__item--sort {
+    margin-inline-start: auto;
+  }
+
+  .hh-search-results-page .collection-filter__item--drawer .btn {
+    min-height: 42px;
+    padding: 0 16px;
+    border: 1px solid rgba(17, 17, 17, 0.14);
+    background: var(--hh-black);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hh-search-results-page .collection-filter__item--drawer .btn .icon {
+    color: var(--hh-gold);
+  }
+
+  .hh-search-results-page .collection-filter__sort-container {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .hh-search-results-page .collection-filter__sort-container::before {
+    content: "SORT";
+    color: var(--hh-muted);
+    font-size: 10px;
+    font-weight: 950;
+    letter-spacing: 0.16em;
+  }
+
   .hh-search-results-page .collection-filter__sort-container select {
     border-color: var(--hh-border);
     background-color: var(--hh-card);
     color: var(--hh-text);
     font-weight: 800;
+    min-height: 42px;
+    min-width: 188px;
+    padding: 0 14px;
+    border-radius: 0;
+    font-size: 12px;
+    letter-spacing: 0.04em;
   }
 
   .hh-search-results-page .collection-sidebar {
@@ -352,6 +573,7 @@
     padding: 16px;
     border: 1px solid var(--hh-border);
     background: var(--hh-card);
+    box-shadow: 0 18px 50px rgba(17, 17, 17, 0.05);
   }
 
   .hh-search-results-page .collection-sidebar__group {
@@ -361,21 +583,140 @@
   .hh-search-results-page .tag-list__header,
   .hh-search-results-page .collapsible-trigger-btn {
     color: var(--hh-text);
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 950;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
   }
 
   .hh-search-results-page .tag__text,
   .hh-search-results-page .tag__checkbox-wrapper {
     color: var(--hh-muted);
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 800;
   }
 
   .hh-search-results-page .tag--active .tag__text {
     color: var(--hh-text);
+  }
+
+  .hh-search-discovery {
+    display: grid;
+    gap: 12px;
+    margin-bottom: clamp(16px, 2vw, 26px);
+  }
+
+  .hh-search-intent {
+    display: grid;
+    gap: 6px;
+    padding: clamp(16px, 2vw, 22px);
+    border: 1px solid rgba(200, 165, 106, 0.28);
+    background:
+      radial-gradient(circle at 0 0, rgba(200, 165, 106, 0.18), transparent 28%),
+      #050505;
+    color: #fff;
+    text-decoration: none;
+    transition: transform 180ms ease, border-color 180ms ease;
+  }
+
+  .hh-search-intent:hover {
+    transform: translateY(-1px);
+    border-color: rgba(200, 165, 106, 0.62);
+  }
+
+  .hh-search-intent__eyebrow,
+  .hh-search-recovery__header span,
+  .hh-search-collection-strip span,
+  .hh-search-team-strip span,
+  .hh-search-active-filters > span {
+    color: var(--hh-gold);
+    font-size: 10px;
+    font-weight: 950;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .hh-search-intent strong {
+    color: #fff;
+    font-size: clamp(22px, 2.4vw, 34px);
+    font-weight: 950;
+    line-height: 1;
+  }
+
+  .hh-search-intent span:not(.hh-search-intent__eyebrow) {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 14px;
+    font-weight: 750;
+    line-height: 1.65;
+  }
+
+  .hh-search-intent em {
+    color: #fff;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hh-search-collection-strip,
+  .hh-search-team-strip,
+  .hh-search-active-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid var(--hh-border);
+    background: var(--hh-card);
+  }
+
+  .hh-search-collection-strip a,
+  .hh-search-team-strip a,
+  .hh-search-active-filters a {
+    display: inline-flex;
+    min-height: 34px;
+    align-items: center;
+    gap: 7px;
+    padding: 0 12px;
+    border: 1px solid rgba(17, 17, 17, 0.12);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.34);
+    color: var(--hh-text);
+    font-size: 12px;
+    font-weight: 850;
+    line-height: 1;
+    text-decoration: none;
+    transition: background 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease;
+  }
+
+  .hh-search-collection-strip a:hover,
+  .hh-search-team-strip a:hover,
+  .hh-search-active-filters a:hover {
+    transform: translateY(-1px);
+    border-color: rgba(200, 165, 106, 0.68);
+    background: var(--hh-black);
+    color: #fff;
+  }
+
+  .hh-search-active-filters {
+    border-color: rgba(200, 165, 106, 0.3);
+  }
+
+  .hh-search-active-filters a {
+    background: #050505;
+    color: #fff;
+  }
+
+  .hh-search-active-filters a b {
+    color: var(--hh-gold);
+    font-size: 14px;
+  }
+
+  .hh-search-active-filters__clear {
+    border-color: rgba(200, 165, 106, 0.56) !important;
+    background: transparent !important;
+    color: var(--hh-text) !important;
   }
 
   .hh-search-results-page .grid--uniform {
@@ -398,9 +739,35 @@
   .hh-search-results-page .grid-product__image-mask,
   .hh-search-results-page .image-wrap,
   .hh-search-results-page .grid-product__image-wrapper {
+    position: relative;
     overflow: hidden;
     border: 1px solid var(--hh-border);
     background: #ded8cd;
+  }
+
+  .hh-search-results-page .grid-product__image-mask::before,
+  .hh-search-results-page .image-wrap::before,
+  .hh-search-results-page .grid-product__image-wrapper::before {
+    content: "SHOP NOW →";
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 14px;
+    z-index: 4;
+    display: inline-flex;
+    min-height: 34px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.34);
+    background: rgba(5, 5, 5, 0.72);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 950;
+    letter-spacing: 0.1em;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 220ms ease, transform 220ms ease;
+    pointer-events: none;
   }
 
   .hh-search-results-page .grid-product__image-mask img,
@@ -414,6 +781,18 @@
   .hh-search-results-page .grid-product:hover .grid-product__image-wrapper img {
     transform: scale(1.035);
     filter: contrast(1.03);
+  }
+
+  .hh-search-results-page .grid-product:hover .grid-product__image-mask::before,
+  .hh-search-results-page .grid-product:hover .image-wrap::before,
+  .hh-search-results-page .grid-product:hover .grid-product__image-wrapper::before {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .hh-search-results-page .quick-product__btn,
+  .hh-search-results-page .shopify-product-reviews-badge {
+    display: none !important;
   }
 
   .hh-search-results-page .grid-product__meta {
@@ -445,20 +824,127 @@
 
   .hh-search-results-page .grid-product__price,
   .hh-search-results-page .grid-product__price span {
-    color: var(--hh-text);
+    color: var(--hh-black);
     font-size: 14px;
     font-weight: 900;
+  }
+
+  .hh-search-recovery,
+  .hh-search-recent {
+    margin-top: clamp(28px, 4vw, 54px);
+    padding-top: clamp(22px, 3vw, 38px);
+    border-top: 1px solid var(--hh-border);
+  }
+
+  .hh-search-recovery--empty {
+    width: 100%;
+    margin-top: 24px;
+    padding-top: 24px;
+  }
+
+  .hh-search-recovery__header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px 16px;
+    align-items: end;
+    margin-bottom: 18px;
+    text-align: right;
+  }
+
+  .hh-search-recovery__header span {
+    grid-column: 1 / -1;
+  }
+
+  .hh-search-recovery__header h2 {
+    margin: 0;
+    color: var(--hh-text);
+    font-size: clamp(24px, 3vw, 42px);
+    font-weight: 950;
+    line-height: 1;
+  }
+
+  .hh-search-recovery__header a {
+    color: var(--hh-text);
+    font-size: 12px;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .hh-search-recovery .grid-product,
+  .hh-search-recent .grid-product {
+    width: 25% !important;
+    flex: 0 0 25% !important;
+    max-width: 25% !important;
+  }
+
+  .hh-search-recent[hidden] {
+    display: none;
+  }
+
+  .hh-search-recent__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(10px, 1vw, 16px);
+  }
+
+  .hh-search-recent-card {
+    display: grid;
+    gap: 9px;
+    color: var(--hh-text);
+    text-decoration: none;
+  }
+
+  .hh-search-recent-card__image {
+    display: block;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border: 1px solid var(--hh-border);
+    background: #ded8cd;
+  }
+
+  .hh-search-recent-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 360ms ease;
+  }
+
+  .hh-search-recent-card:hover .hh-search-recent-card__image img {
+    transform: scale(1.035);
+  }
+
+  .hh-search-recent-card__title {
+    display: -webkit-box;
+    overflow: hidden;
+    color: var(--hh-text);
+    font-size: 13px;
+    font-weight: 850;
+    line-height: 1.35;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .hh-search-recent-card__price {
+    color: var(--hh-black);
+    font-size: 13px;
+    font-weight: 950;
   }
 
   .hh-search-results-page__empty {
     display: grid;
     gap: 14px;
-    max-width: 760px;
+    max-width: 1120px;
     margin: 0 auto;
     padding: clamp(30px, 5vw, 58px);
     border: 1px solid var(--hh-border);
     background: var(--hh-card);
     text-align: center;
+  }
+
+  .hh-search-results-page__empty .hh-search-recovery {
+    text-align: right;
   }
 
   .hh-search-results-page__empty h2 {
@@ -505,11 +991,100 @@
     color: #fff;
   }
 
+  .hh-search-results-page #FilterDrawer {
+    z-index: 9999;
+  }
+
+  .hh-search-results-page #FilterDrawer .drawer__contents {
+    background: #050505;
+    color: #fff;
+  }
+
+  .hh-search-results-page #FilterDrawer .drawer__fixed-header {
+    border-bottom: 1px solid rgba(200, 165, 106, 0.24);
+    background: #050505;
+  }
+
+  .hh-search-results-page #FilterDrawer .drawer__header {
+    color: #fff;
+  }
+
+  .hh-search-results-page #FilterDrawer .drawer__title {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hh-search-results-page #FilterDrawer .drawer__close-button,
+  .hh-search-results-page #FilterDrawer .drawer__close-button .icon {
+    color: var(--hh-gold);
+    stroke: currentColor;
+  }
+
+  .hh-search-results-page #FilterDrawer .drawer__scrollable {
+    padding: 18px;
+  }
+
+  .hh-search-results-page #FilterDrawer .tag-list--active-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .hh-search-results-page #FilterDrawer .tag--remove .btn {
+    background: rgba(200, 165, 106, 0.14);
+    border-color: rgba(200, 165, 106, 0.34);
+    color: #fff;
+  }
+
+  .hh-search-results-page #FilterDrawer .collection-sidebar__group {
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .hh-search-results-page #FilterDrawer .collapsible-trigger-btn,
+  .hh-search-results-page #FilterDrawer .tag-list__header {
+    color: #fff;
+  }
+
+  .hh-search-results-page #FilterDrawer .tag__checkbox-wrapper,
+  .hh-search-results-page #FilterDrawer .tag__text {
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .hh-search-results-page #FilterDrawer .tag--active .tag__text {
+    color: #fff;
+  }
+
+  .hh-search-results-page #FilterDrawer .tag__checkbox {
+    border-color: rgba(200, 165, 106, 0.48);
+  }
+
+  .hh-search-results-page #FilterDrawer .tag__input:checked + .tag__checkbox,
+  .hh-search-results-page #FilterDrawer .tag__input:checked ~ .tag__checkbox {
+    background: var(--hh-gold);
+    border-color: var(--hh-gold);
+  }
+
+  .hh-search-results-page #FilterDrawer .price-range__display-wrapper,
+  .hh-search-results-page #FilterDrawer .price-range__input {
+    color: #fff;
+  }
+
   @media screen and (min-width: 769px) {
     .hh-search-results-page .grid-product {
       width: 33.333333% !important;
       flex: 0 0 33.333333% !important;
       max-width: 33.333333% !important;
+    }
+
+    .hh-search-results-page .grid-product__image-mask::before,
+    .hh-search-results-page .image-wrap::before,
+    .hh-search-results-page .grid-product__image-wrapper::before {
+      max-width: 190px;
+      margin: 0 auto;
     }
   }
 
@@ -568,12 +1143,91 @@
       letter-spacing: 0.08em;
     }
 
+    .hh-search-results-page__body {
+      padding-top: 18px;
+    }
+
     .hh-search-results-page__layout {
       display: block;
     }
 
     .hh-search-results-page__sidebar {
       margin-bottom: 18px;
+    }
+
+    .hh-search-results-page .collection-filter {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+      padding: 10px;
+    }
+
+    .hh-search-results-page .collection-filter__item--drawer,
+    .hh-search-results-page .collection-filter__item--sort {
+      width: 100%;
+    }
+
+    .hh-search-results-page .collection-filter__item--count {
+      display: none;
+    }
+
+    .hh-search-results-page .collection-filter__item--drawer .btn,
+    .hh-search-results-page .collection-filter__sort-container,
+    .hh-search-results-page .collection-filter__sort-container select {
+      width: 100%;
+    }
+
+    .hh-search-results-page .collection-filter__sort-container::before {
+      display: none;
+    }
+
+    .hh-search-results-page .collection-filter__sort-container select {
+      min-width: 0;
+      min-height: 42px;
+      font-size: 11px;
+      background: #050505;
+      color: #fff;
+      border-color: rgba(200, 165, 106, 0.38);
+    }
+
+    .hh-search-discovery {
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .hh-search-intent {
+      padding: 16px;
+    }
+
+    .hh-search-collection-strip,
+    .hh-search-team-strip,
+    .hh-search-active-filters {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding: 10px;
+      scrollbar-width: none;
+    }
+
+    .hh-search-collection-strip::-webkit-scrollbar,
+    .hh-search-team-strip::-webkit-scrollbar,
+    .hh-search-active-filters::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hh-search-collection-strip span,
+    .hh-search-team-strip span,
+    .hh-search-active-filters > span,
+    .hh-search-collection-strip a,
+    .hh-search-team-strip a,
+    .hh-search-active-filters a {
+      flex: 0 0 auto;
+    }
+
+    .hh-search-results-page .grid-product__image-mask::before,
+    .hh-search-results-page .image-wrap::before,
+    .hh-search-results-page .grid-product__image-wrapper::before {
+      display: none;
     }
 
     .hh-search-results-page .grid-product {
@@ -591,8 +1245,99 @@
     .hh-search-results-page__empty {
       padding: 28px 18px;
     }
+
+    .hh-search-results-page__empty h2 {
+      font-size: 28px;
+    }
+
+    .hh-search-recovery__header {
+      grid-template-columns: 1fr;
+      text-align: right;
+    }
+
+    .hh-search-recovery .grid-product,
+    .hh-search-recent .grid-product {
+      width: 50% !important;
+      flex: 0 0 50% !important;
+      max-width: 50% !important;
+    }
+
+    .hh-search-recent__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .hh-search-results-page #FilterDrawer.drawer--left {
+      width: min(92vw, 420px);
+    }
+
+    .hh-search-results-page #FilterDrawer .drawer__scrollable {
+      padding: 16px;
+    }
   }
 </style>
+
+<script>
+  (function() {
+    var sections = document.querySelectorAll('[data-hh-search-recent-section]');
+    if (!sections.length) return;
+
+    function escapeHtml(value) {
+      return String(value || '').replace(/[&<>"']/g, function(character) {
+        return {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#039;'
+        }[character];
+      });
+    }
+
+    function readRecent() {
+      try {
+        var items = JSON.parse(window.localStorage.getItem('hoopers_recently_viewed_products') || '[]');
+        return Array.isArray(items) ? items : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function renderRecent() {
+      var items = readRecent().filter(function(item) {
+        return item && item.url && item.title;
+      }).slice(0, 4);
+
+      sections.forEach(function(section) {
+        var target = section.querySelector('[data-hh-search-recent-items]');
+        if (!target || !items.length) {
+          section.hidden = true;
+          return;
+        }
+
+        target.innerHTML = items.map(function(item) {
+          var title = escapeHtml(item.title);
+          var image = item.image
+            ? '<span class="hh-search-recent-card__image"><img src="' + escapeHtml(item.image) + '" alt="' + title + '" loading="lazy"></span>'
+            : '<span class="hh-search-recent-card__image"></span>';
+          return '<a class="hh-search-recent-card" href="' + escapeHtml(item.url) + '" data-search-action="recently-viewed">' +
+            image +
+            '<span class="hh-search-recent-card__title">' + title + '</span>' +
+            '<span class="hh-search-recent-card__price">' + escapeHtml(item.price || '') + '</span>' +
+          '</a>';
+        }).join('');
+
+        section.hidden = false;
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', renderRecent);
+    } else {
+      renderRecent();
+    }
+  })();
+</script>
 
 {% schema %}
 {
