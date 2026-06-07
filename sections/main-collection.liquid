@@ -52,7 +52,11 @@
 
                   {%- when 'product_grid' -%}
                     <div data-scroll-to>
-                      {%- render 'hoopers-product-type-chips', filter_source: collection, context: 'collection' -%}
+                      {%- render 'hoopers-product-type-chips',
+                        filter_source: collection,
+                        context: 'collection',
+                        fallback_base_url: collection.url
+                      -%}
 
                       {% render 'collection-grid',
                         collection: collection,

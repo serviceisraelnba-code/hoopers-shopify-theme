@@ -180,7 +180,12 @@
                     <a href="/collections/שיקגו-בולס" data-search-action="team-shortcut">Chicago</a>
                   </div>
 
-                  {%- render 'hoopers-product-type-chips', filter_source: search, context: 'search' -%}
+                  {%- capture search_filter_base_url -%}{{ routes.search_url }}?q={{ search_terms | url_encode }}&type=product{%- endcapture -%}
+                  {%- render 'hoopers-product-type-chips',
+                    filter_source: search,
+                    context: 'search',
+                    fallback_base_url: search_filter_base_url
+                  -%}
 
                   {%- if active_filter_count > 0 -%}
                     <div class="hh-search-active-filters" aria-label="Active filters">

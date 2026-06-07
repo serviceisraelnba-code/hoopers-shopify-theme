@@ -8,6 +8,8 @@
 {%- liquid
   assign type_filter = blank
   assign preferred_labels = 'גופיות|מכנסיים|ילדים|חולצות|ג׳קטים|כדורים' | split: '|'
+  assign fallback_values = 'גופיות|מכנסיים|ילדים|חולצות|ג׳קטים|כדורים' | split: '|'
+  assign base_url = fallback_base_url | default: filter_source.url | default: '/'
 
   for filter in filter_source.filters
     assign filter_param_name = filter.param_name | default: ''
@@ -76,4 +78,68 @@
       {%- endunless -%}
     {%- endfor -%}
   </div>
+{%- else -%}
+  <div class="hh-filter-refinement hh-filter-refinement--{{ context | default: 'catalog' }}" aria-label="Product type filters" data-hh-fallback-type-chips>
+    <span>Filter by type</span>
+    {%- for fallback_value in fallback_values -%}
+      <a
+        class="hh-filter-refinement__chip"
+        href="{{ base_url }}{% if base_url contains '?' %}&{% else %}?{% endif %}filter.p.product_type={{ fallback_value | url_encode }}"
+        data-hh-fallback-filter="filter.p.product_type"
+        data-hh-fallback-value="{{ fallback_value | escape }}"
+        data-search-action="add-type-filter"
+      >
+        {{ fallback_value }}
+      </a>
+    {%- endfor -%}
+  </div>
+
+  <script>
+    (function() {
+      var chips = document.querySelectorAll('[data-hh-fallback-filter][data-hh-fallback-value]');
+      if (!chips.length) return;
+
+      var currentUrl = new URL(window.location.href);
+
+      chips.forEach(function(chip) {
+        var paramName = chip.getAttribute('data-hh-fallback-filter');
+        var paramValue = chip.getAttribute('data-hh-fallback-value');
+        if (!paramName || !paramValue) return;
+
+        var values = currentUrl.searchParams.getAll(paramName);
+        var isActive = values.some(function(value) {
+          return value === paramValue;
+        });
+
+        var nextUrl = new URL(window.location.href);
+        nextUrl.searchParams.delete('page');
+        nextUrl.searchParams.delete(paramName);
+
+        values.forEach(function(value) {
+          if (isActive) {
+            if (value !== paramValue) nextUrl.searchParams.append(paramName, value);
+          } else {
+            nextUrl.searchParams.append(paramName, value);
+          }
+        });
+
+        if (!isActive) {
+          nextUrl.searchParams.append(paramName, paramValue);
+        }
+
+        chip.href = nextUrl.pathname + nextUrl.search;
+
+        if (isActive) {
+          chip.classList.add('is-active');
+          chip.setAttribute('data-search-action', 'remove-type-filter');
+          if (!chip.querySelector('b')) {
+            var close = document.createElement('b');
+            close.setAttribute('aria-hidden', 'true');
+            close.textContent = '×';
+            chip.appendChild(close);
+          }
+        }
+      });
+    })();
+  </script>
 {%- endif -%}
