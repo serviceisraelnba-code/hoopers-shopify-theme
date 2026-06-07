@@ -726,6 +726,7 @@
   .hh-search-collection-strip a,
   .hh-search-team-strip a,
   .hh-filter-refinement a,
+  .hh-filter-refinement span.hh-filter-refinement__chip,
   .hh-search-active-filters a {
     display: inline-flex;
     min-height: 34px;
@@ -741,6 +742,13 @@
     line-height: 1;
     text-decoration: none;
     transition: background 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease;
+  }
+
+  .hh-filter-refinement span.hh-filter-refinement__chip.is-disabled {
+    cursor: not-allowed;
+    opacity: 0.42;
+    background: rgba(255, 255, 255, 0.22);
+    color: rgba(17, 17, 17, 0.48);
   }
 
   .hh-search-collection-strip a:hover,

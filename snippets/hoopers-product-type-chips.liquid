@@ -1,8 +1,9 @@
 {% comment %}
-  Renders always-visible product refinement chips using native Shopify filtering.
-  Preference order:
-  1. Use Shopify filter_value.url_to_add/url_to_remove when a matching native filter value exists.
-  2. Fall back to Shopify's native tag filter parameter while preserving the current URL state.
+  Renders product refinement chips from real Shopify filter values only.
+
+  Each chip stays visible for UX consistency, but it becomes clickable only when
+  collection.filters/search.filters contains a matching value with Shopify's
+  native url_to_add/url_to_remove. No guessed filter URLs are generated here.
 
   Arguments:
   - filter_source: collection or search object
@@ -10,13 +11,7 @@
 {% endcomment %}
 
 {%- liquid
-  assign current_url = request.path
-  if request.query_string != blank
-    assign current_url = current_url | append: '?' | append: request.query_string
-  endif
-
-  assign canonical_param = 'filter.p.tag'
-  assign chip_definitions = 'גופיות::גופיות,Jerseys,Jersey,גופיה,NBA Jerseys|מכנסיים::מכנסיים,מכנסי,Shorts,Pants,מכנס|חולצות::חולצות,חולצה,Shirts,T-Shirts,T Shirt,טישרטים|ג׳קטים::ג׳קטים,גקטים,Jackets,Jacket,Winter,חורף,הודיז,Hoodies|כדורים::כדורים,כדור,Basketballs,Basketball|ילדים::ילדים,Kids,ילד,ילדות,Kids NBA' | split: '|'
+  assign chip_definitions = 'גופיות::גופיות,גופיה,Jerseys,Jersey,NBA Jerseys|מכנסיים::מכנסיים,מכנסי,מכנס,Shorts,Pants|חולצות::חולצות,חולצה,Shirts,T-Shirts,T Shirt,טישרטים|ג׳קטים::ג׳קטים,גקטים,Jackets,Jacket,Winter,חורף,הודיז,Hoodies|כדורים::כדורים,כדור,Basketballs,Basketball|ילדים::ילדים,ילד,ילדות,Kids,Kids NBA' | split: '|'
 -%}
 
 <div class="hh-filter-refinement hh-filter-refinement--{{ context | default: 'catalog' }}" aria-label="Product type filters">
@@ -28,24 +23,33 @@
       assign chip_label = chip_parts[0]
       assign aliases = chip_parts[1] | split: ','
       assign matched_value = blank
+      assign matched_filter_label = blank
       assign matched_param_name = blank
       assign matched_value_raw = blank
       assign is_active = false
+      assign is_available = false
 
       for filter in filter_source.filters
         for filter_value in filter.values
           assign value_downcase = filter_value.label | downcase
 
           for alias in aliases
-            assign alias_downcase = alias | strip | downcase
+            assign alias_clean = alias | strip
+            assign alias_downcase = alias_clean | downcase
 
             if value_downcase == alias_downcase or value_downcase contains alias_downcase
               assign matched_value = filter_value
+              assign matched_filter_label = filter.label
               assign matched_param_name = filter_value.param_name
               assign matched_value_raw = filter_value.value
+
               if filter_value.active
                 assign is_active = true
+                assign is_available = true
+              elsif filter_value.count > 0
+                assign is_available = true
               endif
+
               break
             endif
           endfor
@@ -60,97 +64,38 @@
         endif
       endfor
 
-      if matched_value != blank
+      assign chip_url = ''
+      if matched_value != blank and is_available
         if is_active
           assign chip_url = matched_value.url_to_remove
         else
           assign chip_url = matched_value.url_to_add
         endif
-      else
-        assign matched_param_name = canonical_param
-        assign matched_value_raw = chip_label
-        assign encoded_filter_value = matched_value_raw | url_encode
-        assign query_separator = '?'
-
-        if current_url contains '?'
-          assign query_separator = '&'
-        endif
-
-        assign active_test = matched_param_name | append: '=' | append: encoded_filter_value
-        assign is_active = false
-
-        if current_url contains active_test
-          assign is_active = true
-        endif
-
-        if is_active
-          assign chip_url = current_url
-        else
-          assign chip_url = current_url | append: query_separator | append: matched_param_name | append: '=' | append: encoded_filter_value
-        endif
       endif
     -%}
 
-    <a
-      class="hh-filter-refinement__chip{% if is_active %} is-active{% endif %}"
-      href="{{ chip_url }}"
-      data-search-action="{% if is_active %}remove-type-filter{% else %}add-type-filter{% endif %}"
-      data-hh-native-filter-chip
-      data-hh-filter-param="{{ matched_param_name | escape }}"
-      data-hh-filter-value="{{ matched_value_raw | escape }}"
-    >
-      {{ chip_label }}
-      {%- if is_active -%}<b aria-hidden="true">×</b>{%- endif -%}
-    </a>
+    {%- if chip_url != blank -%}
+      <a
+        class="hh-filter-refinement__chip{% if is_active %} is-active{% endif %}"
+        href="{{ chip_url }}"
+        data-search-action="{% if is_active %}remove-type-filter{% else %}add-type-filter{% endif %}"
+        data-hh-native-filter-chip
+        data-hh-filter-label="{{ matched_filter_label | escape }}"
+        data-hh-filter-param="{{ matched_param_name | escape }}"
+        data-hh-filter-value="{{ matched_value_raw | escape }}"
+      >
+        {{ chip_label }}
+        {%- if is_active -%}<b aria-hidden="true">×</b>{%- endif -%}
+      </a>
+    {%- else -%}
+      <span
+        class="hh-filter-refinement__chip is-disabled"
+        aria-disabled="true"
+        data-hh-native-filter-chip-disabled
+        title="No native Shopify filter value is available for {{ chip_label | escape }}"
+      >
+        {{ chip_label }}
+      </span>
+    {%- endif -%}
   {%- endfor -%}
 </div>
-
-<script>
-  (function() {
-    var chips = document.querySelectorAll('[data-hh-native-filter-chip]');
-    if (!chips.length) return;
-
-    var currentUrl = new URL(window.location.href);
-
-    chips.forEach(function(chip) {
-      var paramName = chip.getAttribute('data-hh-filter-param');
-      var paramValue = chip.getAttribute('data-hh-filter-value');
-      if (!paramName || !paramValue) return;
-
-      var values = currentUrl.searchParams.getAll(paramName);
-      var isActive = values.some(function(value) {
-        return value === paramValue;
-      });
-
-      if (!isActive && chip.classList.contains('is-active')) {
-        isActive = true;
-      }
-
-      if (isActive) {
-        var nextUrl = new URL(window.location.href);
-        nextUrl.searchParams.delete('page');
-        nextUrl.searchParams.delete(paramName);
-
-        values.forEach(function(value) {
-          if (value !== paramValue) nextUrl.searchParams.append(paramName, value);
-        });
-
-        chip.href = nextUrl.pathname + nextUrl.search;
-        chip.classList.add('is-active');
-        chip.setAttribute('data-search-action', 'remove-type-filter');
-
-        if (!chip.querySelector('b')) {
-          var close = document.createElement('b');
-          close.setAttribute('aria-hidden', 'true');
-          close.textContent = '×';
-          chip.appendChild(close);
-        }
-      } else if (!chip.getAttribute('href')) {
-        var addUrl = new URL(window.location.href);
-        addUrl.searchParams.delete('page');
-        addUrl.searchParams.append(paramName, paramValue);
-        chip.href = addUrl.pathname + addUrl.search;
-      }
-    });
-  })();
-</script>

@@ -177,7 +177,8 @@
     text-transform: uppercase;
   }
 
-  .hoopers-collection-catalog .hh-filter-refinement a {
+  .hoopers-collection-catalog .hh-filter-refinement a,
+  .hoopers-collection-catalog .hh-filter-refinement span.hh-filter-refinement__chip {
     display: inline-flex;
     min-height: 34px;
     align-items: center;
@@ -192,6 +193,13 @@
     line-height: 1;
     text-decoration: none;
     transition: background 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease;
+  }
+
+  .hoopers-collection-catalog .hh-filter-refinement span.hh-filter-refinement__chip.is-disabled {
+    cursor: not-allowed;
+    opacity: 0.42;
+    background: rgba(255, 255, 255, 0.22);
+    color: rgba(17, 17, 17, 0.48);
   }
 
   .hoopers-collection-catalog .hh-filter-refinement a:hover,
