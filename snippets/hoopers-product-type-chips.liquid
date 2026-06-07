@@ -1,7 +1,8 @@
 {% comment %}
-  Renders strict native Shopify refinement chips for product type/category/tag filters.
-  The chips only use Shopify-provided url_to_add/url_to_remove values so filtering
-  stays scoped to the current collection/search result set.
+  Renders always-visible product refinement chips using native Shopify filtering.
+  Preference order:
+  1. Use Shopify filter_value.url_to_add/url_to_remove when a matching native filter value exists.
+  2. Fall back to Shopify's native tag filter parameter while preserving the current URL state.
 
   Arguments:
   - filter_source: collection or search object
@@ -9,111 +10,147 @@
 {% endcomment %}
 
 {%- liquid
-  assign type_filter = blank
-  assign type_filter_kind = ''
-  assign preferred_labels = 'גופיות|Jerseys|מכנסיים|Shorts|Pants|ילדים|Kids|חולצות|Shirts|T-Shirts|ג׳קטים|Jackets|כדורים|Basketballs' | split: '|'
-
-  for filter in filter_source.filters
-    assign filter_param_name = filter.param_name | default: ''
-    assign filter_label_downcase = filter.label | downcase
-
-    if filter_param_name contains 'product_type' or filter_label_downcase contains 'product type' or filter_label_downcase contains 'סוג מוצר'
-      assign type_filter = filter
-      assign type_filter_kind = 'product_type'
-      break
-    endif
-  endfor
-
-  if type_filter == blank
-    for filter in filter_source.filters
-      assign filter_param_name = filter.param_name | default: ''
-      assign filter_label_downcase = filter.label | downcase
-
-      if filter_param_name contains 'category' or filter_label_downcase contains 'category' or filter_label_downcase contains 'קטגוריה'
-        assign type_filter = filter
-        assign type_filter_kind = 'category'
-        break
-      endif
-    endfor
+  assign current_url = request.path
+  if request.query_string != blank
+    assign current_url = current_url | append: '?' | append: request.query_string
   endif
 
-  if type_filter == blank
-    for filter in filter_source.filters
-      assign filter_param_name = filter.param_name | default: ''
-      assign filter_label_downcase = filter.label | downcase
-
-      if filter_param_name contains 'tag' or filter_label_downcase contains 'tag' or filter_label_downcase contains 'תג'
-        assign type_filter = filter
-        assign type_filter_kind = 'tag'
-        break
-      endif
-    endfor
-  endif
+  assign canonical_param = 'filter.p.tag'
+  assign chip_definitions = 'גופיות::גופיות,Jerseys,Jersey,גופיה,NBA Jerseys|מכנסיים::מכנסיים,מכנסי,Shorts,Pants,מכנס|חולצות::חולצות,חולצה,Shirts,T-Shirts,T Shirt,טישרטים|ג׳קטים::ג׳קטים,גקטים,Jackets,Jacket,Winter,חורף,הודיז,Hoodies|כדורים::כדורים,כדור,Basketballs,Basketball|ילדים::ילדים,Kids,ילד,ילדות,Kids NBA' | split: '|'
 -%}
 
-{%- if type_filter != blank and type_filter.values.size > 0 -%}
-  {%- capture chip_markup -%}
-    {%- for preferred_label in preferred_labels -%}
-      {%- assign matched_value = blank -%}
-      {%- assign preferred_downcase = preferred_label | downcase -%}
+<div class="hh-filter-refinement hh-filter-refinement--{{ context | default: 'catalog' }}" aria-label="Product type filters">
+  <span>Filter by type</span>
 
-      {%- for filter_value in type_filter.values -%}
-        {%- assign value_label_downcase = filter_value.label | downcase -%}
-        {%- if value_label_downcase == preferred_downcase or value_label_downcase contains preferred_downcase or preferred_downcase contains value_label_downcase -%}
-          {%- assign matched_value = filter_value -%}
-          {%- break -%}
-        {%- endif -%}
-      {%- endfor -%}
+  {%- for chip_definition in chip_definitions -%}
+    {%- liquid
+      assign chip_parts = chip_definition | split: '::'
+      assign chip_label = chip_parts[0]
+      assign aliases = chip_parts[1] | split: ','
+      assign matched_value = blank
+      assign matched_param_name = blank
+      assign matched_value_raw = blank
+      assign is_active = false
 
-      {%- if matched_value != blank -%}
-        {%- if matched_value.count > 0 or matched_value.active -%}
-          <a
-            class="hh-filter-refinement__chip{% if matched_value.active %} is-active{% endif %}"
-            href="{% if matched_value.active %}{{ matched_value.url_to_remove }}{% else %}{{ matched_value.url_to_add }}{% endif %}"
-            data-search-action="{% if matched_value.active %}remove-type-filter{% else %}add-type-filter{% endif %}"
-          >
-            {{ matched_value.label | escape }}
-            {%- if matched_value.active -%}<b aria-hidden="true">×</b>{%- endif -%}
-          </a>
-        {%- endif -%}
-      {%- endif -%}
-    {%- endfor -%}
+      for filter in filter_source.filters
+        for filter_value in filter.values
+          assign value_downcase = filter_value.label | downcase
 
-    {%- unless type_filter_kind == 'tag' -%}
-      {%- for filter_value in type_filter.values -%}
-      {%- assign should_skip = false -%}
-      {%- assign value_label_downcase = filter_value.label | downcase -%}
+          for alias in aliases
+            assign alias_downcase = alias | strip | downcase
 
-      {%- for preferred_label in preferred_labels -%}
-        {%- assign preferred_downcase = preferred_label | downcase -%}
-        {%- if value_label_downcase == preferred_downcase or value_label_downcase contains preferred_downcase or preferred_downcase contains value_label_downcase -%}
-          {%- assign should_skip = true -%}
-          {%- break -%}
-        {%- endif -%}
-      {%- endfor -%}
+            if value_downcase == alias_downcase or value_downcase contains alias_downcase
+              assign matched_value = filter_value
+              assign matched_param_name = filter_value.param_name
+              assign matched_value_raw = filter_value.value
+              if filter_value.active
+                assign is_active = true
+              endif
+              break
+            endif
+          endfor
 
-      {%- unless should_skip -%}
-        {%- if filter_value.count > 0 or filter_value.active -%}
-          <a
-            class="hh-filter-refinement__chip{% if filter_value.active %} is-active{% endif %}"
-            href="{% if filter_value.active %}{{ filter_value.url_to_remove }}{% else %}{{ filter_value.url_to_add }}{% endif %}"
-            data-search-action="{% if filter_value.active %}remove-type-filter{% else %}add-type-filter{% endif %}"
-          >
-            {{ filter_value.label | escape }}
-            {%- if filter_value.active -%}<b aria-hidden="true">×</b>{%- endif -%}
-          </a>
-        {%- endif -%}
-      {%- endunless -%}
-      {%- endfor -%}
-    {%- endunless -%}
-  {%- endcapture -%}
+          if matched_value != blank
+            break
+          endif
+        endfor
 
-  {%- assign chip_markup_stripped = chip_markup | strip -%}
+        if matched_value != blank
+          break
+        endif
+      endfor
 
-  {%- if chip_markup_stripped != blank -%}
-    <div class="hh-filter-refinement hh-filter-refinement--{{ context | default: 'catalog' }}" aria-label="Product type filters">
-      <span>Filter by type</span>
-      {{ chip_markup }}
-    </div>
-  {%- endif -%}
-{%- endif -%}
+      if matched_value != blank
+        if is_active
+          assign chip_url = matched_value.url_to_remove
+        else
+          assign chip_url = matched_value.url_to_add
+        endif
+      else
+        assign matched_param_name = canonical_param
+        assign matched_value_raw = chip_label
+        assign encoded_filter_value = matched_value_raw | url_encode
+        assign query_separator = '?'
+
+        if current_url contains '?'
+          assign query_separator = '&'
+        endif
+
+        assign active_test = matched_param_name | append: '=' | append: encoded_filter_value
+        assign is_active = false
+
+        if current_url contains active_test
+          assign is_active = true
+        endif
+
+        if is_active
+          assign chip_url = current_url
+        else
+          assign chip_url = current_url | append: query_separator | append: matched_param_name | append: '=' | append: encoded_filter_value
+        endif
+      endif
+    -%}
+
+    <a
+      class="hh-filter-refinement__chip{% if is_active %} is-active{% endif %}"
+      href="{{ chip_url }}"
+      data-search-action="{% if is_active %}remove-type-filter{% else %}add-type-filter{% endif %}"
+      data-hh-native-filter-chip
+      data-hh-filter-param="{{ matched_param_name | escape }}"
+      data-hh-filter-value="{{ matched_value_raw | escape }}"
+    >
+      {{ chip_label }}
+      {%- if is_active -%}<b aria-hidden="true">×</b>{%- endif -%}
+    </a>
+  {%- endfor -%}
+</div>
+
+<script>
+  (function() {
+    var chips = document.querySelectorAll('[data-hh-native-filter-chip]');
+    if (!chips.length) return;
+
+    var currentUrl = new URL(window.location.href);
+
+    chips.forEach(function(chip) {
+      var paramName = chip.getAttribute('data-hh-filter-param');
+      var paramValue = chip.getAttribute('data-hh-filter-value');
+      if (!paramName || !paramValue) return;
+
+      var values = currentUrl.searchParams.getAll(paramName);
+      var isActive = values.some(function(value) {
+        return value === paramValue;
+      });
+
+      if (!isActive && chip.classList.contains('is-active')) {
+        isActive = true;
+      }
+
+      if (isActive) {
+        var nextUrl = new URL(window.location.href);
+        nextUrl.searchParams.delete('page');
+        nextUrl.searchParams.delete(paramName);
+
+        values.forEach(function(value) {
+          if (value !== paramValue) nextUrl.searchParams.append(paramName, value);
+        });
+
+        chip.href = nextUrl.pathname + nextUrl.search;
+        chip.classList.add('is-active');
+        chip.setAttribute('data-search-action', 'remove-type-filter');
+
+        if (!chip.querySelector('b')) {
+          var close = document.createElement('b');
+          close.setAttribute('aria-hidden', 'true');
+          close.textContent = '×';
+          chip.appendChild(close);
+        }
+      } else if (!chip.getAttribute('href')) {
+        var addUrl = new URL(window.location.href);
+        addUrl.searchParams.delete('page');
+        addUrl.searchParams.append(paramName, paramValue);
+        chip.href = addUrl.pathname + addUrl.search;
+      }
+    });
+  })();
+</script>
