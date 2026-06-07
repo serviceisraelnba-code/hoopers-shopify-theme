@@ -92,7 +92,34 @@
 
                 assign color_file_name = filter_value.label | handle | append: '.' | append: swatch_file_extension
                 assign color_image = color_file_name | file_img_url: '50x50' | prepend: 'https:' | split: '?' | first
+                assign color_value = filter_value.label | strip | downcase
                 assign color_swatch_fallback = filter_value.label | split: ' ' | last | handle
+
+                if color_value contains 'שחור' or color_value contains 'black'
+                  assign color_swatch_fallback = '#000000'
+                elsif color_value contains 'לבן' or color_value contains 'white'
+                  assign color_swatch_fallback = '#ffffff'
+                elsif color_value contains 'אדום' or color_value contains 'red'
+                  assign color_swatch_fallback = '#d71920'
+                elsif color_value contains 'כחול' or color_value contains 'blue'
+                  assign color_swatch_fallback = '#1f5fbf'
+                elsif color_value contains 'צהוב' or color_value contains 'yellow'
+                  assign color_swatch_fallback = '#f4c430'
+                elsif color_value contains 'ירוק' or color_value contains 'green'
+                  assign color_swatch_fallback = '#1f8f4d'
+                elsif color_value contains 'אפור' or color_value contains 'gray' or color_value contains 'grey'
+                  assign color_swatch_fallback = '#8a8a8a'
+                elsif color_value contains 'סגול' or color_value contains 'purple'
+                  assign color_swatch_fallback = '#6f42c1'
+                elsif color_value contains 'ורוד' or color_value contains 'pink'
+                  assign color_swatch_fallback = '#f48fb1'
+                elsif color_value contains 'חום' or color_value contains 'brown'
+                  assign color_swatch_fallback = '#7a4a28'
+                elsif color_value contains 'כתום' or color_value contains 'orange'
+                  assign color_swatch_fallback = '#f47b20'
+                elsif color_value contains 'בז' or color_value contains 'שמנת' or color_value contains 'beige' or color_value contains 'cream'
+                  assign color_swatch_fallback = '#d8c3a5'
+                endif
               -%}
 
                 <li class="tag{% if filter_value.active %} tag--active{% endif %}{% if is_color %} tag--swatch{% endif %}{% if filter_value.count == 0%} hide{% endif %}">
