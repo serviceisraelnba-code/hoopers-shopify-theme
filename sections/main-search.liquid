@@ -70,7 +70,7 @@
   endif
 
   assign show_best_sellers = false
-  if best_sellers_collection != blank and best_sellers_collection.products_count > 0
+  if best_sellers_collection != blank and best_sellers_collection.products_count > 0 and active_filter_count == 0
     if result_count == 0 or result_count < 4
       assign show_best_sellers = true
     endif
@@ -180,11 +180,9 @@
                     <a href="/collections/שיקגו-בולס" data-search-action="team-shortcut">Chicago</a>
                   </div>
 
-                  {%- capture search_filter_base_url -%}{{ routes.search_url }}?q={{ search_terms | url_encode }}&type=product{%- endcapture -%}
                   {%- render 'hoopers-product-type-chips',
                     filter_source: search,
-                    context: 'search',
-                    fallback_base_url: search_filter_base_url
+                    context: 'search'
                   -%}
 
                   {%- if active_filter_count > 0 -%}
@@ -277,10 +275,18 @@
             </div>
           {%- endpaginate -%}
         {%- else -%}
-          <div class="hh-search-results-page__empty">
+          <div class="hh-search-results-page__empty{% if active_filter_count > 0 %} hh-search-results-page__empty--filtered{% endif %}">
             <p class="hh-search-results-page__empty-kicker">{{ section.settings.empty_kicker }}</p>
-            <h2>לא מצאנו תוצאות עבור "{{ search_terms | escape }}"</h2>
-            <p>נסו חיפוש אחר או עברו לאחת הקולקציות הפופולריות.</p>
+            {%- if active_filter_count > 0 -%}
+              <h2>לא נמצאו מוצרים שמתאימים לסינון שבחרת</h2>
+              <p>נסו להסיר מסנן, לבחור סוג מוצר אחר או לחזור לתוצאות החיפוש המלאות.</p>
+              <a class="hh-search-results-page__clear-filters" href="{{ routes.search_url }}?q={{ search_terms | url_encode }}&type=product" data-search-action="clear-filters">
+                Clear filters
+              </a>
+            {%- else -%}
+              <h2>לא מצאנו תוצאות עבור "{{ search_terms | escape }}"</h2>
+              <p>נסו חיפוש אחר או עברו לאחת הקולקציות הפופולריות.</p>
+            {%- endif -%}
             <div class="hh-search-results-page__quick-links" aria-label="Suggested searches">
               <a href="{{ routes.search_url }}?q={{ 'דני אבדיה' | url_encode }}&type=product">דני אבדיה</a>
               <a href="/collections/לוס-אנגלס-לייקרס">Lakers</a>
@@ -1020,6 +1026,35 @@
     font-size: 15px;
     font-weight: 700;
     line-height: 1.7;
+  }
+
+  .hh-search-results-page__empty--filtered {
+    border-color: rgba(200, 165, 106, 0.34);
+    background: linear-gradient(135deg, #f5f3ee 0%, #ece7df 100%);
+  }
+
+  .hh-search-results-page__clear-filters {
+    justify-self: center;
+    display: inline-flex;
+    min-height: 42px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 18px;
+    border: 1px solid rgba(200, 165, 106, 0.72);
+    background: #050505;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 950;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+  }
+
+  .hh-search-results-page__clear-filters:hover {
+    transform: translateY(-1px);
+    background: var(--hh-gold);
+    color: #050505;
   }
 
   .hh-search-results-page__quick-links {

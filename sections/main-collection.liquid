@@ -3,6 +3,11 @@
 
   for filter in collection.filters
     assign current_filter_size = current_filter_size | plus: filter.active_values.size
+    if filter.type == 'price_range'
+      if filter.min_value.value != blank or filter.max_value.value != blank
+        assign current_filter_size = current_filter_size | plus: 1
+      endif
+    endif
   endfor
 -%}
 
@@ -54,8 +59,7 @@
                     <div data-scroll-to>
                       {%- render 'hoopers-product-type-chips',
                         filter_source: collection,
-                        context: 'collection',
-                        fallback_base_url: collection.url
+                        context: 'collection'
                       -%}
 
                       {% render 'collection-grid',
@@ -69,6 +73,29 @@
                         mobile_flush_grid: block.settings.mobile_flush_grid,
                         quick_shop_enable: settings.quick_shop_enable
                       %}
+
+                      {%- if collection.products.size == 0 and current_filter_size > 0 -%}
+                        <div class="hh-collection-filter-empty">
+                          <p class="hh-collection-filter-empty__kicker">FILTERS</p>
+                          <h2>לא נמצאו מוצרים שמתאימים לסינון שבחרת</h2>
+                          <p>נסו להסיר מסנן, לבחור סוג מוצר אחר או לעבור לאחת הקולקציות הפופולריות.</p>
+
+                          <div class="hh-collection-filter-empty__actions">
+                            <a href="{{ collection.url }}" data-search-action="clear-filters">Clear filters</a>
+                            <a href="/collections/all" data-search-action="shop-all">SHOP ALL</a>
+                          </div>
+
+                          <div class="hh-collection-filter-empty__links" aria-label="Suggested product types and collections">
+                            <span>Suggested product types</span>
+                            <a href="/collections/גופיות">גופיות</a>
+                            <a href="/collections/המכנסיים-שלנו">מכנסיים</a>
+                            <a href="/collections/ילדים">ילדים</a>
+                            <a href="/collections/jordan">Jordan</a>
+                            <a href="/collections/fog">Fear Of God</a>
+                            <a href="/collections/מונדיאל">World Cup</a>
+                          </div>
+                        </div>
+                      {%- endif -%}
 
                       {%- if paginate.pages > 1 -%}
                         {%- render 'pagination', paginate: paginate -%}
@@ -178,6 +205,82 @@
   .hoopers-collection-catalog .hh-filter-refinement__chip.is-active b {
     color: var(--hh-gold);
     font-size: 14px;
+  }
+
+  .hoopers-collection-catalog .hh-collection-filter-empty {
+    display: grid;
+    gap: 14px;
+    margin: clamp(18px, 3vw, 34px) 0;
+    padding: clamp(28px, 4vw, 54px);
+    border: 1px solid rgba(200, 165, 106, 0.34);
+    background: linear-gradient(135deg, #f5f3ee 0%, #ece7df 100%);
+    text-align: center;
+  }
+
+  .hoopers-collection-catalog .hh-collection-filter-empty__kicker,
+  .hoopers-collection-catalog .hh-collection-filter-empty__links span {
+    margin: 0;
+    color: var(--hh-gold);
+    font-size: 10px;
+    font-weight: 950;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .hoopers-collection-catalog .hh-collection-filter-empty h2 {
+    margin: 0;
+    color: var(--hh-text);
+    font-size: clamp(28px, 3.4vw, 48px);
+    font-weight: 950;
+    line-height: 1.05;
+  }
+
+  .hoopers-collection-catalog .hh-collection-filter-empty p {
+    max-width: 680px;
+    margin: 0 auto;
+    color: var(--hh-muted);
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.8;
+  }
+
+  .hoopers-collection-catalog .hh-collection-filter-empty__actions,
+  .hoopers-collection-catalog .hh-collection-filter-empty__links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 9px;
+  }
+
+  .hoopers-collection-catalog .hh-collection-filter-empty__actions a,
+  .hoopers-collection-catalog .hh-collection-filter-empty__links a {
+    display: inline-flex;
+    min-height: 38px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 14px;
+    border: 1px solid var(--hh-border);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.34);
+    color: var(--hh-text);
+    font-size: 12px;
+    font-weight: 900;
+    text-decoration: none;
+    transition: background 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease;
+  }
+
+  .hoopers-collection-catalog .hh-collection-filter-empty__actions a:first-child {
+    border-color: rgba(200, 165, 106, 0.72);
+    background: var(--hh-black);
+    color: #fff;
+  }
+
+  .hoopers-collection-catalog .hh-collection-filter-empty__actions a:hover,
+  .hoopers-collection-catalog .hh-collection-filter-empty__links a:hover {
+    transform: translateY(-1px);
+    border-color: rgba(200, 165, 106, 0.72);
+    background: var(--hh-gold);
+    color: var(--hh-black);
   }
 
   .hoopers-collection-catalog .grid,

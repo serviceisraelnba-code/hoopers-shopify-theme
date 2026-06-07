@@ -1,5 +1,8 @@
 {% comment %}
-  Renders native Shopify product type/category refinement chips.
+  Renders strict native Shopify refinement chips for product type/category/tag filters.
+  The chips only use Shopify-provided url_to_add/url_to_remove values so filtering
+  stays scoped to the current collection/search result set.
+
   Arguments:
   - filter_source: collection or search object
   - context: 'collection' or 'search'
@@ -7,32 +10,56 @@
 
 {%- liquid
   assign type_filter = blank
-  assign preferred_labels = 'גופיות|מכנסיים|ילדים|חולצות|ג׳קטים|כדורים' | split: '|'
-  assign fallback_values = 'גופיות|מכנסיים|ילדים|חולצות|ג׳קטים|כדורים' | split: '|'
-  assign base_url = fallback_base_url | default: filter_source.url | default: '/'
+  assign type_filter_kind = ''
+  assign preferred_labels = 'גופיות|Jerseys|מכנסיים|Shorts|Pants|ילדים|Kids|חולצות|Shirts|T-Shirts|ג׳קטים|Jackets|כדורים|Basketballs' | split: '|'
 
   for filter in filter_source.filters
     assign filter_param_name = filter.param_name | default: ''
     assign filter_label_downcase = filter.label | downcase
 
-    if filter_param_name contains 'product_type' or filter_label_downcase contains 'product type' or filter_label_downcase contains 'סוג מוצר' or filter_label_downcase contains 'category' or filter_label_downcase contains 'קטגוריה'
+    if filter_param_name contains 'product_type' or filter_label_downcase contains 'product type' or filter_label_downcase contains 'סוג מוצר'
       assign type_filter = filter
+      assign type_filter_kind = 'product_type'
       break
     endif
   endfor
+
+  if type_filter == blank
+    for filter in filter_source.filters
+      assign filter_param_name = filter.param_name | default: ''
+      assign filter_label_downcase = filter.label | downcase
+
+      if filter_param_name contains 'category' or filter_label_downcase contains 'category' or filter_label_downcase contains 'קטגוריה'
+        assign type_filter = filter
+        assign type_filter_kind = 'category'
+        break
+      endif
+    endfor
+  endif
+
+  if type_filter == blank
+    for filter in filter_source.filters
+      assign filter_param_name = filter.param_name | default: ''
+      assign filter_label_downcase = filter.label | downcase
+
+      if filter_param_name contains 'tag' or filter_label_downcase contains 'tag' or filter_label_downcase contains 'תג'
+        assign type_filter = filter
+        assign type_filter_kind = 'tag'
+        break
+      endif
+    endfor
+  endif
 -%}
 
 {%- if type_filter != blank and type_filter.values.size > 0 -%}
-  <div class="hh-filter-refinement hh-filter-refinement--{{ context | default: 'catalog' }}" aria-label="Product type filters">
-    <span>Filter by type</span>
-
+  {%- capture chip_markup -%}
     {%- for preferred_label in preferred_labels -%}
       {%- assign matched_value = blank -%}
       {%- assign preferred_downcase = preferred_label | downcase -%}
 
       {%- for filter_value in type_filter.values -%}
         {%- assign value_label_downcase = filter_value.label | downcase -%}
-        {%- if value_label_downcase == preferred_downcase or value_label_downcase contains preferred_downcase -%}
+        {%- if value_label_downcase == preferred_downcase or value_label_downcase contains preferred_downcase or preferred_downcase contains value_label_downcase -%}
           {%- assign matched_value = filter_value -%}
           {%- break -%}
         {%- endif -%}
@@ -52,13 +79,14 @@
       {%- endif -%}
     {%- endfor -%}
 
-    {%- for filter_value in type_filter.values -%}
+    {%- unless type_filter_kind == 'tag' -%}
+      {%- for filter_value in type_filter.values -%}
       {%- assign should_skip = false -%}
       {%- assign value_label_downcase = filter_value.label | downcase -%}
 
       {%- for preferred_label in preferred_labels -%}
         {%- assign preferred_downcase = preferred_label | downcase -%}
-        {%- if value_label_downcase == preferred_downcase or value_label_downcase contains preferred_downcase -%}
+        {%- if value_label_downcase == preferred_downcase or value_label_downcase contains preferred_downcase or preferred_downcase contains value_label_downcase -%}
           {%- assign should_skip = true -%}
           {%- break -%}
         {%- endif -%}
@@ -76,70 +104,16 @@
           </a>
         {%- endif -%}
       {%- endunless -%}
-    {%- endfor -%}
-  </div>
-{%- else -%}
-  <div class="hh-filter-refinement hh-filter-refinement--{{ context | default: 'catalog' }}" aria-label="Product type filters" data-hh-fallback-type-chips>
-    <span>Filter by type</span>
-    {%- for fallback_value in fallback_values -%}
-      <a
-        class="hh-filter-refinement__chip"
-        href="{{ base_url }}{% if base_url contains '?' %}&{% else %}?{% endif %}filter.p.product_type={{ fallback_value | url_encode }}"
-        data-hh-fallback-filter="filter.p.product_type"
-        data-hh-fallback-value="{{ fallback_value | escape }}"
-        data-search-action="add-type-filter"
-      >
-        {{ fallback_value }}
-      </a>
-    {%- endfor -%}
-  </div>
+      {%- endfor -%}
+    {%- endunless -%}
+  {%- endcapture -%}
 
-  <script>
-    (function() {
-      var chips = document.querySelectorAll('[data-hh-fallback-filter][data-hh-fallback-value]');
-      if (!chips.length) return;
+  {%- assign chip_markup_stripped = chip_markup | strip -%}
 
-      var currentUrl = new URL(window.location.href);
-
-      chips.forEach(function(chip) {
-        var paramName = chip.getAttribute('data-hh-fallback-filter');
-        var paramValue = chip.getAttribute('data-hh-fallback-value');
-        if (!paramName || !paramValue) return;
-
-        var values = currentUrl.searchParams.getAll(paramName);
-        var isActive = values.some(function(value) {
-          return value === paramValue;
-        });
-
-        var nextUrl = new URL(window.location.href);
-        nextUrl.searchParams.delete('page');
-        nextUrl.searchParams.delete(paramName);
-
-        values.forEach(function(value) {
-          if (isActive) {
-            if (value !== paramValue) nextUrl.searchParams.append(paramName, value);
-          } else {
-            nextUrl.searchParams.append(paramName, value);
-          }
-        });
-
-        if (!isActive) {
-          nextUrl.searchParams.append(paramName, paramValue);
-        }
-
-        chip.href = nextUrl.pathname + nextUrl.search;
-
-        if (isActive) {
-          chip.classList.add('is-active');
-          chip.setAttribute('data-search-action', 'remove-type-filter');
-          if (!chip.querySelector('b')) {
-            var close = document.createElement('b');
-            close.setAttribute('aria-hidden', 'true');
-            close.textContent = '×';
-            chip.appendChild(close);
-          }
-        }
-      });
-    })();
-  </script>
+  {%- if chip_markup_stripped != blank -%}
+    <div class="hh-filter-refinement hh-filter-refinement--{{ context | default: 'catalog' }}" aria-label="Product type filters">
+      <span>Filter by type</span>
+      {{ chip_markup }}
+    </div>
+  {%- endif -%}
 {%- endif -%}
