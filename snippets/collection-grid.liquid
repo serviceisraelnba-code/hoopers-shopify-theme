@@ -27,9 +27,45 @@ Snippet Arguments
   assign default_sort_by = collection.default_sort_by
   assign sort_options = collection.sort_options
   assign current_filter_size = 0
+  assign is_search_results = false
+
+  if collection.results
+    assign is_search_results = true
+  endif
+
+  assign has_best_selling_sort = false
+  assign has_created_descending_sort = false
+  assign has_created_ascending_sort = false
+
+  for option in sort_options
+    if option.value == 'best-selling'
+      assign has_best_selling_sort = true
+    elsif option.value == 'created-descending'
+      assign has_created_descending_sort = true
+    elsif option.value == 'created-ascending'
+      assign has_created_ascending_sort = true
+    endif
+  endfor
 
   for filter in filters
-    assign current_filter_size = current_filter_size | plus: filter.active_values.size
+    assign filter_param_name = filter.param_name | default: ''
+    assign filter_label_downcase = filter.label | downcase
+    assign skip_filter_count = false
+
+    if is_search_results
+      if filter_param_name == 'filter.v.availability' or filter_label_downcase contains 'availability' or filter_label_downcase contains 'מלאי'
+        assign skip_filter_count = true
+      endif
+    endif
+
+    unless skip_filter_count
+      assign current_filter_size = current_filter_size | plus: filter.active_values.size
+      if filter.type == 'price_range'
+        if filter.min_value.value != blank or filter.max_value.value != blank
+          assign current_filter_size = current_filter_size | plus: 1
+        endif
+      endif
+    endunless
   endfor
 %}
 
@@ -63,6 +99,17 @@ Snippet Arguments
           {%- for option in sort_options -%}
           <option value="{{ option.value }}"{% if option.value == sort_by %} selected="selected"{% endif %}>{{ option.name }}</option>
           {%- endfor -%}
+          {%- if is_search_results -%}
+            {%- unless has_best_selling_sort -%}
+              <option value="best-selling"{% if sort_by == 'best-selling' %} selected="selected"{% endif %}>Best selling</option>
+            {%- endunless -%}
+            {%- unless has_created_descending_sort -%}
+              <option value="created-descending"{% if sort_by == 'created-descending' %} selected="selected"{% endif %}>Newest to oldest</option>
+            {%- endunless -%}
+            {%- unless has_created_ascending_sort -%}
+              <option value="created-ascending"{% if sort_by == 'created-ascending' %} selected="selected"{% endif %}>Oldest to newest</option>
+            {%- endunless -%}
+          {%- endif -%}
         </select>
         </div>
     </div>

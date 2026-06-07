@@ -7,15 +7,28 @@
 <ul class="no-bullets tag-list tag-list--active-tags">
 {%- for filter in filters -%}
   {%- assign filter_index = forloop.index -%}
+  {%- liquid
+    assign filter_param_name = filter.param_name | default: ''
+    assign filter_label_downcase = filter.label | downcase
+    assign skip_filter = false
 
-  {%- for filter_value in filter.active_values -%}
-  <li class="tag tag--remove">
-    <a class="btn btn--small" href="{{ filter_value.url_to_remove }}">
-      {{ filter_value.label | escape }}
-    </a>
-    <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-close" viewBox="0 0 64 64"><title>icon-X</title><path d="m19 17.61 27.12 27.13m0-27.12L19 44.74"/></svg>
-  </li>
-  {%- endfor -%}
+    if is_search_results
+      if filter_param_name == 'filter.v.availability' or filter_label_downcase contains 'availability' or filter_label_downcase contains 'מלאי'
+        assign skip_filter = true
+      endif
+    endif
+  -%}
+
+  {%- unless skip_filter -%}
+    {%- for filter_value in filter.active_values -%}
+    <li class="tag tag--remove">
+      <a class="btn btn--small" href="{{ filter_value.url_to_remove }}">
+        {{ filter_value.label | escape }}
+      </a>
+      <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-close" viewBox="0 0 64 64"><title>icon-X</title><path d="m19 17.61 27.12 27.13m0-27.12L19 44.74"/></svg>
+    </li>
+    {%- endfor -%}
+  {%- endunless -%}
 {%- endfor -%}
 </ul>
 
@@ -23,7 +36,19 @@
 {%- for filter in filters -%}
   {%- capture filter_id -%}filter-{{ filter.label | handleize }}{%- endcapture -%}
   {%- assign filter_index = forloop.index -%}
+  {%- liquid
+    assign filter_param_name = filter.param_name | default: ''
+    assign filter_label_downcase = filter.label | downcase
+    assign skip_filter = false
 
+    if is_search_results
+      if filter_param_name == 'filter.v.availability' or filter_label_downcase contains 'availability' or filter_label_downcase contains 'מלאי'
+        assign skip_filter = true
+      endif
+    endif
+  -%}
+
+  {%- unless skip_filter -%}
   <div class="collection-sidebar__group--{{ filter_index }}">
     <div class="collection-sidebar__group">
       <button
@@ -51,6 +76,8 @@
                     if downcased_label contains swatch_trigger
                     assign is_color = true
                     elsif swatch_trigger == 'color' and downcased_label contains 'colour'
+                    assign is_color = true
+                    elsif downcased_label contains 'color' or downcased_label contains 'colour' or downcased_label contains 'צבע'
                     assign is_color = true
                     endif
                 endif
@@ -160,5 +187,6 @@
       </div>
     </div>
   </div>
+  {%- endunless -%}
 {%- endfor -%}
 </form>

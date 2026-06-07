@@ -7,12 +7,22 @@
   assign active_filter_count = 0
 
   for filter in search.filters
-    assign active_filter_count = active_filter_count | plus: filter.active_values.size
-    if filter.type == 'price_range'
-      if filter.min_value.value != blank or filter.max_value.value != blank
-        assign active_filter_count = active_filter_count | plus: 1
-      endif
+    assign filter_param_name = filter.param_name | default: ''
+    assign filter_label_downcase = filter.label | downcase
+    assign skip_filter_count = false
+
+    if filter_param_name == 'filter.v.availability' or filter_label_downcase contains 'availability' or filter_label_downcase contains 'מלאי'
+      assign skip_filter_count = true
     endif
+
+    unless skip_filter_count
+      assign active_filter_count = active_filter_count | plus: filter.active_values.size
+      if filter.type == 'price_range'
+        if filter.min_value.value != blank or filter.max_value.value != blank
+          assign active_filter_count = active_filter_count | plus: 1
+        endif
+      endif
+    endunless
   endfor
 
   assign intent_title = ''
@@ -170,26 +180,50 @@
                     <a href="/collections/שיקגו-בולס" data-search-action="team-shortcut">Chicago</a>
                   </div>
 
+                  {%- if search_terms != blank -%}
+                    <div class="hh-search-type-strip" aria-label="Product type shortcuts">
+                      <span>Filter by type</span>
+                      <a href="{{ routes.search_url }}?q={{ search_terms | append: ' גופיות' | url_encode }}&type=product" data-search-action="type-shortcut">גופיות</a>
+                      <a href="{{ routes.search_url }}?q={{ search_terms | append: ' מכנסיים' | url_encode }}&type=product" data-search-action="type-shortcut">מכנסיים</a>
+                      <a href="{{ routes.search_url }}?q={{ search_terms | append: ' חולצות' | url_encode }}&type=product" data-search-action="type-shortcut">חולצות</a>
+                      <a href="{{ routes.search_url }}?q={{ search_terms | append: ' ג׳קטים' | url_encode }}&type=product" data-search-action="type-shortcut">ג׳קטים</a>
+                      <a href="{{ routes.search_url }}?q={{ search_terms | append: ' כדורים' | url_encode }}&type=product" data-search-action="type-shortcut">כדורים</a>
+                      <a href="{{ routes.search_url }}?q={{ search_terms | append: ' ילדים' | url_encode }}&type=product" data-search-action="type-shortcut">ילדים</a>
+                    </div>
+                  {%- endif -%}
+
                   {%- if active_filter_count > 0 -%}
                     <div class="hh-search-active-filters" aria-label="Active filters">
                       <span>מסננים פעילים</span>
                       {%- for filter in search.filters -%}
-                        {%- for filter_value in filter.active_values -%}
-                          <a href="{{ filter_value.url_to_remove }}" data-search-action="remove-filter">
-                            {{ filter_value.label | escape }} <b aria-hidden="true">×</b>
-                          </a>
-                        {%- endfor -%}
+                        {%- liquid
+                          assign filter_param_name = filter.param_name | default: ''
+                          assign filter_label_downcase = filter.label | downcase
+                          assign skip_filter_chip = false
 
-                        {%- if filter.type == 'price_range' -%}
-                          {%- if filter.min_value.value != blank or filter.max_value.value != blank -%}
-                            <a href="{{ filter.url_to_remove }}" data-search-action="remove-filter">
-                              {%- if filter.min_value.value != blank -%}{{ filter.min_value.value | money_without_trailing_zeros }}{%- else -%}₪0{%- endif -%}
-                              –
-                              {%- if filter.max_value.value != blank -%}{{ filter.max_value.value | money_without_trailing_zeros }}{%- else -%}{{ filter.range_max | money_without_trailing_zeros }}{%- endif -%}
-                              <b aria-hidden="true">×</b>
+                          if filter_param_name == 'filter.v.availability' or filter_label_downcase contains 'availability' or filter_label_downcase contains 'מלאי'
+                            assign skip_filter_chip = true
+                          endif
+                        -%}
+
+                        {%- unless skip_filter_chip -%}
+                          {%- for filter_value in filter.active_values -%}
+                            <a href="{{ filter_value.url_to_remove }}" data-search-action="remove-filter">
+                              {{ filter_value.label | escape }} <b aria-hidden="true">×</b>
                             </a>
+                          {%- endfor -%}
+
+                          {%- if filter.type == 'price_range' -%}
+                            {%- if filter.min_value.value != blank or filter.max_value.value != blank -%}
+                              <a href="{{ filter.url_to_remove }}" data-search-action="remove-filter">
+                                {%- if filter.min_value.value != blank -%}{{ filter.min_value.value | money_without_trailing_zeros }}{%- else -%}₪0{%- endif -%}
+                                –
+                                {%- if filter.max_value.value != blank -%}{{ filter.max_value.value | money_without_trailing_zeros }}{%- else -%}{{ filter.range_max | money_without_trailing_zeros }}{%- endif -%}
+                                <b aria-hidden="true">×</b>
+                              </a>
+                            {%- endif -%}
                           {%- endif -%}
-                        {%- endif -%}
+                        {%- endunless -%}
                       {%- endfor -%}
                       <a class="hh-search-active-filters__clear" href="{{ routes.search_url }}?q={{ search_terms | url_encode }}&type=product" data-search-action="clear-filters">
                         Clear all
@@ -554,14 +588,29 @@
     letter-spacing: 0.16em;
   }
 
+  .hh-search-results-page .collection-filter__sort-container::after {
+    content: "";
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    width: 7px;
+    height: 7px;
+    border-left: 2px solid var(--hh-gold);
+    border-bottom: 2px solid var(--hh-gold);
+    pointer-events: none;
+    transform: translateY(-64%) rotate(-45deg);
+  }
+
   .hh-search-results-page .collection-filter__sort-container select {
+    appearance: none;
+    -webkit-appearance: none;
     border-color: var(--hh-border);
     background-color: var(--hh-card);
     color: var(--hh-text);
     font-weight: 800;
     min-height: 42px;
     min-width: 188px;
-    padding: 0 14px;
+    padding: 0 14px 0 34px;
     border-radius: 0;
     font-size: 12px;
     letter-spacing: 0.04em;
@@ -628,6 +677,7 @@
   .hh-search-recovery__header span,
   .hh-search-collection-strip span,
   .hh-search-team-strip span,
+  .hh-search-type-strip span,
   .hh-search-active-filters > span {
     color: var(--hh-gold);
     font-size: 10px;
@@ -661,6 +711,7 @@
 
   .hh-search-collection-strip,
   .hh-search-team-strip,
+  .hh-search-type-strip,
   .hh-search-active-filters {
     display: flex;
     flex-wrap: wrap;
@@ -673,6 +724,7 @@
 
   .hh-search-collection-strip a,
   .hh-search-team-strip a,
+  .hh-search-type-strip a,
   .hh-search-active-filters a {
     display: inline-flex;
     min-height: 34px;
@@ -692,6 +744,7 @@
 
   .hh-search-collection-strip a:hover,
   .hh-search-team-strip a:hover,
+  .hh-search-type-strip a:hover,
   .hh-search-active-filters a:hover {
     transform: translateY(-1px);
     border-color: rgba(200, 165, 106, 0.68);
@@ -1007,6 +1060,8 @@
 
   .hh-search-results-page #FilterDrawer .drawer__header {
     color: #fff;
+    direction: rtl;
+    text-align: right;
   }
 
   .hh-search-results-page #FilterDrawer .drawer__title {
@@ -1046,7 +1101,13 @@
 
   .hh-search-results-page #FilterDrawer .collapsible-trigger-btn,
   .hh-search-results-page #FilterDrawer .tag-list__header {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
     color: #fff;
+    direction: rtl;
+    text-align: right;
   }
 
   .hh-search-results-page #FilterDrawer .tag__checkbox-wrapper,
@@ -1202,6 +1263,7 @@
 
     .hh-search-collection-strip,
     .hh-search-team-strip,
+    .hh-search-type-strip,
     .hh-search-active-filters {
       flex-wrap: nowrap;
       overflow-x: auto;
@@ -1211,15 +1273,18 @@
 
     .hh-search-collection-strip::-webkit-scrollbar,
     .hh-search-team-strip::-webkit-scrollbar,
+    .hh-search-type-strip::-webkit-scrollbar,
     .hh-search-active-filters::-webkit-scrollbar {
       display: none;
     }
 
     .hh-search-collection-strip span,
     .hh-search-team-strip span,
+    .hh-search-type-strip span,
     .hh-search-active-filters > span,
     .hh-search-collection-strip a,
     .hh-search-team-strip a,
+    .hh-search-type-strip a,
     .hh-search-active-filters a {
       flex: 0 0 auto;
     }
