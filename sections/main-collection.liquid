@@ -52,6 +52,8 @@
 
                   {%- when 'product_grid' -%}
                     <div data-scroll-to>
+                      {%- render 'hoopers-product-type-chips', filter_source: collection, context: 'collection' -%}
+
                       {% render 'collection-grid',
                         collection: collection,
                         items: collection.products,
@@ -123,6 +125,55 @@
   .hoopers-collection-catalog .collection-filter {
     border-color: var(--hh-border);
     margin-bottom: clamp(18px, 2vw, 28px);
+  }
+
+  .hoopers-collection-catalog .hh-filter-refinement {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: clamp(16px, 2vw, 24px);
+    padding: 12px;
+    border: 1px solid var(--hh-border);
+    background: var(--hh-card);
+  }
+
+  .hoopers-collection-catalog .hh-filter-refinement span {
+    color: var(--hh-gold);
+    font-size: 10px;
+    font-weight: 950;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .hoopers-collection-catalog .hh-filter-refinement a {
+    display: inline-flex;
+    min-height: 34px;
+    align-items: center;
+    gap: 7px;
+    padding: 0 12px;
+    border: 1px solid rgba(17, 17, 17, 0.12);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.34);
+    color: var(--hh-text);
+    font-size: 12px;
+    font-weight: 850;
+    line-height: 1;
+    text-decoration: none;
+    transition: background 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease;
+  }
+
+  .hoopers-collection-catalog .hh-filter-refinement a:hover,
+  .hoopers-collection-catalog .hh-filter-refinement__chip.is-active {
+    transform: translateY(-1px);
+    border-color: rgba(200, 165, 106, 0.68);
+    background: var(--hh-black);
+    color: #fff;
+  }
+
+  .hoopers-collection-catalog .hh-filter-refinement__chip.is-active b {
+    color: var(--hh-gold);
+    font-size: 14px;
   }
 
   .hoopers-collection-catalog .grid,
@@ -360,6 +411,22 @@
     .hoopers-collection-catalog .grid {
       margin-left: -6px;
       margin-right: -6px;
+    }
+
+    .hoopers-collection-catalog .hh-filter-refinement {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding: 10px;
+      scrollbar-width: none;
+    }
+
+    .hoopers-collection-catalog .hh-filter-refinement::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hoopers-collection-catalog .hh-filter-refinement span,
+    .hoopers-collection-catalog .hh-filter-refinement a {
+      flex: 0 0 auto;
     }
 
     .hoopers-collection-catalog .grid-product {

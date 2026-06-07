@@ -180,17 +180,7 @@
                     <a href="/collections/שיקגו-בולס" data-search-action="team-shortcut">Chicago</a>
                   </div>
 
-                  {%- if search_terms != blank -%}
-                    <div class="hh-search-type-strip" aria-label="Product type shortcuts">
-                      <span>Filter by type</span>
-                      <a href="{{ routes.search_url }}?q={{ search_terms | append: ' גופיות' | url_encode }}&type=product" data-search-action="type-shortcut">גופיות</a>
-                      <a href="{{ routes.search_url }}?q={{ search_terms | append: ' מכנסיים' | url_encode }}&type=product" data-search-action="type-shortcut">מכנסיים</a>
-                      <a href="{{ routes.search_url }}?q={{ search_terms | append: ' חולצות' | url_encode }}&type=product" data-search-action="type-shortcut">חולצות</a>
-                      <a href="{{ routes.search_url }}?q={{ search_terms | append: ' ג׳קטים' | url_encode }}&type=product" data-search-action="type-shortcut">ג׳קטים</a>
-                      <a href="{{ routes.search_url }}?q={{ search_terms | append: ' כדורים' | url_encode }}&type=product" data-search-action="type-shortcut">כדורים</a>
-                      <a href="{{ routes.search_url }}?q={{ search_terms | append: ' ילדים' | url_encode }}&type=product" data-search-action="type-shortcut">ילדים</a>
-                    </div>
-                  {%- endif -%}
+                  {%- render 'hoopers-product-type-chips', filter_source: search, context: 'search' -%}
 
                   {%- if active_filter_count > 0 -%}
                     <div class="hh-search-active-filters" aria-label="Active filters">
@@ -274,7 +264,7 @@
                 >
                   <div class="hh-search-recovery__header">
                     <span>Recently viewed</span>
-                    <h2>המשכתם מאיפה שעצרתם</h2>
+                    <h2>להמשיך מאיפה שעצרתם</h2>
                   </div>
                   <div class="hh-search-recent__grid" data-hh-search-recent-items></div>
                 </section>
@@ -677,7 +667,7 @@
   .hh-search-recovery__header span,
   .hh-search-collection-strip span,
   .hh-search-team-strip span,
-  .hh-search-type-strip span,
+  .hh-filter-refinement span,
   .hh-search-active-filters > span {
     color: var(--hh-gold);
     font-size: 10px;
@@ -711,7 +701,7 @@
 
   .hh-search-collection-strip,
   .hh-search-team-strip,
-  .hh-search-type-strip,
+  .hh-filter-refinement,
   .hh-search-active-filters {
     display: flex;
     flex-wrap: wrap;
@@ -724,7 +714,7 @@
 
   .hh-search-collection-strip a,
   .hh-search-team-strip a,
-  .hh-search-type-strip a,
+  .hh-filter-refinement a,
   .hh-search-active-filters a {
     display: inline-flex;
     min-height: 34px;
@@ -744,7 +734,7 @@
 
   .hh-search-collection-strip a:hover,
   .hh-search-team-strip a:hover,
-  .hh-search-type-strip a:hover,
+  .hh-filter-refinement a:hover,
   .hh-search-active-filters a:hover {
     transform: translateY(-1px);
     border-color: rgba(200, 165, 106, 0.68);
@@ -754,6 +744,17 @@
 
   .hh-search-active-filters {
     border-color: rgba(200, 165, 106, 0.3);
+  }
+
+  .hh-filter-refinement__chip.is-active {
+    border-color: rgba(200, 165, 106, 0.62);
+    background: #050505;
+    color: #fff;
+  }
+
+  .hh-filter-refinement__chip.is-active b {
+    color: var(--hh-gold);
+    font-size: 14px;
   }
 
   .hh-search-active-filters a {
@@ -1263,7 +1264,7 @@
 
     .hh-search-collection-strip,
     .hh-search-team-strip,
-    .hh-search-type-strip,
+    .hh-filter-refinement,
     .hh-search-active-filters {
       flex-wrap: nowrap;
       overflow-x: auto;
@@ -1273,18 +1274,18 @@
 
     .hh-search-collection-strip::-webkit-scrollbar,
     .hh-search-team-strip::-webkit-scrollbar,
-    .hh-search-type-strip::-webkit-scrollbar,
+    .hh-filter-refinement::-webkit-scrollbar,
     .hh-search-active-filters::-webkit-scrollbar {
       display: none;
     }
 
     .hh-search-collection-strip span,
     .hh-search-team-strip span,
-    .hh-search-type-strip span,
+    .hh-filter-refinement span,
     .hh-search-active-filters > span,
     .hh-search-collection-strip a,
     .hh-search-team-strip a,
-    .hh-search-type-strip a,
+    .hh-filter-refinement a,
     .hh-search-active-filters a {
       flex: 0 0 auto;
     }
@@ -1493,7 +1494,8 @@
       "type": "checkbox",
       "id": "enable_color_swatches",
       "label": "t:sections.main-search.settings.enable_color_swatches.label",
-      "info": "t:sections.main-search.settings.enable_color_swatches.info"
+      "info": "t:sections.main-search.settings.enable_color_swatches.info",
+      "default": true
     },
     {
       "type": "range",

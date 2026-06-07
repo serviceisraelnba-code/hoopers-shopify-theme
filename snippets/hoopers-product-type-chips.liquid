@@ -1,0 +1,79 @@
+{% comment %}
+  Renders native Shopify product type/category refinement chips.
+  Arguments:
+  - filter_source: collection or search object
+  - context: 'collection' or 'search'
+{% endcomment %}
+
+{%- liquid
+  assign type_filter = blank
+  assign preferred_labels = 'גופיות|מכנסיים|ילדים|חולצות|ג׳קטים|כדורים' | split: '|'
+
+  for filter in filter_source.filters
+    assign filter_param_name = filter.param_name | default: ''
+    assign filter_label_downcase = filter.label | downcase
+
+    if filter_param_name contains 'product_type' or filter_label_downcase contains 'product type' or filter_label_downcase contains 'סוג מוצר' or filter_label_downcase contains 'category' or filter_label_downcase contains 'קטגוריה'
+      assign type_filter = filter
+      break
+    endif
+  endfor
+-%}
+
+{%- if type_filter != blank and type_filter.values.size > 0 -%}
+  <div class="hh-filter-refinement hh-filter-refinement--{{ context | default: 'catalog' }}" aria-label="Product type filters">
+    <span>Filter by type</span>
+
+    {%- for preferred_label in preferred_labels -%}
+      {%- assign matched_value = blank -%}
+      {%- assign preferred_downcase = preferred_label | downcase -%}
+
+      {%- for filter_value in type_filter.values -%}
+        {%- assign value_label_downcase = filter_value.label | downcase -%}
+        {%- if value_label_downcase == preferred_downcase or value_label_downcase contains preferred_downcase -%}
+          {%- assign matched_value = filter_value -%}
+          {%- break -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- if matched_value != blank -%}
+        {%- if matched_value.count > 0 or matched_value.active -%}
+          <a
+            class="hh-filter-refinement__chip{% if matched_value.active %} is-active{% endif %}"
+            href="{% if matched_value.active %}{{ matched_value.url_to_remove }}{% else %}{{ matched_value.url_to_add }}{% endif %}"
+            data-search-action="{% if matched_value.active %}remove-type-filter{% else %}add-type-filter{% endif %}"
+          >
+            {{ matched_value.label | escape }}
+            {%- if matched_value.active -%}<b aria-hidden="true">×</b>{%- endif -%}
+          </a>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- for filter_value in type_filter.values -%}
+      {%- assign should_skip = false -%}
+      {%- assign value_label_downcase = filter_value.label | downcase -%}
+
+      {%- for preferred_label in preferred_labels -%}
+        {%- assign preferred_downcase = preferred_label | downcase -%}
+        {%- if value_label_downcase == preferred_downcase or value_label_downcase contains preferred_downcase -%}
+          {%- assign should_skip = true -%}
+          {%- break -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- unless should_skip -%}
+        {%- if filter_value.count > 0 or filter_value.active -%}
+          <a
+            class="hh-filter-refinement__chip{% if filter_value.active %} is-active{% endif %}"
+            href="{% if filter_value.active %}{{ filter_value.url_to_remove }}{% else %}{{ filter_value.url_to_add }}{% endif %}"
+            data-search-action="{% if filter_value.active %}remove-type-filter{% else %}add-type-filter{% endif %}"
+          >
+            {{ filter_value.label | escape }}
+            {%- if filter_value.active -%}<b aria-hidden="true">×</b>{%- endif -%}
+          </a>
+        {%- endif -%}
+      {%- endunless -%}
+    {%- endfor -%}
+  </div>
+{%- endif -%}
