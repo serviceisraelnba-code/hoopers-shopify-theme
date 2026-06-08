@@ -9641,15 +9641,6 @@ html[dir=rtl] .grid-product__content{
 }
   }
 
-@media only screen and (max-width:768px){
-
-.supports-touch .grid-product.hh-product-card-touch-preview .grid-product__secondary-image{
-      animation:fade-in 0.2s cubic-bezier(0.26, 0.54, 0.32, 1) 0s forwards;
-      display:block !important;
-      pointer-events:none;
-}
-  }
-
 .grid-product__color-image{
   background-color:var(--colorBody);
   background-position:50%;
