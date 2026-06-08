@@ -8271,11 +8271,6 @@ theme.recentlyViewed = {
 
     document.documentElement.classList.add('product-card-mobile-taps-initialized');
 
-    var touchState = null;
-    var suppressClickCard = null;
-    var suppressClickUntil = 0;
-    var moveThreshold = 8;
-
     function isMobile() {
       return theme.config && theme.config.bpSmall;
     }
@@ -8294,70 +8289,6 @@ theme.recentlyViewed = {
       return card ? card.querySelector('.grid-product__link[href]') : null;
     }
 
-    function getTouchPoint(event) {
-      var touch = event.touches && event.touches[0] || event.changedTouches && event.changedTouches[0];
-      return touch ? { x: touch.clientX, y: touch.clientY } : null;
-    }
-
-    function showSwipePreview(card) {
-      if (!card || !card.querySelector('.grid-product__secondary-image')) return;
-
-      card.classList.add('hh-product-card-swipe-preview');
-      window.clearTimeout(card.hhProductCardSwipePreviewTimer);
-      card.hhProductCardSwipePreviewTimer = window.setTimeout(function() {
-        card.classList.remove('hh-product-card-swipe-preview');
-      }, 850);
-    }
-
-    function handleTouchStart(event) {
-      if (!isMobile()) return;
-      if (event.target.closest && event.target.closest('a, button, input, select, textarea')) return;
-
-      var imageArea = getImageArea(event.target);
-      if (!imageArea) return;
-
-      var point = getTouchPoint(event);
-      var card = getCard(imageArea);
-      if (!point || !card) return;
-
-      touchState = {
-        card: card,
-        startX: point.x,
-        startY: point.y,
-        moved: false
-      };
-    }
-
-    function handleTouchMove(event) {
-      if (!touchState || !isMobile()) return;
-
-      var point = getTouchPoint(event);
-      if (!point) return;
-
-      var deltaX = Math.abs(point.x - touchState.startX);
-      var deltaY = Math.abs(point.y - touchState.startY);
-
-      if (Math.max(deltaX, deltaY) < moveThreshold) return;
-
-      touchState.moved = true;
-      showSwipePreview(touchState.card);
-    }
-
-    function handleTouchEnd() {
-      if (!touchState) return;
-
-      if (touchState.moved) {
-        suppressClickCard = touchState.card;
-        suppressClickUntil = Date.now() + 450;
-      }
-
-      touchState = null;
-    }
-
-    function handleTouchCancel() {
-      touchState = null;
-    }
-
     function handleClick(event) {
       if (!isMobile() || event.defaultPrevented) return;
       if (event.target.closest && event.target.closest('a, button, input, select, textarea')) return;
@@ -8369,22 +8300,10 @@ theme.recentlyViewed = {
       var link = getProductLink(card);
       if (!link || !link.href) return;
 
-      if (card && card === suppressClickCard && Date.now() < suppressClickUntil) {
-        event.preventDefault();
-        event.stopPropagation();
-        suppressClickCard = null;
-        suppressClickUntil = 0;
-        return;
-      }
-
       event.preventDefault();
       window.location.href = link.href;
     }
 
-    document.addEventListener('touchstart', handleTouchStart, { passive: true });
-    document.addEventListener('touchmove', handleTouchMove, { passive: true });
-    document.addEventListener('touchend', handleTouchEnd);
-    document.addEventListener('touchcancel', handleTouchCancel);
     document.addEventListener('click', handleClick);
   };
 
