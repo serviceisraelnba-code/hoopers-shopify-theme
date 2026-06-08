@@ -1152,7 +1152,10 @@
 
         function extractProductsFromSearchHtml(html) {
           var doc = new DOMParser().parseFromString(html, 'text/html');
-          var links = Array.prototype.slice.call(doc.querySelectorAll('a[href*="/products/"]'));
+          var resultGrid = doc.querySelector('.hh-search-results-page__content .collection-grid__wrapper .grid.grid--uniform') ||
+            doc.querySelector('.hh-search-results-page__content .collection-grid__wrapper .grid') ||
+            doc.querySelector('.hh-search-results-page__content .grid.grid--uniform');
+          var links = resultGrid ? Array.prototype.slice.call(resultGrid.querySelectorAll('.grid-product a[href*="/products/"], a.grid-product__link[href*="/products/"]')) : [];
           var seen = {};
           var products = [];
 
