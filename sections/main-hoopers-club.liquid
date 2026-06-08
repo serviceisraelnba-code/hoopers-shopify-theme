@@ -29,18 +29,32 @@
 
   #{{ section_id }} .club-hero {
     position: relative;
-    min-height: clamp(500px, 74vh, 760px);
+    min-height: clamp(520px, 70vh, 720px);
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     overflow: hidden;
     background: var(--club-black);
     color: var(--club-white);
   }
 
   #{{ section_id }} .club-hero__media {
+    position: relative;
+    z-index: 2;
+    min-height: clamp(360px, 48vw, 560px);
+    overflow: hidden;
+    border: 1px solid rgba(200, 165, 106, 0.26);
+    background:
+      linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+      #111;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.34);
+  }
+
+  #{{ section_id }} .club-hero__media::after {
+    content: "";
     position: absolute;
     inset: 0;
-    opacity: 0.42;
+    background: linear-gradient(180deg, rgba(5, 5, 5, 0.08), rgba(5, 5, 5, 0.58));
+    pointer-events: none;
   }
 
   #{{ section_id }} .club-hero__media img {
@@ -55,16 +69,30 @@
     position: absolute;
     inset: 0;
     background:
-      linear-gradient(180deg, rgba(5, 5, 5, 0.24), rgba(5, 5, 5, 0.92)),
+      linear-gradient(90deg, rgba(5, 5, 5, 0.16), rgba(5, 5, 5, 0.92)),
       radial-gradient(circle at 18% 18%, rgba(200, 165, 106, 0.16), transparent 34%);
     pointer-events: none;
+  }
+
+  #{{ section_id }} .club-hero__grid {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: minmax(0, 0.92fr) minmax(320px, 0.72fr);
+    gap: clamp(22px, 4vw, 62px);
+    align-items: center;
+    width: 100%;
+    padding: clamp(64px, 9vw, 112px) 0 clamp(44px, 6vw, 76px);
+  }
+
+  #{{ section_id }} .club-hero__grid--text-only {
+    grid-template-columns: 1fr;
   }
 
   #{{ section_id }} .club-hero__content {
     position: relative;
     z-index: 2;
-    width: min(100%, 880px);
-    padding: 118px 0 58px;
+    width: min(100%, 780px);
   }
 
   #{{ section_id }} .club-kicker {
@@ -80,7 +108,7 @@
   #{{ section_id }} .club-hero__title {
     margin: 0;
     color: var(--club-white);
-    font-size: clamp(48px, 9vw, 112px);
+    font-size: clamp(48px, 8vw, 104px);
     line-height: 0.88;
     font-weight: 950;
     letter-spacing: 0.04em;
@@ -235,6 +263,14 @@
     isolation: isolate;
   }
 
+  #{{ section_id }} .club-tier--rookie {
+    border-color: rgba(5, 5, 5, 0.1);
+    background:
+      linear-gradient(155deg, rgba(255, 255, 255, 0.96), rgba(247, 242, 232, 0.92)),
+      var(--club-white);
+    color: var(--club-ink);
+  }
+
   #{{ section_id }} .club-tier::before {
     content: "";
     position: absolute;
@@ -251,6 +287,13 @@
     background:
       linear-gradient(155deg, rgba(200, 165, 106, 0.18), rgba(255, 255, 255, 0.03)),
       #0b0b0b;
+  }
+
+  #{{ section_id }} .club-tier--mvp {
+    border-color: rgba(200, 165, 106, 0.72);
+    background:
+      linear-gradient(145deg, rgba(200, 165, 106, 0.28), rgba(255, 255, 255, 0.035) 42%, rgba(200, 165, 106, 0.08)),
+      #070707;
   }
 
   #{{ section_id }} .club-tier__top,
@@ -284,6 +327,20 @@
     text-transform: uppercase;
   }
 
+  #{{ section_id }} .club-tier--rookie .club-tier__title,
+  #{{ section_id }} .club-tier--rookie .club-tier__rule {
+    color: var(--club-ink);
+  }
+
+  #{{ section_id }} .club-tier--rookie .club-tier__text {
+    color: rgba(17, 17, 17, 0.66);
+  }
+
+  #{{ section_id }} .club-tier--rookie .club-tier__icon {
+    border-color: rgba(5, 5, 5, 0.2);
+    color: var(--club-ink);
+  }
+
   #{{ section_id }} .club-tier__rule {
     margin: 16px 0 0;
     color: var(--club-white);
@@ -300,56 +357,40 @@
     font-weight: 650;
   }
 
-  #{{ section_id }} .club-progress {
-    margin-top: 18px;
-    border: 1px solid rgba(200, 165, 106, 0.24);
-    background: rgba(255, 255, 255, 0.055);
-    padding: clamp(20px, 3vw, 30px);
+  #{{ section_id }} .club-tier-progress {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(200, 165, 106, 0.2);
   }
 
-  #{{ section_id }} .club-progress__grid {
-    display: grid;
-    grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
-    gap: 22px;
-    align-items: center;
-  }
-
-  #{{ section_id }} .club-progress__title {
-    margin: 0;
-    color: var(--club-white);
-    font-size: clamp(24px, 3vw, 36px);
-    line-height: 1;
-    font-weight: 950;
-  }
-
-  #{{ section_id }} .club-progress__text {
-    margin: 10px 0 0;
-    color: var(--club-muted-dark);
-    font-size: 14px;
-    line-height: 1.55;
-    font-weight: 650;
-  }
-
-  #{{ section_id }} .club-progress__bar {
+  #{{ section_id }} .club-tier-progress__bar {
     position: relative;
-    height: 10px;
+    height: 6px;
     overflow: hidden;
     background: rgba(255, 255, 255, 0.12);
   }
 
-  #{{ section_id }} .club-progress__bar span {
+  #{{ section_id }} .club-tier--rookie .club-tier-progress__bar {
+    background: rgba(5, 5, 5, 0.12);
+  }
+
+  #{{ section_id }} .club-tier-progress__bar span {
     display: block;
-    width: 64%;
+    width: 38%;
     height: 100%;
     background: var(--club-gold);
   }
 
-  #{{ section_id }} .club-progress__example {
-    margin: 12px 0 0;
-    color: var(--club-white);
-    font-size: 13px;
+  #{{ section_id }} .club-tier-progress__text {
+    margin: 10px 0 0;
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 12px;
     line-height: 1.45;
-    font-weight: 850;
+    font-weight: 750;
+  }
+
+  #{{ section_id }} .club-tier--rookie .club-tier-progress__text {
+    color: rgba(17, 17, 17, 0.58);
   }
 
   #{{ section_id }} .club-join {
@@ -394,6 +435,47 @@
     font-weight: 950;
     letter-spacing: 0.12em;
     text-transform: uppercase;
+  }
+
+  #{{ section_id }} .club-why {
+    margin-top: 24px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(200, 165, 106, 0.24);
+  }
+
+  #{{ section_id }} .club-why__title {
+    margin: 0 0 12px;
+    color: var(--club-white);
+    font-size: 18px;
+    line-height: 1.2;
+    font-weight: 950;
+  }
+
+  #{{ section_id }} .club-why__list {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  #{{ section_id }} .club-why__list li {
+    position: relative;
+    padding-right: 18px;
+    color: var(--club-muted-dark);
+    font-size: 14px;
+    line-height: 1.45;
+    font-weight: 750;
+  }
+
+  #{{ section_id }} .club-why__list li::before {
+    content: "";
+    position: absolute;
+    top: 0.62em;
+    right: 0;
+    width: 6px;
+    height: 6px;
+    background: var(--club-gold);
   }
 
   #{{ section_id }} .club-form {
@@ -512,9 +594,14 @@
 
   @media screen and (max-width: 900px) {
     #{{ section_id }} .club-section__head,
-    #{{ section_id }} .club-progress__grid,
+    #{{ section_id }} .club-hero__grid,
     #{{ section_id }} .club-join {
       grid-template-columns: 1fr;
+    }
+
+    #{{ section_id }} .club-hero__media {
+      order: -1;
+      min-height: 310px;
     }
 
     #{{ section_id }} .club-benefits,
@@ -529,11 +616,16 @@
     }
 
     #{{ section_id }} .club-hero {
-      min-height: 560px;
+      min-height: auto;
     }
 
-    #{{ section_id }} .club-hero__content {
-      padding: 94px 0 42px;
+    #{{ section_id }} .club-hero__grid {
+      padding: 36px 0 42px;
+      gap: 24px;
+    }
+
+    #{{ section_id }} .club-hero__media {
+      min-height: 270px;
     }
 
     #{{ section_id }} .club-hero__title {
@@ -574,18 +666,20 @@
 
 <section id="{{ section_id }}">
   <div class="club-hero">
-    {%- if section.settings.hero_image != blank -%}
-      <div class="club-hero__media">
-        {{ section.settings.hero_image | image_url: width: 2200 | image_tag: loading: 'eager', widths: '720, 1100, 1600, 2200', alt: section.settings.hero_title }}
-      </div>
-    {%- endif -%}
-
     <div class="club-page-width">
-      <div class="club-hero__content">
-        <p class="club-kicker">{{ section.settings.hero_kicker }}</p>
-        <h1 class="club-hero__title">{{ section.settings.hero_title }}</h1>
-        <p class="club-hero__subtitle">{{ section.settings.hero_subtitle }}</p>
-        <a class="club-button" href="#{{ section_id }}-join">{{ section.settings.hero_button_text }}</a>
+      <div class="club-hero__grid{% if section.settings.hero_image == blank %} club-hero__grid--text-only{% endif %}">
+        <div class="club-hero__content">
+          <p class="club-kicker">{{ section.settings.hero_kicker }}</p>
+          <h1 class="club-hero__title">{{ section.settings.hero_title }}</h1>
+          <p class="club-hero__subtitle">{{ section.settings.hero_subtitle }}</p>
+          <a class="club-button" href="#{{ section_id }}-join">{{ section.settings.hero_button_text }}</a>
+        </div>
+
+        {%- if section.settings.hero_image != blank -%}
+          <div class="club-hero__media">
+            {{ section.settings.hero_image | image_url: width: 1400 | image_tag: loading: 'eager', widths: '480, 720, 980, 1400', alt: section.settings.hero_title }}
+          </div>
+        {%- endif -%}
       </div>
     </div>
   </div>
@@ -601,15 +695,19 @@
       </div>
 
       <div class="club-benefits">
+        {%- assign benefit_count = 0 -%}
         {%- for block in section.blocks -%}
           {%- if block.type == 'benefit' -%}
-            <article class="club-benefit" {{ block.shopify_attributes }}>
-              <div>
-                <p class="club-benefit__label">{{ block.settings.label }}</p>
-                <h3 class="club-benefit__title">{{ block.settings.title }}</h3>
-              </div>
-              <p class="club-benefit__text">{{ block.settings.text }}</p>
-            </article>
+            {%- assign benefit_count = benefit_count | plus: 1 -%}
+            {%- if benefit_count <= 6 -%}
+              <article class="club-benefit" {{ block.shopify_attributes }}>
+                <div>
+                  <p class="club-benefit__label">{{ block.settings.label }}</p>
+                  <h3 class="club-benefit__title">{{ block.settings.title }}</h3>
+                </div>
+                <p class="club-benefit__text">{{ block.settings.text }}</p>
+              </article>
+            {%- endif -%}
           {%- endif -%}
         {%- endfor -%}
       </div>
@@ -627,9 +725,23 @@
       </div>
 
       <div class="club-tiers">
+        {%- assign tier_count = 0 -%}
         {%- for block in section.blocks -%}
           {%- if block.type == 'tier' -%}
-            <article class="club-tier{% if block.settings.featured %} club-tier--featured{% endif %}" {{ block.shopify_attributes }}>
+            {%- assign tier_count = tier_count | plus: 1 -%}
+            {%- if tier_count <= 3 -%}
+            {%- liquid
+              assign tier_title_handle = block.settings.title | handle
+              assign tier_class = ''
+              if tier_title_handle contains 'rookie'
+                assign tier_class = ' club-tier--rookie'
+              elsif tier_title_handle contains 'mvp'
+                assign tier_class = ' club-tier--mvp'
+              elsif block.settings.featured
+                assign tier_class = ' club-tier--featured'
+              endif
+            -%}
+            <article class="club-tier{{ tier_class }}" {{ block.shopify_attributes }}>
               <div class="club-tier__top">
                 <span class="club-tier__icon">{{ block.settings.badge }}</span>
                 <h3 class="club-tier__title">{{ block.settings.title }}</h3>
@@ -637,24 +749,15 @@
               </div>
               <div class="club-tier__bottom">
                 <p class="club-tier__text">{{ block.settings.text }}</p>
+                <div class="club-tier-progress">
+                  <div class="club-tier-progress__bar" aria-hidden="true"><span></span></div>
+                  <p class="club-tier-progress__text">{{ block.settings.progress_text | default: section.settings.tier_progress_text }}</p>
+                </div>
               </div>
             </article>
+            {%- endif -%}
           {%- endif -%}
         {%- endfor -%}
-      </div>
-
-      <div class="club-progress">
-        <div class="club-progress__grid">
-          <div>
-            <p class="club-kicker">{{ section.settings.progress_kicker }}</p>
-            <h3 class="club-progress__title">{{ section.settings.progress_title }}</h3>
-            <p class="club-progress__text">{{ section.settings.progress_text }}</p>
-          </div>
-          <div>
-            <div class="club-progress__bar" aria-hidden="true"><span></span></div>
-            <p class="club-progress__example">{{ section.settings.progress_example }}</p>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -667,6 +770,14 @@
           <h2 class="club-join__title">{{ section.settings.form_title }}</h2>
           <p class="club-join__text">{{ section.settings.form_text }}</p>
           <p class="club-join__note">{{ section.settings.form_note }}</p>
+          <div class="club-why">
+            <h3 class="club-why__title">{{ section.settings.why_title }}</h3>
+            <ul class="club-why__list">
+              <li>{{ section.settings.why_item_1 }}</li>
+              <li>{{ section.settings.why_item_2 }}</li>
+              <li>{{ section.settings.why_item_3 }}</li>
+            </ul>
+          </div>
         </div>
 
         <div class="club-join__panel">
@@ -723,14 +834,18 @@
       </div>
 
       <div class="club-faq">
+        {%- assign faq_count = 0 -%}
         {%- for block in section.blocks -%}
           {%- if block.type == 'faq' -%}
-            <details {{ block.shopify_attributes }}>
-              <summary>{{ block.settings.question }}</summary>
-              <div class="club-faq__answer">
-                {{ block.settings.answer }}
-              </div>
-            </details>
+            {%- assign faq_count = faq_count | plus: 1 -%}
+            {%- if faq_count <= 5 -%}
+              <details {{ block.shopify_attributes }}>
+                <summary>{{ block.settings.question }}</summary>
+                <div class="club-faq__answer">
+                  {{ block.settings.answer }}
+                </div>
+              </details>
+            {%- endif -%}
           {%- endif -%}
         {%- endfor -%}
       </div>
@@ -758,16 +873,17 @@
     { "type": "text", "id": "tiers_kicker", "label": "Tiers kicker", "default": "CLUB STATUS" },
     { "type": "text", "id": "tiers_title", "label": "Tiers title", "default": "דרגות המועדון" },
     { "type": "textarea", "id": "tiers_text", "label": "Tiers text", "default": "בהשקה נתחיל עם שלוש דרגות פשוטות וברורות. ככל שהקהילה תגדל, נוסיף יכולות מתקדמות יותר." },
-    { "type": "text", "id": "progress_kicker", "label": "Progress kicker", "default": "COMING NEXT" },
-    { "type": "text", "id": "progress_title", "label": "Progress title", "default": "Progress Bar עתידי" },
-    { "type": "textarea", "id": "progress_text", "label": "Progress text", "default": "בהמשך חברי מועדון יוכלו לראות כמה הם קרובים לדרגה הבאה. כרגע זה תצוגה רעיונית בלבד ללא לוגיקה." },
-    { "type": "text", "id": "progress_example", "label": "Progress example", "default": "דוגמה: נותרו לך עוד 2 הזמנות להגיע ל-MVP" },
+    { "type": "text", "id": "tier_progress_text", "label": "Tier progress preview text", "default": "בעתיד יוצג כאן כמה חסר לך לדרגה הבאה" },
 
     { "type": "header", "content": "Join form" },
     { "type": "text", "id": "form_kicker", "label": "Form kicker", "default": "JOIN THE CLUB" },
     { "type": "text", "id": "form_title", "label": "Form title", "default": "הצטרפו ל-HOOPERS CLUB" },
     { "type": "textarea", "id": "form_text", "label": "Form text", "default": "השאירו פרטים ונצרף אתכם לרשימת חברי המועדון הראשונים של HOOPERS." },
     { "type": "text", "id": "form_note", "label": "Form note", "default": "בלי ספאם. רק דרופים, עדכונים ותוכן של HOOPERS." },
+    { "type": "text", "id": "why_title", "label": "Why join title", "default": "למה להצטרף עכשיו?" },
+    { "type": "text", "id": "why_item_1", "label": "Why item 1", "default": "להיות ראשונים בדרופים חדשים" },
+    { "type": "text", "id": "why_item_2", "label": "Why item 2", "default": "לקבל הטבות לחברי מועדון בלבד" },
+    { "type": "text", "id": "why_item_3", "label": "Why item 3", "default": "לצבור סטטוס לפי הרכישות שלך" },
     { "type": "text", "id": "name_label", "label": "Name label", "default": "שם" },
     { "type": "text", "id": "email_label", "label": "Email label", "default": "אימייל" },
     { "type": "text", "id": "phone_label", "label": "Phone label", "default": "טלפון" },
@@ -798,6 +914,7 @@
         { "type": "text", "id": "title", "label": "Title", "default": "ROOKIE" },
         { "type": "text", "id": "rule", "label": "Rule", "default": "כל חבר מועדון חדש" },
         { "type": "textarea", "id": "text", "label": "Text", "default": "נקודת הכניסה לקהילת HOOPERS." },
+        { "type": "text", "id": "progress_text", "label": "Progress preview text", "default": "בעתיד יוצג כאן כמה חסר לך לדרגה הבאה" },
         { "type": "checkbox", "id": "featured", "label": "Featured tier", "default": false }
       ]
     },
@@ -814,20 +931,20 @@
     {
       "name": "HOOPERS Club",
       "blocks": [
-        { "type": "benefit", "settings": { "label": "ACCESS", "title": "Early Access לדרופים", "text": "גישה מוקדמת לדרופים וקולקציות חדשות לפני כולם." } },
-        { "type": "benefit", "settings": { "label": "UPDATES", "title": "עדכונים ישירים", "text": "עדכונים על השקות, חידושים ומה שקורה ב-HOOPERS." } },
-        { "type": "benefit", "settings": { "label": "CONTENT", "title": "תוכן בלעדי", "text": "מדריכים, סטיילינג ותוכן מיוחד לחברי המועדון." } },
-        { "type": "benefit", "settings": { "label": "BIRTHDAY", "title": "מתנת יום הולדת", "text": "הפתעה מיוחדת לחברי מועדון סביב יום ההולדת." } },
-        { "type": "benefit", "settings": { "label": "MEMBERS", "title": "הטבות מיוחדות", "text": "הטבות נקודתיות לחברי מועדון, בלי להפוך את HOOPERS למועדון הנחות רגיל." } },
-        { "type": "benefit", "settings": { "label": "FAMILY", "title": "HOOPERS FAMILY", "text": "הזדמנויות להופיע בעמודים, בתוכן ובקהילה של HOOPERS." } },
-        { "type": "tier", "settings": { "badge": "ROOKIE", "title": "ROOKIE", "rule": "כל חבר מועדון חדש", "text": "כל מי שמצטרף ל-HOOPERS CLUB מתחיל כאן.", "featured": false } },
-        { "type": "tier", "settings": { "badge": "ALL STAR", "title": "ALL STAR", "rule": "5+ הזמנות או 1,200₪+", "text": "לחברי מועדון פעילים שממשיכים לבנות את הסטייל שלהם עם HOOPERS.", "featured": true } },
-        { "type": "tier", "settings": { "badge": "MVP", "title": "MVP", "rule": "10+ הזמנות או 2,500₪+", "text": "הדרגה הגבוהה ביותר בשלב ההשקה של HOOPERS CLUB.", "featured": false } },
-        { "type": "faq", "settings": { "question": "איך מצטרפים ל-HOOPERS CLUB?", "answer": "<p>ממלאים את טופס ההצטרפות בעמוד הזה. בשלב ההשקה נבדוק את התגובות ונעדכן את חברי המועדון בהמשך.</p>" } },
-        { "type": "faq", "settings": { "question": "מה ההבדל בין ROOKIE, ALL STAR ו-MVP?", "answer": "<p>ROOKIE היא דרגת הכניסה לכל חבר חדש. ALL STAR מיועדת ללקוחות עם 5+ הזמנות או 1,200₪+. MVP מיועדת ללקוחות עם 10+ הזמנות או 2,500₪+.</p>" } },
-        { "type": "faq", "settings": { "question": "האם זה מועדון הנחות?", "answer": "<p>לא בדיוק. HOOPERS CLUB נבנה סביב גישה מוקדמת, עדכונים, תוכן, קהילה והטבות מיוחדות, לא רק הנחות.</p>" } },
-        { "type": "faq", "settings": { "question": "האם הדרגות מתעדכנות אוטומטית?", "answer": "<p>בשלב הראשון לא. קודם נעלה את העמוד ונבדוק תגובת לקוחות. בהמשך נחבר Customer Tags, Metafields ו-Flow.</p>" } },
-        { "type": "faq", "settings": { "question": "מה לגבי מתנת יום הולדת?", "answer": "<p>תאריך יום ההולדת הוא אופציונלי בשלב ההרשמה. בהמשך נחבר לוגיקה מסודרת למתנות ועדכונים.</p>" } }
+        { "type": "benefit", "settings": { "label": "ACCESS", "title": "גישה מוקדמת לדרופים", "text": "חברי מועדון מקבלים עדיפות ראשונה בדרופים חדשים לפני שהם נפתחים לכולם." } },
+        { "type": "benefit", "settings": { "label": "WHATSAPP", "title": "עדכונים ישירים בוואטסאפ", "text": "עדכונים קצרים וישירים על השקות, חידושים ומהלכים מיוחדים של HOOPERS." } },
+        { "type": "benefit", "settings": { "label": "BIRTHDAY", "title": "מתנת יום הולדת", "text": "הפתעה מיוחדת לחברי מועדון סביב יום ההולדת, כשנפעיל את השלב הבא." } },
+        { "type": "benefit", "settings": { "label": "MEMBERS", "title": "הטבות בלעדיות לחברי מועדון", "text": "הטבות נקודתיות ומיוחדות לחברי HOOPERS CLUB, בלי להפוך את זה למועדון הנחות רגיל." } },
+        { "type": "benefit", "settings": { "label": "FAMILY", "title": "הזדמנות להופיע ב-HOOPERS FAMILY", "text": "חברי מועדון יוכלו לקבל הזדמנויות להופיע בתוכן, בעמודים ובקהילה של HOOPERS." } },
+        { "type": "benefit", "settings": { "label": "FIRST LOOK", "title": "גישה לקולקציות לפני כולם", "text": "הצצה מוקדמת לקולקציות, צבעים ופריטים חדשים לפני שהם עולים לקהל הרחב." } },
+        { "type": "tier", "settings": { "badge": "ROOKIE", "title": "ROOKIE", "rule": "כל חבר מועדון חדש", "text": "דרגת הכניסה לכל מי שמצטרף ל-HOOPERS CLUB.", "progress_text": "בעתיד יוצג כאן כמה חסר לך לדרגה הבאה", "featured": false } },
+        { "type": "tier", "settings": { "badge": "ALL STAR", "title": "ALL STAR", "rule": "5+ הזמנות או 1,200₪+", "text": "לחברי מועדון פעילים שממשיכים לבנות את הסטייל שלהם עם HOOPERS.", "progress_text": "בעתיד יוצג כאן כמה חסר לך ל-MVP", "featured": true } },
+        { "type": "tier", "settings": { "badge": "MVP", "title": "MVP", "rule": "10+ הזמנות או 2,500₪+", "text": "הדרגה הגבוהה ביותר בשלב ההשקה של HOOPERS CLUB.", "progress_text": "בעתיד יוצג כאן סטטוס MVP והטבות מתקדמות", "featured": false } },
+        { "type": "faq", "settings": { "question": "מה זה HOOPERS CLUB?", "answer": "<p>HOOPERS CLUB הוא מועדון הלקוחות של HOOPERS לחברי קהילה שרוצים לקבל גישה מוקדמת, עדכונים ישירים, תוכן והטבות מיוחדות.</p>" } },
+        { "type": "faq", "settings": { "question": "כמה עולה להצטרף?", "answer": "<p>ההצטרפות ל-HOOPERS CLUB בשלב ההשקה היא ללא עלות.</p>" } },
+        { "type": "faq", "settings": { "question": "איך עולים דרגה?", "answer": "<p>בשלב הראשון הדרגות מבוססות על כמות הזמנות או סכום רכישות: ROOKIE לכל חבר חדש, ALL STAR מ-5 הזמנות או 1,200₪+, ו-MVP מ-10 הזמנות או 2,500₪+.</p>" } },
+        { "type": "faq", "settings": { "question": "האם יש הנחות לחברי מועדון?", "answer": "<p>המועדון לא נבנה כמועדון הנחות קלאסי. יהיו הטבות מיוחדות לחברי מועדון, לצד גישה מוקדמת, עדכונים ותוכן בלעדי.</p>" } },
+        { "type": "faq", "settings": { "question": "איך מסירים את עצמי מהמועדון?", "answer": "<p>אפשר לפנות אלינו בכל שלב דרך עמוד צור קשר או במייל, ונעדכן את ההעדפות שלכם.</p>" } }
       ]
     }
   ],
