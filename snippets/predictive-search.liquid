@@ -449,6 +449,51 @@
     scrollbar-color: rgba(200, 165, 106, 0.55) rgba(255, 255, 255, 0.08);
   }
 
+  .hh-native-search .hh-autocomplete-results {
+    display: none;
+    position: fixed !important;
+    top: var(--hh-autocomplete-top, 168px) !important;
+    left: var(--hh-autocomplete-left, 16px) !important;
+    z-index: 2147483600 !important;
+    width: var(--hh-autocomplete-width, calc(100vw - 32px)) !important;
+    max-height: var(--hh-autocomplete-max-height, calc(100vh - 190px)) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding: clamp(14px, 2vw, 20px) !important;
+    border: 1px solid rgba(200, 165, 106, 0.76) !important;
+    border-radius: 16px;
+    background: rgba(5, 5, 5, 0.98) !important;
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.72), 0 0 0 1px rgba(255, 255, 255, 0.06) inset !important;
+    color: #fff !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: none !important;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(200, 165, 106, 0.55) rgba(255, 255, 255, 0.08);
+  }
+
+  .hh-native-search.hh-search-has-query .hh-autocomplete-results {
+    display: block !important;
+  }
+
+  .hh-native-search .hh-autocomplete-results * {
+    visibility: visible !important;
+  }
+
+  .hh-native-search .hh-autocomplete-results .hh-search-section {
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .hh-native-search .hh-autocomplete-results .hh-native-search-results__grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .hh-native-search .hh-autocomplete-results .hh-search-product {
+    display: block;
+  }
+
   .hh-native-search.hh-search-has-query .search__results {
     display: block !important;
     min-height: min(420px, 48vh) !important;
@@ -620,6 +665,19 @@
       gap: 12px;
     }
 
+    .hh-native-search .hh-autocomplete-results {
+      top: var(--hh-autocomplete-top, 150px) !important;
+      left: var(--hh-autocomplete-left, 12px) !important;
+      width: var(--hh-autocomplete-width, calc(100vw - 24px)) !important;
+      max-height: var(--hh-autocomplete-max-height, calc(100vh - 170px)) !important;
+      padding: 12px !important;
+      border-radius: 12px;
+    }
+
+    .hh-native-search .hh-autocomplete-results .hh-native-search-results__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .hh-search-section {
       gap: 14px;
       padding-top: 24px;
@@ -670,6 +728,8 @@
           <span class="icon__fallback-text">{{ 'general.search.submit' | t }}</span>
         </button>
       </div>
+
+      <div class="hh-autocomplete-results" data-hh-autocomplete-results aria-live="polite"></div>
 
       <div id="predictive-search" class="search__results" tabindex="-1"></div>
 
@@ -828,6 +888,12 @@
               results.style.display = 'none';
               results.innerHTML = '';
             }
+
+            var autocompleteResults = root.querySelector('[data-hh-autocomplete-results]');
+            if (autocompleteResults) {
+              autocompleteResults.style.display = 'none';
+              autocompleteResults.innerHTML = '';
+            }
           });
 
           document.querySelectorAll('.site-header__search-container').forEach(function (container) {
@@ -848,6 +914,7 @@
 
           var input = root.querySelector('input[type="search"]');
           var results = root.querySelector('.search__results');
+          var autocompleteResults = root.querySelector('[data-hh-autocomplete-results]');
           var emptyState = root.querySelector('[data-hh-search-empty]');
 
           if (input) input.value = '';
@@ -855,6 +922,11 @@
           if (results) {
             results.style.display = 'none';
             results.innerHTML = '';
+          }
+
+          if (autocompleteResults) {
+            autocompleteResults.style.display = 'none';
+            autocompleteResults.innerHTML = '';
           }
 
           if (emptyState) {
@@ -983,6 +1055,33 @@
           return '<li><a class="hh-search-product" href="' + escapeHtml(product.url) + '">' + imageMarkup + '<span class="hh-search-product__title">' + escapeHtml(product.title) + '</span>' + priceMarkup + '</a></li>';
         }
 
+        function getAutocompletePanel(root) {
+          if (!root) return null;
+          return root.querySelector('[data-hh-autocomplete-results]');
+        }
+
+        function positionAutocompletePanel(root) {
+          var panel = getAutocompletePanel(root);
+          var inputWrap = root && root.querySelector('.search__input-wrap');
+          if (!panel || !inputWrap) return;
+
+          var rect = inputWrap.getBoundingClientRect();
+          var gutter = window.matchMedia('(max-width: 749px)').matches ? 12 : 24;
+          var top = Math.max(gutter, Math.round(rect.bottom + 12));
+          var left = Math.max(gutter, Math.round(rect.left));
+          var width = Math.max(280, Math.round(rect.width));
+          var maxRight = window.innerWidth - gutter;
+
+          if (left + width > maxRight) {
+            width = Math.max(280, maxRight - left);
+          }
+
+          panel.style.setProperty('--hh-autocomplete-top', top + 'px');
+          panel.style.setProperty('--hh-autocomplete-left', left + 'px');
+          panel.style.setProperty('--hh-autocomplete-width', width + 'px');
+          panel.style.setProperty('--hh-autocomplete-max-height', Math.max(220, window.innerHeight - top - gutter) + 'px');
+        }
+
         function normalizeUrl(url) {
           if (!url) return '';
           try {
@@ -1099,7 +1198,7 @@
 
         function renderSearchPageProducts(root, searchTerm, products) {
           root = getVisibleSearchRoot(root) || root;
-          var results = root && root.querySelector('.search__results');
+          var results = getAutocompletePanel(root);
           if (!results) return;
 
           var html = '<div class="hh-native-search-results">';
@@ -1121,7 +1220,7 @@
           results.style.display = 'block';
           results.style.visibility = 'visible';
           results.style.opacity = '1';
-          results.style.background = 'transparent';
+          positionAutocompletePanel(root);
           root.classList.add('hh-search-has-query');
           setSearchLock(true);
         }
@@ -1132,18 +1231,17 @@
 
         function clearVisibleSearchResults(root) {
           root = getVisibleSearchRoot(root) || root;
-          var results = root && root.querySelector('.search__results');
+          var results = getAutocompletePanel(root);
           if (!results) return;
 
           results.style.display = 'none';
           results.innerHTML = '';
-          results.style.background = 'transparent';
           root.classList.remove('hh-search-has-query');
         }
 
         function runSearchPageAutocomplete(root, searchTerm) {
           root = getVisibleSearchRoot(root) || root;
-          var results = root && root.querySelector('.search__results');
+          var results = getAutocompletePanel(root);
           if (!root || !results || searchTerm.length < 2) return;
 
           if (searchAbortController) {
@@ -1159,7 +1257,7 @@
           results.style.display = 'block';
           results.style.visibility = 'visible';
           results.style.opacity = '1';
-          results.style.background = 'transparent';
+          positionAutocompletePanel(root);
           root.classList.add('hh-search-has-query');
 
           fetch(url, { signal: searchAbortController.signal })
