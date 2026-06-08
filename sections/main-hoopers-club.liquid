@@ -1,0 +1,838 @@
+{%- liquid
+  assign section_id = 'hoopers-club-' | append: section.id
+-%}
+
+<style>
+  #{{ section_id }} {
+    --club-black: #050505;
+    --club-ink: #111111;
+    --club-cream: #f7f2e8;
+    --club-white: #ffffff;
+    --club-muted: rgba(17, 17, 17, 0.62);
+    --club-muted-dark: rgba(255, 255, 255, 0.68);
+    --club-gold: #c8a56a;
+    --club-border: rgba(5, 5, 5, 0.1);
+    background: var(--club-cream);
+    color: var(--club-ink);
+    direction: rtl;
+  }
+
+  #{{ section_id }} * {
+    box-sizing: border-box;
+  }
+
+  #{{ section_id }} .club-page-width {
+    width: min(100%, 1320px);
+    margin: 0 auto;
+    padding: 0 18px;
+  }
+
+  #{{ section_id }} .club-hero {
+    position: relative;
+    min-height: clamp(500px, 74vh, 760px);
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    background: var(--club-black);
+    color: var(--club-white);
+  }
+
+  #{{ section_id }} .club-hero__media {
+    position: absolute;
+    inset: 0;
+    opacity: 0.42;
+  }
+
+  #{{ section_id }} .club-hero__media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #{{ section_id }} .club-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(5, 5, 5, 0.24), rgba(5, 5, 5, 0.92)),
+      radial-gradient(circle at 18% 18%, rgba(200, 165, 106, 0.16), transparent 34%);
+    pointer-events: none;
+  }
+
+  #{{ section_id }} .club-hero__content {
+    position: relative;
+    z-index: 2;
+    width: min(100%, 880px);
+    padding: 118px 0 58px;
+  }
+
+  #{{ section_id }} .club-kicker {
+    margin: 0 0 16px;
+    color: var(--club-gold);
+    font-size: 11px;
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  #{{ section_id }} .club-hero__title {
+    margin: 0;
+    color: var(--club-white);
+    font-size: clamp(48px, 9vw, 112px);
+    line-height: 0.88;
+    font-weight: 950;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  #{{ section_id }} .club-hero__subtitle {
+    max-width: 740px;
+    margin: 22px 0 0;
+    color: var(--club-muted-dark);
+    font-size: clamp(16px, 2.3vw, 23px);
+    line-height: 1.55;
+    font-weight: 650;
+  }
+
+  #{{ section_id }} .club-button {
+    display: inline-flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 28px;
+    padding: 0 22px;
+    border: 1px solid rgba(200, 165, 106, 0.72);
+    background: var(--club-white);
+    color: var(--club-black);
+    font-size: 12px;
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: transform 180ms ease, background 180ms ease, color 180ms ease, border-color 180ms ease;
+  }
+
+  #{{ section_id }} .club-button:hover,
+  #{{ section_id }} .club-button:focus-visible {
+    transform: translateY(-2px);
+    border-color: var(--club-gold);
+    background: var(--club-gold);
+    color: var(--club-black);
+  }
+
+  #{{ section_id }} .club-button--dark {
+    background: var(--club-black);
+    color: var(--club-white);
+  }
+
+  #{{ section_id }} .club-section {
+    padding: clamp(42px, 6vw, 76px) 0;
+  }
+
+  #{{ section_id }} .club-section--dark {
+    background: var(--club-black);
+    color: var(--club-white);
+  }
+
+  #{{ section_id }} .club-section__head {
+    display: grid;
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    gap: 24px;
+    align-items: end;
+    margin-bottom: 26px;
+  }
+
+  #{{ section_id }} .club-section__title {
+    margin: 0;
+    font-size: clamp(30px, 5vw, 58px);
+    line-height: 0.95;
+    font-weight: 950;
+    letter-spacing: 0.02em;
+  }
+
+  #{{ section_id }} .club-section__text {
+    margin: 0;
+    color: var(--club-muted);
+    font-size: 15px;
+    line-height: 1.65;
+    font-weight: 700;
+  }
+
+  #{{ section_id }} .club-section--dark .club-section__text {
+    color: var(--club-muted-dark);
+  }
+
+  #{{ section_id }} .club-benefits {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  #{{ section_id }} .club-benefit {
+    min-height: 190px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid var(--club-border);
+    background: var(--club-white);
+    padding: 22px;
+    transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+  }
+
+  #{{ section_id }} .club-benefit:hover {
+    transform: translateY(-4px);
+    border-color: rgba(200, 165, 106, 0.58);
+    box-shadow: 0 18px 44px rgba(5, 5, 5, 0.08);
+  }
+
+  #{{ section_id }} .club-benefit__label {
+    margin: 0;
+    color: var(--club-gold);
+    font-size: 10px;
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  #{{ section_id }} .club-benefit__title {
+    margin: 18px 0 0;
+    color: var(--club-ink);
+    font-size: clamp(21px, 2.4vw, 30px);
+    line-height: 1.04;
+    font-weight: 950;
+  }
+
+  #{{ section_id }} .club-benefit__text {
+    margin: 14px 0 0;
+    color: var(--club-muted);
+    font-size: 14px;
+    line-height: 1.55;
+    font-weight: 650;
+  }
+
+  #{{ section_id }} .club-tiers {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  #{{ section_id }} .club-tier {
+    position: relative;
+    overflow: hidden;
+    min-height: 330px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background:
+      linear-gradient(160deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.015)),
+      #0d0d0d;
+    padding: 26px;
+    isolation: isolate;
+  }
+
+  #{{ section_id }} .club-tier::before {
+    content: "";
+    position: absolute;
+    inset: auto -18% -38% auto;
+    width: 220px;
+    height: 220px;
+    border: 1px solid rgba(200, 165, 106, 0.16);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  #{{ section_id }} .club-tier--featured {
+    border-color: rgba(200, 165, 106, 0.54);
+    background:
+      linear-gradient(155deg, rgba(200, 165, 106, 0.18), rgba(255, 255, 255, 0.03)),
+      #0b0b0b;
+  }
+
+  #{{ section_id }} .club-tier__top,
+  #{{ section_id }} .club-tier__bottom {
+    position: relative;
+    z-index: 2;
+  }
+
+  #{{ section_id }} .club-tier__icon {
+    display: inline-flex;
+    min-height: 34px;
+    align-items: center;
+    margin-bottom: 18px;
+    padding: 0 12px;
+    border: 1px solid rgba(200, 165, 106, 0.48);
+    color: var(--club-gold);
+    font-size: 11px;
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  #{{ section_id }} .club-tier__title {
+    margin: 0;
+    color: var(--club-white);
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 0.95;
+    font-weight: 950;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  #{{ section_id }} .club-tier__rule {
+    margin: 16px 0 0;
+    color: var(--club-white);
+    font-size: 17px;
+    line-height: 1.45;
+    font-weight: 850;
+  }
+
+  #{{ section_id }} .club-tier__text {
+    margin: 16px 0 0;
+    color: var(--club-muted-dark);
+    font-size: 14px;
+    line-height: 1.55;
+    font-weight: 650;
+  }
+
+  #{{ section_id }} .club-progress {
+    margin-top: 18px;
+    border: 1px solid rgba(200, 165, 106, 0.24);
+    background: rgba(255, 255, 255, 0.055);
+    padding: clamp(20px, 3vw, 30px);
+  }
+
+  #{{ section_id }} .club-progress__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+    gap: 22px;
+    align-items: center;
+  }
+
+  #{{ section_id }} .club-progress__title {
+    margin: 0;
+    color: var(--club-white);
+    font-size: clamp(24px, 3vw, 36px);
+    line-height: 1;
+    font-weight: 950;
+  }
+
+  #{{ section_id }} .club-progress__text {
+    margin: 10px 0 0;
+    color: var(--club-muted-dark);
+    font-size: 14px;
+    line-height: 1.55;
+    font-weight: 650;
+  }
+
+  #{{ section_id }} .club-progress__bar {
+    position: relative;
+    height: 10px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  #{{ section_id }} .club-progress__bar span {
+    display: block;
+    width: 64%;
+    height: 100%;
+    background: var(--club-gold);
+  }
+
+  #{{ section_id }} .club-progress__example {
+    margin: 12px 0 0;
+    color: var(--club-white);
+    font-size: 13px;
+    line-height: 1.45;
+    font-weight: 850;
+  }
+
+  #{{ section_id }} .club-join {
+    display: grid;
+    grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+    gap: 18px;
+    align-items: stretch;
+  }
+
+  #{{ section_id }} .club-join__panel {
+    border: 1px solid var(--club-border);
+    background: var(--club-white);
+    padding: clamp(24px, 4vw, 38px);
+  }
+
+  #{{ section_id }} .club-join__panel--dark {
+    background: var(--club-black);
+    color: var(--club-white);
+    border-color: rgba(200, 165, 106, 0.24);
+  }
+
+  #{{ section_id }} .club-join__title {
+    margin: 0;
+    font-size: clamp(30px, 4vw, 52px);
+    line-height: 0.96;
+    font-weight: 950;
+  }
+
+  #{{ section_id }} .club-join__text {
+    margin: 16px 0 0;
+    color: var(--club-muted-dark);
+    font-size: 15px;
+    line-height: 1.7;
+    font-weight: 650;
+  }
+
+  #{{ section_id }} .club-join__note {
+    margin: 24px 0 0;
+    color: var(--club-gold);
+    font-size: 11px;
+    line-height: 1.5;
+    font-weight: 950;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  #{{ section_id }} .club-form {
+    display: grid;
+    gap: 14px;
+  }
+
+  #{{ section_id }} .club-form__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  #{{ section_id }} .club-form__row {
+    display: grid;
+    gap: 8px;
+  }
+
+  #{{ section_id }} .club-form label {
+    color: var(--club-ink);
+    font-size: 11px;
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  #{{ section_id }} .club-form input {
+    width: 100%;
+    min-height: 52px;
+    border: 1px solid rgba(5, 5, 5, 0.16);
+    background: #fdfaf4;
+    color: var(--club-ink);
+    padding: 13px 15px;
+    font: inherit;
+    font-size: 16px;
+    line-height: 1.35;
+    border-radius: 0;
+    box-shadow: none;
+    outline: none;
+    direction: rtl;
+  }
+
+  #{{ section_id }} .club-form input:focus {
+    border-color: rgba(200, 165, 106, 0.9);
+    background: var(--club-white);
+  }
+
+  #{{ section_id }} .club-form__message {
+    margin: 0 0 4px;
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 800;
+  }
+
+  #{{ section_id }} .club-form__message--success {
+    color: #236b34;
+  }
+
+  #{{ section_id }} .club-form__message--error {
+    color: #9c2424;
+  }
+
+  #{{ section_id }} .club-faq {
+    display: grid;
+    gap: 10px;
+  }
+
+  #{{ section_id }} .club-faq details {
+    border: 1px solid var(--club-border);
+    background: var(--club-white);
+  }
+
+  #{{ section_id }} .club-faq summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 20px;
+    color: var(--club-ink);
+    cursor: pointer;
+    list-style: none;
+    font-size: 16px;
+    line-height: 1.35;
+    font-weight: 950;
+  }
+
+  #{{ section_id }} .club-faq summary::-webkit-details-marker {
+    display: none;
+  }
+
+  #{{ section_id }} .club-faq summary::after {
+    content: "+";
+    flex: 0 0 auto;
+    color: var(--club-gold);
+    font-size: 24px;
+    line-height: 1;
+    transition: transform 180ms ease;
+  }
+
+  #{{ section_id }} .club-faq details[open] summary::after {
+    transform: rotate(45deg);
+  }
+
+  #{{ section_id }} .club-faq__answer {
+    padding: 0 20px 18px;
+    color: var(--club-muted);
+    font-size: 15px;
+    line-height: 1.65;
+    font-weight: 650;
+  }
+
+  #{{ section_id }} .club-faq__answer p {
+    margin: 0;
+  }
+
+  @media screen and (max-width: 900px) {
+    #{{ section_id }} .club-section__head,
+    #{{ section_id }} .club-progress__grid,
+    #{{ section_id }} .club-join {
+      grid-template-columns: 1fr;
+    }
+
+    #{{ section_id }} .club-benefits,
+    #{{ section_id }} .club-tiers {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media screen and (max-width: 640px) {
+    #{{ section_id }} .club-page-width {
+      padding: 0 14px;
+    }
+
+    #{{ section_id }} .club-hero {
+      min-height: 560px;
+    }
+
+    #{{ section_id }} .club-hero__content {
+      padding: 94px 0 42px;
+    }
+
+    #{{ section_id }} .club-hero__title {
+      font-size: clamp(46px, 16vw, 72px);
+    }
+
+    #{{ section_id }} .club-button {
+      width: 100%;
+    }
+
+    #{{ section_id }} .club-section {
+      padding: 42px 0;
+    }
+
+    #{{ section_id }} .club-section__head {
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    #{{ section_id }} .club-benefit,
+    #{{ section_id }} .club-tier,
+    #{{ section_id }} .club-join__panel {
+      padding: 20px;
+    }
+
+    #{{ section_id }} .club-form__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #{{ section_id }} * {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+</style>
+
+<section id="{{ section_id }}">
+  <div class="club-hero">
+    {%- if section.settings.hero_image != blank -%}
+      <div class="club-hero__media">
+        {{ section.settings.hero_image | image_url: width: 2200 | image_tag: loading: 'eager', widths: '720, 1100, 1600, 2200', alt: section.settings.hero_title }}
+      </div>
+    {%- endif -%}
+
+    <div class="club-page-width">
+      <div class="club-hero__content">
+        <p class="club-kicker">{{ section.settings.hero_kicker }}</p>
+        <h1 class="club-hero__title">{{ section.settings.hero_title }}</h1>
+        <p class="club-hero__subtitle">{{ section.settings.hero_subtitle }}</p>
+        <a class="club-button" href="#{{ section_id }}-join">{{ section.settings.hero_button_text }}</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="club-section">
+    <div class="club-page-width">
+      <div class="club-section__head">
+        <div>
+          <p class="club-kicker">{{ section.settings.benefits_kicker }}</p>
+          <h2 class="club-section__title">{{ section.settings.benefits_title }}</h2>
+        </div>
+        <p class="club-section__text">{{ section.settings.benefits_text }}</p>
+      </div>
+
+      <div class="club-benefits">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'benefit' -%}
+            <article class="club-benefit" {{ block.shopify_attributes }}>
+              <div>
+                <p class="club-benefit__label">{{ block.settings.label }}</p>
+                <h3 class="club-benefit__title">{{ block.settings.title }}</h3>
+              </div>
+              <p class="club-benefit__text">{{ block.settings.text }}</p>
+            </article>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+
+  <div class="club-section club-section--dark">
+    <div class="club-page-width">
+      <div class="club-section__head">
+        <div>
+          <p class="club-kicker">{{ section.settings.tiers_kicker }}</p>
+          <h2 class="club-section__title">{{ section.settings.tiers_title }}</h2>
+        </div>
+        <p class="club-section__text">{{ section.settings.tiers_text }}</p>
+      </div>
+
+      <div class="club-tiers">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'tier' -%}
+            <article class="club-tier{% if block.settings.featured %} club-tier--featured{% endif %}" {{ block.shopify_attributes }}>
+              <div class="club-tier__top">
+                <span class="club-tier__icon">{{ block.settings.badge }}</span>
+                <h3 class="club-tier__title">{{ block.settings.title }}</h3>
+                <p class="club-tier__rule">{{ block.settings.rule }}</p>
+              </div>
+              <div class="club-tier__bottom">
+                <p class="club-tier__text">{{ block.settings.text }}</p>
+              </div>
+            </article>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+
+      <div class="club-progress">
+        <div class="club-progress__grid">
+          <div>
+            <p class="club-kicker">{{ section.settings.progress_kicker }}</p>
+            <h3 class="club-progress__title">{{ section.settings.progress_title }}</h3>
+            <p class="club-progress__text">{{ section.settings.progress_text }}</p>
+          </div>
+          <div>
+            <div class="club-progress__bar" aria-hidden="true"><span></span></div>
+            <p class="club-progress__example">{{ section.settings.progress_example }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="{{ section_id }}-join" class="club-section">
+    <div class="club-page-width">
+      <div class="club-join">
+        <div class="club-join__panel club-join__panel--dark">
+          <p class="club-kicker">{{ section.settings.form_kicker }}</p>
+          <h2 class="club-join__title">{{ section.settings.form_title }}</h2>
+          <p class="club-join__text">{{ section.settings.form_text }}</p>
+          <p class="club-join__note">{{ section.settings.form_note }}</p>
+        </div>
+
+        <div class="club-join__panel">
+          {%- form 'contact', class: 'club-form' -%}
+            <input type="hidden" name="contact[Source]" value="HOOPERS CLUB">
+
+            {%- if form.posted_successfully? -%}
+              <p class="club-form__message club-form__message--success">{{ section.settings.success_message }}</p>
+            {%- endif -%}
+
+            {%- if form.errors -%}
+              <div class="club-form__message club-form__message--error">
+                {{ form.errors | default_errors }}
+              </div>
+            {%- endif -%}
+
+            <div class="club-form__grid">
+              <div class="club-form__row">
+                <label for="ClubName-{{ section.id }}">{{ section.settings.name_label }}</label>
+                <input id="ClubName-{{ section.id }}" type="text" name="contact[name]" autocomplete="name" required>
+              </div>
+
+              <div class="club-form__row">
+                <label for="ClubEmail-{{ section.id }}">{{ section.settings.email_label }}</label>
+                <input id="ClubEmail-{{ section.id }}" type="email" name="contact[email]" autocomplete="email" required>
+              </div>
+
+              <div class="club-form__row">
+                <label for="ClubPhone-{{ section.id }}">{{ section.settings.phone_label }}</label>
+                <input id="ClubPhone-{{ section.id }}" type="tel" name="contact[phone]" autocomplete="tel" required>
+              </div>
+
+              <div class="club-form__row">
+                <label for="ClubBirthday-{{ section.id }}">{{ section.settings.birthday_label }}</label>
+                <input id="ClubBirthday-{{ section.id }}" type="date" name="contact[Birthday]">
+              </div>
+            </div>
+
+            <button class="club-button club-button--dark" type="submit">{{ section.settings.submit_text }}</button>
+          {%- endform -%}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="club-section">
+    <div class="club-page-width">
+      <div class="club-section__head">
+        <div>
+          <p class="club-kicker">{{ section.settings.faq_kicker }}</p>
+          <h2 class="club-section__title">{{ section.settings.faq_title }}</h2>
+        </div>
+        <p class="club-section__text">{{ section.settings.faq_text }}</p>
+      </div>
+
+      <div class="club-faq">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'faq' -%}
+            <details {{ block.shopify_attributes }}>
+              <summary>{{ block.settings.question }}</summary>
+              <div class="club-faq__answer">
+                {{ block.settings.answer }}
+              </div>
+            </details>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "HOOPERS Club",
+  "settings": [
+    { "type": "header", "content": "Hero" },
+    { "type": "image_picker", "id": "hero_image", "label": "Hero image" },
+    { "type": "text", "id": "hero_kicker", "label": "Hero kicker", "default": "HOOPERS MEMBERS" },
+    { "type": "text", "id": "hero_title", "label": "Hero title", "default": "HOOPERS CLUB" },
+    { "type": "textarea", "id": "hero_subtitle", "label": "Hero subtitle", "default": "מועדון הלקוחות של HOOPERS לחברי הקהילה שרוצים לקבל גישה מוקדמת, תוכן בלעדי והטבות מיוחדות." },
+    { "type": "text", "id": "hero_button_text", "label": "Hero button text", "default": "הצטרפו למועדון" },
+
+    { "type": "header", "content": "Benefits" },
+    { "type": "text", "id": "benefits_kicker", "label": "Benefits kicker", "default": "MEMBER BENEFITS" },
+    { "type": "text", "id": "benefits_title", "label": "Benefits title", "default": "מה מקבלים כחברי מועדון?" },
+    { "type": "textarea", "id": "benefits_text", "label": "Benefits text", "default": "זה לא מועדון הנחות קלאסי. זה מקום לחברי HOOPERS שמחוברים לדרופים, לסטייל ולקהילה." },
+
+    { "type": "header", "content": "Tiers" },
+    { "type": "text", "id": "tiers_kicker", "label": "Tiers kicker", "default": "CLUB STATUS" },
+    { "type": "text", "id": "tiers_title", "label": "Tiers title", "default": "דרגות המועדון" },
+    { "type": "textarea", "id": "tiers_text", "label": "Tiers text", "default": "בהשקה נתחיל עם שלוש דרגות פשוטות וברורות. ככל שהקהילה תגדל, נוסיף יכולות מתקדמות יותר." },
+    { "type": "text", "id": "progress_kicker", "label": "Progress kicker", "default": "COMING NEXT" },
+    { "type": "text", "id": "progress_title", "label": "Progress title", "default": "Progress Bar עתידי" },
+    { "type": "textarea", "id": "progress_text", "label": "Progress text", "default": "בהמשך חברי מועדון יוכלו לראות כמה הם קרובים לדרגה הבאה. כרגע זה תצוגה רעיונית בלבד ללא לוגיקה." },
+    { "type": "text", "id": "progress_example", "label": "Progress example", "default": "דוגמה: נותרו לך עוד 2 הזמנות להגיע ל-MVP" },
+
+    { "type": "header", "content": "Join form" },
+    { "type": "text", "id": "form_kicker", "label": "Form kicker", "default": "JOIN THE CLUB" },
+    { "type": "text", "id": "form_title", "label": "Form title", "default": "הצטרפו ל-HOOPERS CLUB" },
+    { "type": "textarea", "id": "form_text", "label": "Form text", "default": "השאירו פרטים ונצרף אתכם לרשימת חברי המועדון הראשונים של HOOPERS." },
+    { "type": "text", "id": "form_note", "label": "Form note", "default": "בלי ספאם. רק דרופים, עדכונים ותוכן של HOOPERS." },
+    { "type": "text", "id": "name_label", "label": "Name label", "default": "שם" },
+    { "type": "text", "id": "email_label", "label": "Email label", "default": "אימייל" },
+    { "type": "text", "id": "phone_label", "label": "Phone label", "default": "טלפון" },
+    { "type": "text", "id": "birthday_label", "label": "Birthday label", "default": "תאריך יום הולדת (לא חובה)" },
+    { "type": "text", "id": "submit_text", "label": "Submit text", "default": "שלחו הרשמה" },
+    { "type": "text", "id": "success_message", "label": "Success message", "default": "תודה! ההרשמה התקבלה ונחזור אליכם עם עדכוני HOOPERS CLUB." },
+
+    { "type": "header", "content": "FAQ" },
+    { "type": "text", "id": "faq_kicker", "label": "FAQ kicker", "default": "FAQ" },
+    { "type": "text", "id": "faq_title", "label": "FAQ title", "default": "שאלות נפוצות" },
+    { "type": "textarea", "id": "faq_text", "label": "FAQ text", "default": "כל מה שחשוב לדעת לפני שמצטרפים למועדון." }
+  ],
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Benefit",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Small label", "default": "BENEFIT" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Early Access לדרופים" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "קבלו גישה מוקדמת לדרופים וקולקציות לפני כולם." }
+      ]
+    },
+    {
+      "type": "tier",
+      "name": "Tier",
+      "settings": [
+        { "type": "text", "id": "badge", "label": "Badge", "default": "CLUB" },
+        { "type": "text", "id": "title", "label": "Title", "default": "ROOKIE" },
+        { "type": "text", "id": "rule", "label": "Rule", "default": "כל חבר מועדון חדש" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "נקודת הכניסה לקהילת HOOPERS." },
+        { "type": "checkbox", "id": "featured", "label": "Featured tier", "default": false }
+      ]
+    },
+    {
+      "type": "faq",
+      "name": "FAQ",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "מה זה HOOPERS CLUB?" },
+        { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>HOOPERS CLUB הוא מועדון הלקוחות של HOOPERS לחברי קהילה שרוצים לקבל עדכונים, גישה מוקדמת והטבות מיוחדות.</p>" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "HOOPERS Club",
+      "blocks": [
+        { "type": "benefit", "settings": { "label": "ACCESS", "title": "Early Access לדרופים", "text": "גישה מוקדמת לדרופים וקולקציות חדשות לפני כולם." } },
+        { "type": "benefit", "settings": { "label": "UPDATES", "title": "עדכונים ישירים", "text": "עדכונים על השקות, חידושים ומה שקורה ב-HOOPERS." } },
+        { "type": "benefit", "settings": { "label": "CONTENT", "title": "תוכן בלעדי", "text": "מדריכים, סטיילינג ותוכן מיוחד לחברי המועדון." } },
+        { "type": "benefit", "settings": { "label": "BIRTHDAY", "title": "מתנת יום הולדת", "text": "הפתעה מיוחדת לחברי מועדון סביב יום ההולדת." } },
+        { "type": "benefit", "settings": { "label": "MEMBERS", "title": "הטבות מיוחדות", "text": "הטבות נקודתיות לחברי מועדון, בלי להפוך את HOOPERS למועדון הנחות רגיל." } },
+        { "type": "benefit", "settings": { "label": "FAMILY", "title": "HOOPERS FAMILY", "text": "הזדמנויות להופיע בעמודים, בתוכן ובקהילה של HOOPERS." } },
+        { "type": "tier", "settings": { "badge": "ROOKIE", "title": "ROOKIE", "rule": "כל חבר מועדון חדש", "text": "כל מי שמצטרף ל-HOOPERS CLUB מתחיל כאן.", "featured": false } },
+        { "type": "tier", "settings": { "badge": "ALL STAR", "title": "ALL STAR", "rule": "5+ הזמנות או 1,200₪+", "text": "לחברי מועדון פעילים שממשיכים לבנות את הסטייל שלהם עם HOOPERS.", "featured": true } },
+        { "type": "tier", "settings": { "badge": "MVP", "title": "MVP", "rule": "10+ הזמנות או 2,500₪+", "text": "הדרגה הגבוהה ביותר בשלב ההשקה של HOOPERS CLUB.", "featured": false } },
+        { "type": "faq", "settings": { "question": "איך מצטרפים ל-HOOPERS CLUB?", "answer": "<p>ממלאים את טופס ההצטרפות בעמוד הזה. בשלב ההשקה נבדוק את התגובות ונעדכן את חברי המועדון בהמשך.</p>" } },
+        { "type": "faq", "settings": { "question": "מה ההבדל בין ROOKIE, ALL STAR ו-MVP?", "answer": "<p>ROOKIE היא דרגת הכניסה לכל חבר חדש. ALL STAR מיועדת ללקוחות עם 5+ הזמנות או 1,200₪+. MVP מיועדת ללקוחות עם 10+ הזמנות או 2,500₪+.</p>" } },
+        { "type": "faq", "settings": { "question": "האם זה מועדון הנחות?", "answer": "<p>לא בדיוק. HOOPERS CLUB נבנה סביב גישה מוקדמת, עדכונים, תוכן, קהילה והטבות מיוחדות, לא רק הנחות.</p>" } },
+        { "type": "faq", "settings": { "question": "האם הדרגות מתעדכנות אוטומטית?", "answer": "<p>בשלב הראשון לא. קודם נעלה את העמוד ונבדוק תגובת לקוחות. בהמשך נחבר Customer Tags, Metafields ו-Flow.</p>" } },
+        { "type": "faq", "settings": { "question": "מה לגבי מתנת יום הולדת?", "answer": "<p>תאריך יום ההולדת הוא אופציונלי בשלב ההרשמה. בהמשך נחבר לוגיקה מסודרת למתנות ועדכונים.</p>" } }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.popups"]
+  }
+}
+{% endschema %}
