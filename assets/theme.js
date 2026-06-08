@@ -8261,7 +8261,77 @@ theme.recentlyViewed = {
   theme.initGlobals = function() {
     theme.collapsibles.init();
     theme.videoModal();
+    theme.initProductCardMobileTaps();
   }
+
+  theme.initProductCardMobileTaps = function() {
+    if (document.documentElement.classList.contains('product-card-mobile-taps-initialized')) {
+      return;
+    }
+
+    document.documentElement.classList.add('product-card-mobile-taps-initialized');
+
+    function isMobile() {
+      return theme.config && theme.config.bpSmall;
+    }
+
+    function getImageArea(target) {
+      if (!target || !target.closest) return null;
+      return target.closest('.grid__item-image-wrapper, .grid-product__image-mask, .image-wrap, .grid-product__image-wrapper');
+    }
+
+    function getCard(target) {
+      if (!target || !target.closest) return null;
+      return target.closest('.grid-product');
+    }
+
+    function getProductLink(card) {
+      return card ? card.querySelector('.grid-product__link[href]') : null;
+    }
+
+    function previewCard(card) {
+      if (!card || !card.querySelector('.grid-product__secondary-image')) return;
+
+      card.classList.add('hh-product-card-touch-preview');
+      window.clearTimeout(card.hhProductCardPreviewTimer);
+      card.hhProductCardPreviewTimer = window.setTimeout(function() {
+        card.classList.remove('hh-product-card-touch-preview');
+      }, 900);
+    }
+
+    function handlePress(event) {
+      if (!isMobile()) return;
+
+      var imageArea = getImageArea(event.target);
+      if (!imageArea) return;
+
+      previewCard(getCard(imageArea));
+    }
+
+    function handleClick(event) {
+      if (!isMobile() || event.defaultPrevented) return;
+      if (event.target.closest && event.target.closest('a, button, input, select, textarea')) return;
+
+      var imageArea = getImageArea(event.target);
+      if (!imageArea) return;
+
+      var card = getCard(imageArea);
+      var link = getProductLink(card);
+      if (!link || !link.href) return;
+
+      previewCard(card);
+      event.preventDefault();
+      window.location.href = link.href;
+    }
+
+    if (window.PointerEvent) {
+      document.addEventListener('pointerdown', handlePress, { passive: true });
+    } else {
+      document.addEventListener('touchstart', handlePress, { passive: true });
+    }
+
+    document.addEventListener('click', handleClick);
+  };
 
   DOMready(function(){
     theme.sections = new theme.Sections();
