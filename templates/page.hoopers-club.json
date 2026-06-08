@@ -1,8 +1,114 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
       "type": "main-hoopers-club",
-      "settings": {}
+      "blocks": {
+        "tier_ezrBX9": {
+          "type": "tier",
+          "settings": {
+            "badge": "CLUB",
+            "title": "ROOKIE",
+            "rule": "כל חבר מועדון חדש",
+            "text": "נקודת הכניסה לקהילת HOOPERS.",
+            "featured": false
+          }
+        },
+        "benefit_bcPfm4": {
+          "type": "benefit",
+          "settings": {
+            "label": "BENEFIT",
+            "title": "Early Access לדרופים",
+            "text": "קבלו גישה מוקדמת לדרופים וקולקציות לפני כולם."
+          }
+        },
+        "tier_rtGwwi": {
+          "type": "tier",
+          "settings": {
+            "badge": "CLUB",
+            "title": "ROOKIE",
+            "rule": "כל חבר מועדון חדש",
+            "text": "נקודת הכניסה לקהילת HOOPERS.",
+            "featured": false
+          }
+        },
+        "benefit_Q6nWcn": {
+          "type": "benefit",
+          "settings": {
+            "label": "BENEFIT",
+            "title": "Early Access לדרופים",
+            "text": "קבלו גישה מוקדמת לדרופים וקולקציות לפני כולם."
+          }
+        },
+        "benefit_G69QTP": {
+          "type": "benefit",
+          "settings": {
+            "label": "BENEFIT",
+            "title": "Early Access לדרופים",
+            "text": "קבלו גישה מוקדמת לדרופים וקולקציות לפני כולם."
+          }
+        },
+        "faq_Ce8BN9": {
+          "type": "faq",
+          "settings": {
+            "question": "מה זה HOOPERS CLUB?",
+            "answer": "<p>HOOPERS CLUB הוא מועדון הלקוחות של HOOPERS לחברי קהילה שרוצים לקבל עדכונים, גישה מוקדמת והטבות מיוחדות.</p>"
+          }
+        },
+        "faq_PdQAmP": {
+          "type": "faq",
+          "settings": {
+            "question": "מה זה HOOPERS CLUB?",
+            "answer": "<p>HOOPERS CLUB הוא מועדון הלקוחות של HOOPERS לחברי קהילה שרוצים לקבל עדכונים, גישה מוקדמת והטבות מיוחדות.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "tier_ezrBX9",
+        "benefit_bcPfm4",
+        "tier_rtGwwi",
+        "benefit_Q6nWcn",
+        "benefit_G69QTP",
+        "faq_Ce8BN9",
+        "faq_PdQAmP"
+      ],
+      "settings": {
+        "hero_kicker": "HOOPERS MEMBERS",
+        "hero_title": "HOOPERS CLUB",
+        "hero_subtitle": "מועדון הלקוחות של HOOPERS לחברי הקהילה שרוצים לקבל גישה מוקדמת, תוכן בלעדי והטבות מיוחדות.",
+        "hero_button_text": "הצטרפו למועדון",
+        "benefits_kicker": "MEMBER BENEFITS",
+        "benefits_title": "מה מקבלים כחברי מועדון?",
+        "benefits_text": "זה לא מועדון הנחות קלאסי. זה מקום לחברי HOOPERS שמחוברים לדרופים, לסטייל ולקהילה.",
+        "tiers_kicker": "CLUB STATUS",
+        "tiers_title": "דרגות המועדון",
+        "tiers_text": "בהשקה נתחיל עם שלוש דרגות פשוטות וברורות. ככל שהקהילה תגדל, נוסיף יכולות מתקדמות יותר.",
+        "progress_kicker": "COMING NEXT",
+        "progress_title": "Progress Bar עתידי",
+        "progress_text": "בהמשך חברי מועדון יוכלו לראות כמה הם קרובים לדרגה הבאה. כרגע זה תצוגה רעיונית בלבד ללא לוגיקה.",
+        "progress_example": "דוגמה: נותרו לך עוד 2 הזמנות להגיע ל-MVP",
+        "form_kicker": "JOIN THE CLUB",
+        "form_title": "הצטרפו ל-HOOPERS CLUB",
+        "form_text": "השאירו פרטים ונצרף אתכם לרשימת חברי המועדון הראשונים של HOOPERS.",
+        "form_note": "בלי ספאם. רק דרופים, עדכונים ותוכן של HOOPERS.",
+        "name_label": "שם",
+        "email_label": "אימייל",
+        "phone_label": "טלפון",
+        "birthday_label": "תאריך יום הולדת (לא חובה)",
+        "submit_text": "שלחו הרשמה",
+        "success_message": "תודה! ההרשמה התקבלה ונחזור אליכם עם עדכוני HOOPERS CLUB.",
+        "faq_kicker": "FAQ",
+        "faq_title": "שאלות נפוצות",
+        "faq_text": "כל מה שחשוב לדעת לפני שמצטרפים למועדון."
+      }
     }
   },
   "order": [
