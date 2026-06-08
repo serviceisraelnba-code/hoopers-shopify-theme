@@ -1011,6 +1011,7 @@
 
 {%- if section.settings.enable_sidebar == false or section.settings.filter_style == 'drawer' or collection.filters.size == 0 -%}
 {% style %}
+  .hoopers-collection-catalog .hh-search-results-page__layout { display: block; }
   .hoopers-collection-catalog .hh-search-results-page__sidebar { display: none; }
   .hoopers-collection-catalog .hh-search-results-page__content { min-width: 0; width: 100%; }
   .collection-content .grid__item--sidebar { width: 0; padding:0; }
