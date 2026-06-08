@@ -919,6 +919,21 @@
               if (input) input.focus();
             }, 90);
           }
+
+          return chosenRoot || null;
+        }
+
+        function getVisibleSearchRoot(preferredRoot) {
+          if (preferredRoot && isUsableRoot(preferredRoot) && !preferredRoot.classList.contains('hh-native-search--inactive-duplicate')) {
+            return preferredRoot;
+          }
+
+          var activeRoots = Array.prototype.slice.call(document.querySelectorAll('.hh-native-search.is-active'))
+            .filter(function (root) {
+              return isUsableRoot(root) && !root.classList.contains('hh-native-search--inactive-duplicate');
+            });
+
+          return activeRoots.find(isPreferredViewportRoot) || activeRoots[0] || activateVisibleSearchRoot() || preferredRoot || null;
         }
 
         function escapeHtml(value) {
@@ -1047,10 +1062,28 @@
             });
           });
 
-          return products.slice(0, 8);
+          return products.slice(0, 6);
+        }
+
+        function renderPopularSearchChips() {
+          var popular = [
+            { label: 'דני אבדיה', url: '{{ routes.search_url }}?type=product&q={{ 'דני אבדיה' | url_encode }}' },
+            { label: 'Jordan', url: '{{ routes.search_url }}?type=product&q=Jordan' },
+            { label: 'Lakers', url: '{{ routes.search_url }}?type=product&q=Lakers' },
+            { label: 'Fear Of God', url: '{{ routes.search_url }}?type=product&q=Fear%20Of%20God' },
+            { label: 'World Cup', url: '{{ routes.search_url }}?type=product&q=World%20Cup' },
+            { label: 'Kids', url: '{{ routes.search_url }}?type=product&q=Kids' }
+          ];
+
+          return '<section class="hh-search-section"><h3 class="hh-search-section__title">Popular Searches</h3><ul class="hh-search-chips">' +
+            popular.map(function (item) {
+              return '<li><a class="hh-search-chip" href="' + item.url + '">' + escapeHtml(item.label) + '</a></li>';
+            }).join('') +
+            '</ul></section>';
         }
 
         function renderSearchPageProducts(root, searchTerm, products) {
+          root = getVisibleSearchRoot(root) || root;
           var results = root && root.querySelector('.search__results');
           if (!results) return;
 
@@ -1064,7 +1097,8 @@
             html += '<li><a class="hh-search-link" href="{{ routes.search_url }}?type=product&q=' + encodeURIComponent(searchTerm) + '">Search "' + escapeHtml(searchTerm) + '"</a></li>';
             html += '</ul></section>';
           } else {
-            html += '<div class="hh-native-search-results__empty">No results found for "' + escapeHtml(searchTerm) + '".</div>';
+            html += '<div class="hh-native-search-results__empty">לא נמצאו תוצאות</div>';
+            html += renderPopularSearchChips();
           }
 
           html += '</div>';
@@ -1081,6 +1115,7 @@
         var searchTimer = null;
 
         function clearVisibleSearchResults(root) {
+          root = getVisibleSearchRoot(root) || root;
           var results = root && root.querySelector('.search__results');
           if (!results) return;
 
@@ -1091,6 +1126,7 @@
         }
 
         function runSearchPageAutocomplete(root, searchTerm) {
+          root = getVisibleSearchRoot(root) || root;
           var results = root && root.querySelector('.search__results');
           if (!root || !results || searchTerm.length < 2) return;
 
@@ -1125,10 +1161,17 @@
         }
 
         function handleNativeSearchInput(input) {
-          var root = input && input.closest('.hh-native-search');
+          var preferredRoot = input && input.closest('.hh-native-search');
+          var root = getVisibleSearchRoot(preferredRoot) || preferredRoot;
           var searchTerm = input ? input.value.trim() : '';
+          var visibleInput = root && root.querySelector('input[type="search"]');
+
+          if (visibleInput && visibleInput !== input && visibleInput.value !== searchTerm) {
+            visibleInput.value = searchTerm;
+          }
 
           syncQueryState(root);
+          if (preferredRoot && preferredRoot !== root) syncQueryState(preferredRoot);
 
           if (!root) return;
 
