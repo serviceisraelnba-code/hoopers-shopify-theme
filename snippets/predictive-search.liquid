@@ -430,6 +430,10 @@
 
   .hh-native-search .search__results {
     display: none;
+    position: relative;
+    z-index: 4;
+    flex: 1 1 auto !important;
+    width: 100% !important;
     min-height: 0 !important;
     max-height: none !important;
     overflow-y: auto !important;
@@ -439,8 +443,15 @@
     background: transparent !important;
     box-shadow: none !important;
     color: #fff !important;
+    visibility: visible !important;
+    opacity: 1 !important;
     scrollbar-width: thin;
     scrollbar-color: rgba(200, 165, 106, 0.55) rgba(255, 255, 255, 0.08);
+  }
+
+  .hh-native-search.hh-search-has-query .search__results {
+    display: block !important;
+    min-height: min(420px, 48vh) !important;
   }
 
   .hh-native-search .search__results * {
@@ -574,6 +585,10 @@
     .hh-native-search .search__results,
     .hh-search-empty {
       padding-bottom: 28px !important;
+    }
+
+    .hh-native-search.hh-search-has-query .search__results {
+      min-height: min(360px, 52vh) !important;
     }
 
     .hh-native-search .btn--close-search {
@@ -800,15 +815,6 @@
 
         function getActiveRoots() {
           return Array.prototype.slice.call(document.querySelectorAll('.hh-native-search.is-active'));
-        }
-
-        function debugAutocomplete(message, data) {
-          if (!window.console || !window.console.log) return;
-          if (typeof data === 'undefined') {
-            window.console.log('[HOOPERS autocomplete]', message);
-          } else {
-            window.console.log('[HOOPERS autocomplete]', message, data);
-          }
         }
 
         function resetNativeSearchRoots() {
@@ -1094,15 +1100,6 @@
         function renderSearchPageProducts(root, searchTerm, products) {
           root = getVisibleSearchRoot(root) || root;
           var results = root && root.querySelector('.search__results');
-
-          debugAutocomplete('render called', {
-            renderCalled: true,
-            query: searchTerm,
-            products: products.length,
-            visibleOverlayFound: !!root,
-            resultsContainerFound: !!results
-          });
-
           if (!results) return;
 
           var html = '<div class="hh-native-search-results">';
@@ -1115,7 +1112,6 @@
             html += '<li><a class="hh-search-link" href="{{ routes.search_url }}?type=product&q=' + encodeURIComponent(searchTerm) + '">Search "' + escapeHtml(searchTerm) + '"</a></li>';
             html += '</ul></section>';
           } else {
-            html += '<div class="hh-native-search-results__empty">Debug: 0 products parsed</div>';
             html += '<div class="hh-native-search-results__empty">לא נמצאו תוצאות</div>';
             html += renderPopularSearchChips();
           }
@@ -1123,10 +1119,11 @@
           html += '</div>';
           results.innerHTML = html;
           results.style.display = 'block';
+          results.style.visibility = 'visible';
+          results.style.opacity = '1';
           results.style.background = 'transparent';
           root.classList.add('hh-search-has-query');
           setSearchLock(true);
-          activateVisibleSearchRoot();
         }
 
         var activeSearchRequestId = 0;
@@ -1147,13 +1144,6 @@
         function runSearchPageAutocomplete(root, searchTerm) {
           root = getVisibleSearchRoot(root) || root;
           var results = root && root.querySelector('.search__results');
-
-          debugAutocomplete('visible overlay lookup', {
-            query: searchTerm,
-            visibleOverlayFound: !!root,
-            resultsContainerFound: !!results
-          });
-
           if (!root || !results || searchTerm.length < 2) return;
 
           if (searchAbortController) {
@@ -1165,49 +1155,26 @@
           var requestId = activeSearchRequestId;
           var url = '{{ routes.search_url }}?q=' + encodeURIComponent(searchTerm) + '&type=product';
 
-          debugAutocomplete('fetch URL', {
-            query: searchTerm,
-            url: url
-          });
-
           results.innerHTML = '<div class="hh-native-search-results"><div class="hh-native-search-results__loading">Searching...</div></div>';
           results.style.display = 'block';
+          results.style.visibility = 'visible';
+          results.style.opacity = '1';
           results.style.background = 'transparent';
           root.classList.add('hh-search-has-query');
 
           fetch(url, { signal: searchAbortController.signal })
             .then(function (response) {
-              debugAutocomplete('response status', {
-                query: searchTerm,
-                status: response.status,
-                ok: response.ok
-              });
-
               if (!response.ok) throw new Error(response.status);
               return response.text();
             })
             .then(function (html) {
               if (requestId !== activeSearchRequestId) return;
               var parsedProducts = extractProductsFromSearchHtml(html);
-
-              debugAutocomplete('response parsed', {
-                query: searchTerm,
-                htmlLength: html.length,
-                productLinksFound: parsedProducts.length,
-                productCardsFound: parsedProducts.length
-              });
-
               renderSearchPageProducts(root, searchTerm, parsedProducts);
             })
             .catch(function (error) {
               if (error.name === 'AbortError') return;
               if (requestId !== activeSearchRequestId) return;
-
-              debugAutocomplete('fetch error', {
-                query: searchTerm,
-                message: error.message || String(error)
-              });
-
               renderSearchPageProducts(root, searchTerm, []);
             });
         }
@@ -1217,13 +1184,6 @@
           var root = getVisibleSearchRoot(preferredRoot) || preferredRoot;
           var searchTerm = input ? input.value.trim() : '';
           var visibleInput = root && root.querySelector('input[type="search"]');
-
-          debugAutocomplete('input event fired', {
-            query: searchTerm,
-            inputFound: !!input,
-            preferredRootFound: !!preferredRoot,
-            visibleOverlayFound: !!root
-          });
 
           if (visibleInput && visibleInput !== input && visibleInput.value !== searchTerm) {
             visibleInput.value = searchTerm;
