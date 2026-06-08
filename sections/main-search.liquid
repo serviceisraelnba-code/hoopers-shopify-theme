@@ -151,79 +151,15 @@
               </aside>
 
               <div class="hh-search-results-page__content">
-                <div class="hh-search-discovery">
-                  {%- if intent_link != blank -%}
-                    <a class="hh-search-intent" href="{{ intent_link }}" data-search-action="intent-collection">
-                      <span class="hh-search-intent__eyebrow">Suggested collection</span>
-                      <strong>{{ intent_title }}</strong>
-                      <span>{{ intent_text }}</span>
-                      <em>{{ intent_button }} →</em>
-                    </a>
-                  {%- endif -%}
-
-                  <div class="hh-search-collection-strip" aria-label="Suggested collections">
-                    <span>Suggested paths</span>
-                    <a href="/collections/גופיות" data-search-action="collection-suggestion">גופיות NBA</a>
-                    <a href="/collections/המכנסיים-שלנו" data-search-action="collection-suggestion">מכנסיים</a>
-                    <a href="/collections/מונדיאל" data-search-action="collection-suggestion">World Cup</a>
-                    <a href="/collections/fog" data-search-action="collection-suggestion">Fear Of God</a>
-                    <a href="/collections/jordan" data-search-action="collection-suggestion">Jordan</a>
-                    <a href="/collections/ילדים" data-search-action="collection-suggestion">Kids</a>
-                  </div>
-
-                  <div class="hh-search-team-strip" aria-label="NBA team shortcuts">
-                    <span>Shop by team</span>
-                    <a href="/collections/לוס-אנגלס-לייקרס" data-search-action="team-shortcut">Lakers</a>
-                    <a href="/collections/גולדן-סטייט-ווריוס" data-search-action="team-shortcut">Golden State</a>
-                    <a href="/collections/בוסטון-סלטיקס" data-search-action="team-shortcut">Boston</a>
-                    <a href="/collections/ניו-יורק-ניקס" data-search-action="team-shortcut">New York</a>
-                    <a href="/collections/שיקגו-בולס" data-search-action="team-shortcut">Chicago</a>
-                  </div>
-
-                  {%- render 'hoopers-product-type-chips',
-                    filter_source: search,
-                    context: 'search'
-                  -%}
-
-                  {%- if active_filter_count > 0 -%}
-                    <div class="hh-search-active-filters" aria-label="Active filters">
-                      <span>מסננים פעילים</span>
-                      {%- for filter in search.filters -%}
-                        {%- liquid
-                          assign filter_param_name = filter.param_name | default: ''
-                          assign filter_label_downcase = filter.label | downcase
-                          assign skip_filter_chip = false
-
-                          if filter_param_name == 'filter.v.availability' or filter_label_downcase contains 'availability' or filter_label_downcase contains 'מלאי'
-                            assign skip_filter_chip = true
-                          endif
-                        -%}
-
-                        {%- unless skip_filter_chip -%}
-                          {%- for filter_value in filter.active_values -%}
-                            <a href="{{ filter_value.url_to_remove }}" data-search-action="remove-filter">
-                              {{ filter_value.label | escape }} <b aria-hidden="true">×</b>
-                            </a>
-                          {%- endfor -%}
-
-                          {%- if filter.type == 'price_range' -%}
-                            {%- if filter.min_value.value != blank or filter.max_value.value != blank -%}
-                              <a href="{{ filter.url_to_remove }}" data-search-action="remove-filter">
-                                {%- if filter.min_value.value != blank -%}{{ filter.min_value.value | money_without_trailing_zeros }}{%- else -%}₪0{%- endif -%}
-                                –
-                                {%- if filter.max_value.value != blank -%}{{ filter.max_value.value | money_without_trailing_zeros }}{%- else -%}{{ filter.range_max | money_without_trailing_zeros }}{%- endif -%}
-                                <b aria-hidden="true">×</b>
-                              </a>
-                            {%- endif -%}
-                          {%- endif -%}
-                        {%- endunless -%}
-                      {%- endfor -%}
-                      <a class="hh-search-active-filters__clear" href="{{ routes.search_url }}?q={{ search_terms | url_encode }}&type=product" data-search-action="clear-filters">
-                        Clear all
-                      </a>
-                    </div>
-                  {%- endif -%}
-                </div>
+                {%- render 'hoopers-filter-experience',
+                  filter_source: search,
+                  context: 'search',
+                  search_terms: search_terms,
+                  intent_link: intent_link,
+                  intent_title: intent_title,
+                  intent_text: intent_text,
+                  intent_button: intent_button
+                -%}
 
                 {% render 'collection-grid',
                   collection: search,

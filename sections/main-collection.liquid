@@ -25,8 +25,8 @@
     </div>
 
     <div class="page-width">
-      <div class="grid">
-        <div class="grid__item medium-up--one-fifth grid__item--sidebar">
+      <div class="hh-search-results-page__layout" data-scroll-to>
+        <aside class="hh-search-results-page__sidebar">
           {%- render 'collection-grid-filters',
             collection: collection,
             enable_sidebar: section.settings.enable_sidebar,
@@ -34,9 +34,9 @@
             collapsed: section.settings.collapsed,
             enable_color_swatches: section.settings.enable_color_swatches
           -%}
-        </div>
+        </aside>
 
-        <div class="grid__item medium-up--four-fifths grid__item--content">
+        <div class="hh-search-results-page__content">
           {%- liquid
             for block in section.blocks
               case block.type
@@ -64,7 +64,7 @@
 
                   {%- when 'product_grid' -%}
                     <div data-scroll-to>
-                      {%- render 'hoopers-product-type-chips',
+                      {%- render 'hoopers-filter-experience',
                         filter_source: collection,
                         context: 'collection'
                       -%}
@@ -74,7 +74,7 @@
                         items: collection.products,
                         enable_sidebar: section.settings.enable_sidebar,
                         filter_style: section.settings.filter_style,
-                        enable_sort: section.settings.enable_sort,
+                        enable_sort: true,
                         enable_collection_count: block.settings.enable_collection_count,
                         per_row: block.settings.per_row,
                         mobile_flush_grid: block.settings.mobile_flush_grid,
@@ -192,6 +192,297 @@
   .hoopers-collection-catalog .collection-filter {
     border-color: var(--hh-border);
     margin-bottom: clamp(18px, 2vw, 28px);
+  }
+
+  .hoopers-collection-catalog .hh-search-results-page__layout {
+    display: grid;
+    grid-template-columns: minmax(214px, 232px) minmax(0, 1fr);
+    gap: clamp(14px, 1.7vw, 26px);
+    align-items: start;
+    direction: rtl;
+  }
+
+  .hoopers-collection-catalog .hh-search-results-page__sidebar,
+  .hoopers-collection-catalog .hh-search-results-page__content {
+    min-width: 0;
+  }
+
+  .hoopers-collection-catalog .collection-filter {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--hh-border);
+    background: var(--hh-card);
+    color: var(--hh-text);
+  }
+
+  .hoopers-collection-catalog .collection-filter__item--count {
+    color: var(--hh-muted);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .hoopers-collection-catalog .collection-filter__item--sort {
+    margin-inline-start: auto;
+  }
+
+  .hoopers-collection-catalog .collection-filter__item--drawer .btn {
+    min-height: 42px;
+    padding: 0 16px;
+    border: 1px solid rgba(17, 17, 17, 0.14);
+    background: var(--hh-black);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hoopers-collection-catalog .collection-filter__item--drawer .btn .icon {
+    color: var(--hh-gold);
+  }
+
+  .hoopers-collection-catalog .collection-filter__sort-container {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .hoopers-collection-catalog .collection-filter__sort-container::before {
+    content: "SORT";
+    color: var(--hh-muted);
+    font-size: 10px;
+    font-weight: 950;
+    letter-spacing: 0.16em;
+  }
+
+  .hoopers-collection-catalog .collection-filter__sort-container::after {
+    content: "";
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    width: 7px;
+    height: 7px;
+    border-left: 2px solid var(--hh-gold);
+    border-bottom: 2px solid var(--hh-gold);
+    transform: translateY(-65%) rotate(-45deg);
+    pointer-events: none;
+  }
+
+  .hoopers-collection-catalog .collection-filter__sort-container select {
+    min-width: 188px;
+    min-height: 42px;
+    padding-inline-end: 16px;
+    padding-inline-start: 34px;
+    appearance: none;
+    -webkit-appearance: none;
+    border-color: var(--hh-border);
+    background-color: var(--hh-card);
+    color: var(--hh-text);
+    font-weight: 800;
+  }
+
+  .hoopers-collection-catalog .collection-sidebar {
+    position: sticky;
+    top: 94px;
+    padding: 16px;
+    border: 1px solid var(--hh-border);
+    background: var(--hh-card);
+  }
+
+  .hoopers-collection-catalog .collection-sidebar__group {
+    border-color: var(--hh-border);
+  }
+
+  .hoopers-collection-catalog .tag-list__header,
+  .hoopers-collection-catalog .collapsible-trigger-btn {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--hh-text);
+    font-size: 12px;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hoopers-collection-catalog .tag__checkbox-wrapper,
+  .hoopers-collection-catalog .tag__text {
+    color: rgba(17, 17, 17, 0.72);
+    font-weight: 750;
+  }
+
+  .hoopers-collection-catalog .tag--active .tag__text {
+    color: var(--hh-text);
+  }
+
+  .hoopers-collection-catalog .tag__checkbox {
+    border-color: rgba(200, 165, 106, 0.48);
+  }
+
+  .hoopers-collection-catalog .tag__input:checked + .tag__checkbox,
+  .hoopers-collection-catalog .tag__input:checked ~ .tag__checkbox {
+    background: var(--hh-gold);
+    border-color: var(--hh-gold);
+  }
+
+  .hoopers-collection-catalog .hh-search-discovery {
+    display: grid;
+    gap: 12px;
+    margin-bottom: clamp(16px, 2vw, 26px);
+  }
+
+  .hoopers-collection-catalog .hh-search-collection-strip,
+  .hoopers-collection-catalog .hh-search-team-strip,
+  .hoopers-collection-catalog .hh-filter-refinement,
+  .hoopers-collection-catalog .hh-search-active-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid var(--hh-border);
+    background: var(--hh-card);
+  }
+
+  .hoopers-collection-catalog .hh-search-collection-strip span,
+  .hoopers-collection-catalog .hh-search-team-strip span,
+  .hoopers-collection-catalog .hh-filter-refinement span,
+  .hoopers-collection-catalog .hh-search-active-filters > span {
+    color: var(--hh-gold);
+    font-size: 10px;
+    font-weight: 950;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .hoopers-collection-catalog .hh-search-collection-strip a,
+  .hoopers-collection-catalog .hh-search-team-strip a,
+  .hoopers-collection-catalog .hh-filter-refinement a,
+  .hoopers-collection-catalog .hh-filter-refinement span.hh-filter-refinement__chip,
+  .hoopers-collection-catalog .hh-search-active-filters a {
+    display: inline-flex;
+    min-height: 34px;
+    align-items: center;
+    gap: 7px;
+    padding: 0 12px;
+    border: 1px solid rgba(17, 17, 17, 0.12);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.34);
+    color: var(--hh-text);
+    font-size: 12px;
+    font-weight: 850;
+    line-height: 1;
+    text-decoration: none;
+    transition: background 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease;
+  }
+
+  .hoopers-collection-catalog .hh-search-collection-strip a:hover,
+  .hoopers-collection-catalog .hh-search-team-strip a:hover,
+  .hoopers-collection-catalog .hh-filter-refinement a:hover,
+  .hoopers-collection-catalog .hh-search-active-filters a:hover,
+  .hoopers-collection-catalog .hh-filter-refinement__chip.is-active {
+    transform: translateY(-1px);
+    border-color: rgba(200, 165, 106, 0.68);
+    background: var(--hh-black);
+    color: #fff;
+  }
+
+  .hoopers-collection-catalog .hh-search-active-filters {
+    border-color: rgba(200, 165, 106, 0.3);
+  }
+
+  .hoopers-collection-catalog .hh-search-active-filters a {
+    background: #050505;
+    color: #fff;
+  }
+
+  .hoopers-collection-catalog .hh-search-active-filters a b,
+  .hoopers-collection-catalog .hh-filter-refinement__chip.is-active b {
+    color: var(--hh-gold);
+    font-size: 14px;
+  }
+
+  .hoopers-collection-catalog .hh-search-active-filters__clear {
+    border-color: rgba(200, 165, 106, 0.56) !important;
+    background: transparent !important;
+    color: var(--hh-text) !important;
+  }
+
+  .hoopers-collection-catalog #FilterDrawer {
+    z-index: 9999;
+  }
+
+  .hoopers-collection-catalog #FilterDrawer .drawer__contents,
+  .hoopers-collection-catalog #FilterDrawer .drawer__fixed-header {
+    background: #050505;
+    color: #fff;
+  }
+
+  .hoopers-collection-catalog #FilterDrawer .drawer__fixed-header {
+    border-bottom: 1px solid rgba(200, 165, 106, 0.24);
+  }
+
+  .hoopers-collection-catalog #FilterDrawer .drawer__header {
+    color: #fff;
+    direction: rtl;
+    text-align: right;
+  }
+
+  .hoopers-collection-catalog #FilterDrawer .drawer__title {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hoopers-collection-catalog #FilterDrawer .drawer__close-button,
+  .hoopers-collection-catalog #FilterDrawer .drawer__close-button .icon {
+    color: var(--hh-gold);
+    stroke: currentColor;
+  }
+
+  .hoopers-collection-catalog #FilterDrawer .drawer__scrollable {
+    padding: 18px;
+  }
+
+  .hoopers-collection-catalog #FilterDrawer .tag-list--active-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .hoopers-collection-catalog #FilterDrawer .tag--remove .btn {
+    background: rgba(200, 165, 106, 0.14);
+    border-color: rgba(200, 165, 106, 0.34);
+    color: #fff;
+  }
+
+  .hoopers-collection-catalog #FilterDrawer .collection-sidebar__group {
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .hoopers-collection-catalog #FilterDrawer .collapsible-trigger-btn,
+  .hoopers-collection-catalog #FilterDrawer .tag-list__header {
+    color: #fff;
+  }
+
+  .hoopers-collection-catalog #FilterDrawer .tag__checkbox-wrapper,
+  .hoopers-collection-catalog #FilterDrawer .tag__text,
+  .hoopers-collection-catalog #FilterDrawer .price-range__display-wrapper,
+  .hoopers-collection-catalog #FilterDrawer .price-range__input {
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .hoopers-collection-catalog #FilterDrawer .tag--active .tag__text {
+    color: #fff;
   }
 
   .hoopers-collection-catalog .hh-filter-refinement {
@@ -559,6 +850,54 @@
       padding-right: 12px;
     }
 
+    .hoopers-collection-catalog .hh-search-results-page__layout {
+      display: block;
+    }
+
+    .hoopers-collection-catalog .hh-search-results-page__sidebar {
+      margin-bottom: 18px;
+    }
+
+    .hoopers-collection-catalog .collection-sidebar {
+      position: static;
+    }
+
+    .hoopers-collection-catalog .collection-filter {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+      padding: 10px;
+    }
+
+    .hoopers-collection-catalog .collection-filter__item--drawer,
+    .hoopers-collection-catalog .collection-filter__item--sort {
+      width: 100%;
+    }
+
+    .hoopers-collection-catalog .collection-filter__item--count {
+      display: none;
+    }
+
+    .hoopers-collection-catalog .collection-filter__item--drawer .btn,
+    .hoopers-collection-catalog .collection-filter__sort-container,
+    .hoopers-collection-catalog .collection-filter__sort-container select {
+      width: 100%;
+    }
+
+    .hoopers-collection-catalog .collection-filter__sort-container::before {
+      display: none;
+    }
+
+    .hoopers-collection-catalog .collection-filter__sort-container select {
+      min-width: 0;
+      min-height: 42px;
+      font-size: 11px;
+      background: #050505;
+      color: #fff;
+      border-color: rgba(200, 165, 106, 0.38);
+    }
+
     .hoopers-collection-catalog .hh-collection-title-block {
       padding: 20px 0 16px;
     }
@@ -579,20 +918,45 @@
       margin-right: -6px;
     }
 
-    .hoopers-collection-catalog .hh-filter-refinement {
+    .hoopers-collection-catalog .hh-search-discovery {
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .hoopers-collection-catalog .hh-search-collection-strip,
+    .hoopers-collection-catalog .hh-search-team-strip,
+    .hoopers-collection-catalog .hh-filter-refinement,
+    .hoopers-collection-catalog .hh-search-active-filters {
       flex-wrap: nowrap;
       overflow-x: auto;
       padding: 10px;
       scrollbar-width: none;
     }
 
-    .hoopers-collection-catalog .hh-filter-refinement::-webkit-scrollbar {
+    .hoopers-collection-catalog .hh-search-collection-strip::-webkit-scrollbar,
+    .hoopers-collection-catalog .hh-search-team-strip::-webkit-scrollbar,
+    .hoopers-collection-catalog .hh-filter-refinement::-webkit-scrollbar,
+    .hoopers-collection-catalog .hh-search-active-filters::-webkit-scrollbar {
       display: none;
     }
 
+    .hoopers-collection-catalog .hh-search-collection-strip span,
+    .hoopers-collection-catalog .hh-search-team-strip span,
     .hoopers-collection-catalog .hh-filter-refinement span,
-    .hoopers-collection-catalog .hh-filter-refinement a {
+    .hoopers-collection-catalog .hh-search-active-filters > span,
+    .hoopers-collection-catalog .hh-search-collection-strip a,
+    .hoopers-collection-catalog .hh-search-team-strip a,
+    .hoopers-collection-catalog .hh-filter-refinement a,
+    .hoopers-collection-catalog .hh-search-active-filters a {
       flex: 0 0 auto;
+    }
+
+    .hoopers-collection-catalog #FilterDrawer.drawer--left {
+      width: min(92vw, 420px);
+    }
+
+    .hoopers-collection-catalog #FilterDrawer .drawer__scrollable {
+      padding: 16px;
     }
 
     .hoopers-collection-catalog .grid-product {
@@ -647,6 +1011,8 @@
 
 {%- if section.settings.enable_sidebar == false or section.settings.filter_style == 'drawer' or collection.filters.size == 0 -%}
 {% style %}
+  .hoopers-collection-catalog .hh-search-results-page__sidebar { display: none; }
+  .hoopers-collection-catalog .hh-search-results-page__content { min-width: 0; width: 100%; }
   .collection-content .grid__item--sidebar { width: 0; padding:0; }
   .collection-content .grid__item--content { width: 100%; }
   .grid__item--sidebar { position: static; overflow: hidden; }
