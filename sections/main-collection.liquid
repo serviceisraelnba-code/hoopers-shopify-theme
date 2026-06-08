@@ -18,6 +18,13 @@
 >
   <div id="CollectionAjaxContent">
     <div class="page-width">
+      <header class="hh-collection-title-block">
+        <p class="hh-collection-title-block__eyebrow">HOOPERS COLLECTION</p>
+        <h1 class="hh-collection-title-block__heading">{{ collection.title }}</h1>
+      </header>
+    </div>
+
+    <div class="page-width">
       <div class="grid">
         <div class="grid__item medium-up--one-fifth grid__item--sidebar">
           {%- render 'collection-grid-filters',
@@ -128,6 +135,35 @@
 
   .hoopers-collection-catalog .page-width {
     max-width: 1560px;
+  }
+
+  .hoopers-collection-catalog .hh-collection-title-block {
+    max-width: 940px;
+    margin: 0 auto;
+    padding: clamp(34px, 5vw, 62px) 0 clamp(24px, 3.4vw, 42px);
+    text-align: center;
+    background: transparent;
+  }
+
+  .hoopers-collection-catalog .hh-collection-title-block__eyebrow {
+    margin: 0 0 10px;
+    color: var(--hh-gold) !important;
+    font-size: 10px !important;
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .hoopers-collection-catalog .hh-collection-title-block__heading {
+    margin: 0;
+    color: var(--hh-black) !important;
+    font-size: clamp(34px, 4.4vw, 62px) !important;
+    line-height: 0.96;
+    font-weight: 950 !important;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    text-align: center;
   }
 
   .hoopers-collection-catalog .grid__item--content {
@@ -521,6 +557,21 @@
     .hoopers-collection-catalog .page-width {
       padding-left: 12px;
       padding-right: 12px;
+    }
+
+    .hoopers-collection-catalog .hh-collection-title-block {
+      padding: 28px 0 22px;
+    }
+
+    .hoopers-collection-catalog .hh-collection-title-block__eyebrow {
+      font-size: 9px !important;
+      letter-spacing: 0.14em;
+    }
+
+    .hoopers-collection-catalog .hh-collection-title-block__heading {
+      font-size: clamp(28px, 9vw, 40px) !important;
+      line-height: 1;
+      letter-spacing: 0.01em;
     }
 
     .hoopers-collection-catalog .grid {
